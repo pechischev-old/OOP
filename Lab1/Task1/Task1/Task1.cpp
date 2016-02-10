@@ -9,86 +9,101 @@
 using namespace std;
 
 static const int MAX_AMOUNT_ARGUMENTS = 5;
+static const int MAX_FILE_SIZE = 2147483647;
+static const string NO_ARGUMENTS = "no required arguments";
+static const string NOT_OPEN = " file can not be opened";
+static const string ERROR_BIG_FILE_SIZE = " file size more than two gigabytes";
+static const string FORMAT_INPUT = "MyProgram.exe inputFile outputFile searchStrin replaceString";
 
-struct SProgramData {
-	string inputFileName;
-	string outputFileName;
+struct SProgramData 
+{
 	string searchString;
 	string replaceString;
 	ifstream fin;
 	ofstream fout;
-	bool canChange;
 };
 
-
-void ExitProgram() {
-	exit(1);
+bool CheckFileSize(ifstream & inputFile)
+{
+	inputFile.seekg(0, std::ios::end);
+	size_t size = static_cast<size_t>(inputFile.tellg());
+	inputFile.seekg(0, std::ios::beg);
+	return size >= MAX_FILE_SIZE;
 }
 
-void InitProgram(int argc, char* argv[], SProgramData & progData) {
-	/*progData.inputFileName = "input.txt";
-	progData.outputFileName = "output.txt";
-	progData.searchString = "qwea";
-	progData.replaceString = "123";*/
+bool InitProgram(int argc, char* argv[], SProgramData & progData) 
+{
+	string inputFileName;
+	string outputFileName;
 	if (argc == MAX_AMOUNT_ARGUMENTS)
 	{
-		progData.inputFileName = argv[1];
-		progData.outputFileName = argv[2];
+		inputFileName = argv[1];
+		outputFileName = argv[2];
 		progData.searchString = argv[3];
 		progData.replaceString = argv[4];
 	}
 	else
 	{
-		cout << "no required arguments" << endl;
-		ExitProgram();
+		cout << NO_ARGUMENTS << endl;
+		cout << FORMAT_INPUT << endl;
+		return false;
 	}
-
-	progData.fin.open(progData.inputFileName);
-	if (!progData.fin.is_open()) {
-		cout << progData.inputFileName + " file can not be opened" << endl;
-		ExitProgram();
+	progData.fin.open(inputFileName);
+	if (!progData.fin.is_open()) 
+	{
+		cout << inputFileName + NOT_OPEN << endl;
+		return false;
 	}
-	
-	progData.fout.open(progData.outputFileName);
-	if (!progData.fout.is_open()) {
-		cout << progData.outputFileName + " file can not be opened" << endl;
-		ExitProgram();
+	if (CheckFileSize(progData.fin)) {
+		cout << inputFileName + ERROR_BIG_FILE_SIZE << endl;
+		return false;
 	}
+	progData.fout.open(outputFileName);
+	if (!progData.fout.is_open()) 
+	{
+		cout << outputFileName + NOT_OPEN << endl;
+		return false;
+	}
+	return true;
 }
 
-void WriteInFile(ofstream & fout, string outputStr) {
+void WriteInFile(ofstream & fout,const string & outputStr)
+{
 	fout << outputStr;
 }
 
-void ReplaceString(SProgramData & progData, string & buffStr) {
+bool FindSubstr(const string & str, const size_t & begin, const string & substr) 
+{
 	size_t j = 0;
-	string recStr;
-	string rec;
-	for (size_t i = 0; i < buffStr.length(); ++i) {
-		if (buffStr[i] == progData.searchString[j]) {
-			j += 1;
-			rec += buffStr[i];
-		}
-		else {
-			recStr += rec + buffStr[i];
-			j = 0;
-			rec.clear();
-		}
-		if (j == progData.searchString.length() && progData.canChange) {
-			recStr += progData.replaceString;
-			j = 0;
-			rec.clear();
-		}
-	}
-	WriteInFile(progData.fout, recStr);
-	buffStr.clear();
+	return str.substr(begin, substr.length()) == substr;
 }
 
-void Run(SProgramData & progData) {
+void ReplaceString(SProgramData & progData, const string & str)
+{
+	string outputStr;
+	string substr = progData.searchString;
+	bool canReplace = substr.size() > 0;
+	for (size_t i = 0; i < str.length();) {
+		if (FindSubstr(str, i, substr) && (str.length() - i) >= substr.size() && canReplace)
+		{
+			i = i + substr.size();
+			outputStr += progData.replaceString;
+		}
+		else 
+		{
+			outputStr += str[i];
+			++i;
+		}
+	}
+	WriteInFile(progData.fout, outputStr);
+}
 
+void Run(SProgramData & progData) 
+{
 	string buffStr;
-	progData.canChange = progData.searchString.length() > 0;
-	while (getline(progData.fin, buffStr)) {
+	while (!progData.fin.eof())
+	{
+		getline(progData.fin, buffStr);
 		buffStr += '\n';
 		ReplaceString(progData, buffStr);
 	}
@@ -99,7 +114,7 @@ void Run(SProgramData & progData) {
 int main(int argc, char* argv[])
 {
 	SProgramData progData;
-	InitProgram(argc, argv, progData);
-	Run(progData);
+	if (InitProgram(argc, argv, progData))
+		Run(progData);
 	return 0;
 }
