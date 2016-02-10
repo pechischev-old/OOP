@@ -13,7 +13,7 @@ static const int MAX_FILE_SIZE = 2147483647;
 static const string NO_ARGUMENTS = "no required arguments";
 static const string NOT_OPEN = " file can not be opened";
 static const string ERROR_BIG_FILE_SIZE = " file size more than two gigabytes";
-static const string FORMAT_INPUT = "MyProgram.exe inputFile outputFile searchStrin replaceString";
+static const string FORMAT_INPUT = "EXAMPLE: MyProgram.exe inputFile outputFile searchStrin replaceString";
 
 struct SProgramData 
 {
@@ -72,22 +72,21 @@ void WriteInFile(ofstream & fout,const string & outputStr)
 	fout << outputStr;
 }
 
-bool FindSubstr(const string & str, const size_t & begin, const string & substr) 
+bool FindSubstr(const string & str, const size_t & index, const string & substr) 
 {
-	size_t j = 0;
-	return str.substr(begin, substr.length()) == substr;
+	return (str.substr(index, substr.length()) == substr) && (str.length() - index) >= substr.size();
 }
 
-void ReplaceString(SProgramData & progData, const string & str)
+string ReplaceString(const string & str, const string & searchStr, const string & replaceStr)
 {
 	string outputStr;
-	string substr = progData.searchString;
+	string substr = searchStr;
 	bool canReplace = substr.size() > 0;
 	for (size_t i = 0; i < str.length();) {
-		if (FindSubstr(str, i, substr) && (str.length() - i) >= substr.size() && canReplace)
+		if (FindSubstr(str, i, substr) && canReplace)
 		{
 			i = i + substr.size();
-			outputStr += progData.replaceString;
+			outputStr += replaceStr;
 		}
 		else 
 		{
@@ -95,7 +94,7 @@ void ReplaceString(SProgramData & progData, const string & str)
 			++i;
 		}
 	}
-	WriteInFile(progData.fout, outputStr);
+	return outputStr;
 }
 
 void Run(SProgramData & progData) 
@@ -105,7 +104,8 @@ void Run(SProgramData & progData)
 	{
 		getline(progData.fin, buffStr);
 		buffStr += '\n';
-		ReplaceString(progData, buffStr);
+		string outputStr = ReplaceString(buffStr, progData.searchString, progData.replaceString);
+		WriteInFile(progData.fout, outputStr);
 	}
 	progData.fin.close();
 	progData.fout.close();
@@ -116,5 +116,6 @@ int main(int argc, char* argv[])
 	SProgramData progData;
 	if (InitProgram(argc, argv, progData))
 		Run(progData);
+	system("pause");
 	return 0;
 }
