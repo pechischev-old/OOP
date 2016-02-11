@@ -7,6 +7,7 @@ static const int DECIMAL_BASE = 10;
 static const int SHIFT_CHAR = 48;
 static const int MIN_NOTATION = 2;
 static const int MAX_NOTATION = 36;
+static const std::string EXCESS_VALUE = "excess values type";
 static const std::string NOT_ARGUMENT = "no required arguments";
 static const std::string FORMAT_STRING = "MyProgram.exe sourceNotation destinationNotation value";
 static const std::string EXCESS_ERROR = "number exceeds the radix";

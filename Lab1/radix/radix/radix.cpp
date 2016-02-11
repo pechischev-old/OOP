@@ -48,8 +48,8 @@ arrayInt StringToInt(const int & sourceBase, bool & wasError, const string & val
 	{
 		if (isdigit(value[i]) && value[i] < sourceBase + SHIFT_CHAR)
 			arr.push_back(value[i] - SHIFT_CHAR);
-		else if (value[i] < (FIRST_LETTER + sourceBase - DECIMAL_BASE) && isalpha(value[i]))
-			arr.push_back(DECIMAL_BASE + value[i] - FIRST_LETTER);
+		else if (char(toupper(value[i])) < (FIRST_LETTER + sourceBase - DECIMAL_BASE) && isalpha(value[i]))
+			arr.push_back(DECIMAL_BASE + char(toupper(value[i])) - FIRST_LETTER);
 		else {
 			wasError = true;
 			cout << EXCESS_ERROR << endl;
@@ -76,13 +76,13 @@ void TransferToDecimalNotation(int & sourceBase, bool & wasError, string & value
 		int power = value.length() - 1;
 		for (size_t i = 0; i < value.length(); ++i)
 		{
-			valueDecimal += arrNumbers[i] * static_cast<int>(pow(sourceBase, power));
+			valueDecimal += (arrNumbers[i] * static_cast<int>(pow(sourceBase, power)));
 			--power;
 		}
 		sourceBase = DECIMAL_BASE;
 		value = TranslationInString(valueDecimal);
-		// сравнение на допустимую длину 
 	}
+	
 }
 
 void TransferIntoOtherNotation(const int & destinationBase, const int & sourceBase, bool & wasError, string & value)
@@ -103,7 +103,7 @@ void TransferIntoOtherNotation(const int & destinationBase, const int & sourceBa
 void RememberSign(char & sign, string & value) // TODO: переименовать функцию
 {
 	sign = !isalnum(value[0]) ? value[0] : '\0';
-	value = (sign == '-') ? value.substr(1, value.length()) : value;
+	value = (sign == '-' || sign == '+') ? value.substr(1, value.length()) : value;
 }
 
 bool InitProgram(int argc, char* argv[], SProgramData & progData) 
@@ -155,7 +155,10 @@ void Run(SProgramData & progData)
 	if (!progData.wasError)
 	{
 		TransferIntoOtherNotation(progData.destinationNotation, progData.sourceNotation, progData.wasError, progData.value);
-		Output(progData.value, progData.sign);
+		if (progData.value.empty())
+			cout << EXCESS_VALUE << endl;
+		else
+			Output(progData.value, progData.sign);
 	}
 }
 
