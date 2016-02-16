@@ -1,4 +1,4 @@
-// Task1.cpp: определяет точку входа для консольного приложения.
+п»ї// Task1.cpp: РѕРїСЂРµРґРµР»СЏРµС‚ С‚РѕС‡РєСѓ РІС…РѕРґР° РґР»СЏ РєРѕРЅСЃРѕР»СЊРЅРѕРіРѕ РїСЂРёР»РѕР¶РµРЅРёСЏ.
 //
 
 #include "stdafx.h"
@@ -6,22 +6,11 @@
 #include <string>
 #include <fstream>
 
+#include "ConstVar.h"
+
 using namespace std;
 
-static const int MAX_AMOUNT_ARGUMENTS = 5;
-static const int MAX_FILE_SIZE = 2147483647;
-static const string NO_ARGUMENTS = "no required arguments";
-static const string NOT_OPEN = " file can not be opened";
-static const string ERROR_BIG_FILE_SIZE = " file size more than two gigabytes";
-static const string FORMAT_INPUT = "EXAMPLE: MyProgram.exe inputFile outputFile searchStrin replaceString";
 
-struct SProgramData 
-{
-	string searchString;
-	string replaceString;
-	ifstream fin;
-	ofstream fout;
-};
 
 bool CheckFileSize(ifstream & inputFile)
 {
@@ -31,37 +20,28 @@ bool CheckFileSize(ifstream & inputFile)
 	return size >= MAX_FILE_SIZE;
 }
 
-bool InitProgram(int argc, char* argv[], SProgramData & progData) 
+bool CheckInputValidation(int argc, char* argv[]) 
 {
-	string inputFileName;
-	string outputFileName;
-	if (argc == MAX_AMOUNT_ARGUMENTS)
-	{
-		inputFileName = argv[1];
-		outputFileName = argv[2];
-		progData.searchString = argv[3];
-		progData.replaceString = argv[4];
-	}
-	else
+	if (argc != MAX_AMOUNT_ARGUMENTS)
 	{
 		cout << NO_ARGUMENTS << endl;
 		cout << FORMAT_INPUT << endl;
 		return false;
 	}
-	progData.fin.open(inputFileName);
-	if (!progData.fin.is_open()) 
+	ifstream fin(argv[1]);
+	if (!fin.is_open()) 
 	{
-		cout << inputFileName + NOT_OPEN << endl;
+		cout << argv[1] + NOT_OPEN << endl;
 		return false;
 	}
-	if (CheckFileSize(progData.fin)) {
-		cout << inputFileName + ERROR_BIG_FILE_SIZE << endl;
+	if (CheckFileSize(fin)) {
+		cout << argv[1] + ERROR_BIG_FILE_SIZE << endl;
 		return false;
 	}
-	progData.fout.open(outputFileName);
-	if (!progData.fout.is_open()) 
+	ofstream fout(argv[2]);
+	if (!fout.is_open()) 
 	{
-		cout << outputFileName + NOT_OPEN << endl;
+		cout << argv[2] + NOT_OPEN << endl;
 		return false;
 	}
 	return true;
@@ -74,48 +54,57 @@ void WriteInFile(ofstream & fout,const string & outputStr)
 
 bool FindSubstr(const string & str, const size_t & index, const string & substr) 
 {
+
 	return (str.substr(index, substr.length()) == substr) && (str.length() - index) >= substr.size();
 }
 
 string ReplaceString(const string & str, const string & searchStr, const string & replaceStr)
 {
 	string outputStr;
-	string substr = searchStr;
-	bool canReplace = substr.size() > 0;
-	for (size_t i = 0; i < str.length();) {
-		if (FindSubstr(str, i, substr) && canReplace)
+	bool canReplace = searchStr.size() > 0;
+	if (canReplace) 
+	{
+		for (size_t i = 0; i < str.length();) 
 		{
-			i = i + substr.size();
-			outputStr += replaceStr;
-		}
-		else 
-		{
-			outputStr += str[i];
-			++i;
+			if (FindSubstr(str, i, searchStr))
+			{
+				i = i + searchStr.size();
+				outputStr += replaceStr;
+			}
+			else
+			{
+				outputStr += str[i];
+				++i;
+			}
 		}
 	}
 	return outputStr;
 }
 
-void Run(SProgramData & progData) 
+void Run(char* argv[])
 {
+	ifstream fin(argv[1]);
+	ofstream fout(argv[2]);
+	string searchString = argv[3];
+	string replaceString = argv[4];
 	string buffStr;
-	while (!progData.fin.eof())
+	while (!fin.eof())
 	{
-		getline(progData.fin, buffStr);
+		getline(fin, buffStr);
 		buffStr += '\n';
-		string outputStr = ReplaceString(buffStr, progData.searchString, progData.replaceString);
-		WriteInFile(progData.fout, outputStr);
+		string outputStr = ReplaceString(buffStr, searchString, replaceString);
+		WriteInFile(fout, outputStr);
 	}
-	progData.fin.close();
-	progData.fout.close();
+	
+	if (!fout.flush())
+	{
+		cout << NOT_WRITE + argv[2] << endl;
+	};
 }
 
 int main(int argc, char* argv[])
 {
-	SProgramData progData;
-	if (InitProgram(argc, argv, progData))
-		Run(progData);
-	system("pause");
+	if (CheckInputValidation(argc, argv))
+		Run(argv);
 	return 0;
 }

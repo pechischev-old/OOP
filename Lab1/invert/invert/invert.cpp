@@ -28,7 +28,7 @@ float GetDeterminateFromArray_2x2(const Matrix & matrix_2x2)
 	return matrix_2x2[0][0] * matrix_2x2[1][1] - matrix_2x2[0][1] * matrix_2x2[1][0];
 }
 
-float GetMinor(const Matrix & matrix, const size_t & column,const size_t & row)
+float GetMinor(const Matrix & matrix, const size_t & column, const size_t & row)
 {
 	Matrix matrix_2x2;
 	matrix_2x2.resize(2);
