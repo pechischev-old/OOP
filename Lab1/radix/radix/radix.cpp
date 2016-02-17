@@ -69,7 +69,8 @@ string TranslationInString(const int & valueDecimal) {
 
 void TransferToDecimalNotation(int & sourceBase, bool & wasError, string & value) 
 {
-	arrayInt arrNumbers = StringToInt(sourceBase, wasError, value); // TODO: проверить на пустоту
+	arrayInt arrNumbers = StringToInt(sourceBase, wasError, value); 
+	wasError = arrNumbers.empty();
 	if (!wasError) 
 	{
 		int valueDecimal = 0;
@@ -82,7 +83,6 @@ void TransferToDecimalNotation(int & sourceBase, bool & wasError, string & value
 		sourceBase = DECIMAL_BASE;
 		value = TranslationInString(valueDecimal);
 	}
-	
 }
 
 void TransferIntoOtherNotation(const int & destinationBase, const int & sourceBase, bool & wasError, string & value)
@@ -117,7 +117,7 @@ bool InitProgram(int argc, char* argv[], SProgramData & progData)
 		}
 		if (!(MIN_NOTATION <= atoi(argv[1]) && atoi(argv[1]) <= MAX_NOTATION))
 		{	
-			cout << DISPARITY <<endl;
+			cout << DISPARITY << endl;
 			return false;
 		}
 		if (!(MIN_NOTATION <= atoi(argv[2]) && atoi(argv[2]) <= MAX_NOTATION))
@@ -133,8 +133,8 @@ bool InitProgram(int argc, char* argv[], SProgramData & progData)
 	}
 	else 
 	{
-		cout << NOT_ARGUMENT << endl;
-		cout << FORMAT_STRING << endl;
+		cout << NO_ARGUMENTS << endl;
+		cout << STRING_FORMAT << endl;
 		return false;
 	}
 	return true;
@@ -167,7 +167,6 @@ int main(int argc, char* argv[])
 	SProgramData progData;
 	if (InitProgram(argc, argv, progData))
 		Run(progData);
-	//system("pause");
     return 0;
 }
 

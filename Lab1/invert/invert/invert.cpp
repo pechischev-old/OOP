@@ -72,9 +72,7 @@ void InvertMatrix(Matrix & arrayMinor, float & determinate)
 {
 	for (size_t i = 0; i < arrayMinor.size(); ++i)
 		for (size_t j = 0; j < arrayMinor[i].size(); ++j) 
-		{
 			arrayMinor[i][j] = (1 / determinate) * SIGNS[i][j] * arrayMinor[i][j];
-		}
 }
 
 void Run(Matrix & matrix)
@@ -99,22 +97,23 @@ Matrix GetArrayFromFile(const string & inputFileStr)
 	
 	for (size_t i = 0; i < SIZE_ARRAY; ++i)
 	{
-		for (size_t j = 0; j < SIZE_ARRAY; ++j) {
+		for (size_t j = 0; j < SIZE_ARRAY; ++j) 
+		{
 			float number = 0;
 			fin >> number;
 			arr[i].push_back(number);
 		}
 	}
-	fin.close();
 	return arr;
 }
 
 bool IsCorrectSymbol(const char & symbol)
 {
-	return (isdigit(int(symbol)) || symbol == '-' || symbol == ' ' || symbol == '.' || symbol == '\t' || symbol == ',');
+	return (isdigit(static_cast<int>(symbol)) || symbol == '-' || symbol == ' ' || symbol == '.' || symbol == '\t' || symbol == ',');
 }
 
-bool CheckFileContent(const string & inputFileStr) {
+bool CheckFileContent(const string & inputFileStr) 
+{
 	ifstream fin(inputFileStr);
 	if (!fin.is_open())
 	{
@@ -125,17 +124,16 @@ bool CheckFileContent(const string & inputFileStr) {
 	int numberOfLine = 0;
 	while (getline(fin, inputStr))
 	{
-		for (size_t i = 0; i < inputStr.size(); ++i) {
+		for (size_t i = 0; i < inputStr.size(); ++i) 
+		{
 			if (!IsCorrectSymbol(inputStr[i]))
 			{
 				cout << INVALID_CHARACTER << endl;
-				fin.close();
 				return false;
 			}
 		}
 		++numberOfLine;
 	}
-	fin.close();
 	return numberOfLine == SIZE_ARRAY;
 }
 
@@ -151,8 +149,8 @@ bool InitProgram(int argc, char* argv[], Matrix & arr)
 	}
 	else
 	{
-		cout << NOT_ARGUMENT << endl;
-		cout << FORMAT_STRING << endl;
+		cout << NO_ARGUMENTS << endl;
+		cout << STRING_FORMAT << endl;
 		return false;
 	}
 	return true;
@@ -162,9 +160,7 @@ int main(int argc, char* argv[])
 {
 	Matrix matrix;
 	if (InitProgram(argc, argv, matrix))
-	{
 		Run(matrix);
-	}
     return 0;
 }
 

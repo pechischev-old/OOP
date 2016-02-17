@@ -25,7 +25,7 @@ bool CheckInputValidation(int argc, char* argv[])
 	if (argc != MAX_AMOUNT_ARGUMENTS)
 	{
 		cout << NO_ARGUMENTS << endl;
-		cout << FORMAT_INPUT << endl;
+		cout << INPUT_FORMAT << endl;
 		return false;
 	}
 	ifstream fin(argv[1]);
@@ -54,8 +54,10 @@ void WriteInFile(ofstream & fout,const string & outputStr)
 
 bool FindSubstr(const string & str, const size_t & index, const string & substr) 
 {
-
-	return (str.substr(index, substr.length()) == substr) && (str.length() - index) >= substr.size();
+	if ((str.length() - index) >= substr.size())
+		if (str[index] == substr[0] && str[index + substr.length() - 1] == substr[substr.length() - 1])
+			return (str.substr(index, substr.length()) == substr);
+	return false;
 }
 
 string ReplaceString(const string & str, const string & searchStr, const string & replaceStr)
