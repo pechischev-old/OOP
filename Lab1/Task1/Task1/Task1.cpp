@@ -61,7 +61,7 @@ bool FindSubstr(const string & str, const size_t & index, const string & substr)
 {
 	
 	if ((str.length() - index) >= substr.size() && substr.size() > 0)
-		if (CheckFirstAndLastSymbols(str[index], substr[0], str[index + substr.length() - 1], substr.back()))
+		if (CheckFirstAndLastSymbols(str[index], substr.front(), str[index + substr.length() - 1], substr.back()))
 			return (str.substr(index, substr.length()) == substr);
 	return false;
 
