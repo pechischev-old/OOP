@@ -16,8 +16,7 @@ void OutputArray(const Matrix & matrix)
 	{
 		for (size_t j = 0; j < matrix[i].size(); ++j)
 		{
-			cout.precision(COUNT_AFTER_POINT);
-			cout << matrix[i][j] << "  ";
+			printf("%.3f ", matrix[i][j]);
 		}
 		cout << endl;
 	}
@@ -134,7 +133,12 @@ bool CheckFileContent(const string & inputFileStr)
 		}
 		++numberOfLine;
 	}
-	return numberOfLine == SIZE_ARRAY;
+	if (numberOfLine != SIZE_ARRAY)
+	{
+		cout << SIZE_EXCEED << endl;
+		return false;
+	}
+	return true;
 }
 
 bool InitProgram(int argc, char* argv[], Matrix & arr)

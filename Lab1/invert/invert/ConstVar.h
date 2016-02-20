@@ -11,7 +11,8 @@ static const std::string STRING_FORMAT = "EXAMPLE: invert.exe <matrixfile>";
 static const std::string NOT_OPEN = " file can not be opened";
 static const std::string INVALID_CHARACTER = "File contains an invalid character";
 static const std::string NO_INVERT = "no inverse matrix";
-static const int COUNT_AFTER_POINT = 2;
+static const std::string SIZE_EXCEED = "the number of lines does not meet the conditions of the problem";
+static const int COUNT_AFTER_POINT = 3;
 
 static const Matrix SIGNS = {{1, -1, 1},
 							 {-1, 1, -1},

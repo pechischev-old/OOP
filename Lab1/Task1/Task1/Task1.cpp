@@ -44,29 +44,36 @@ bool CheckInputValidation(int argc, char* argv[])
 		cout << argv[2] + NOT_OPEN << endl;
 		return false;
 	}
+	fout.close();
 	return true;
 }
 
-void WriteInFile(ofstream & fout,const string & outputStr)
+void WriteInFile(ofstream & fout, const string & outputStr)
 {
 	fout << outputStr;
 }
 
+bool CheckFirstAndLastSymbols(const char & first1, const char & first2, const char & last1, const char & last2 ) {
+	return first1 == first2 && last1 == last2;
+}
+
 bool FindSubstr(const string & str, const size_t & index, const string & substr) 
 {
-	if ((str.length() - index) >= substr.size())
-		if (str[index] == substr[0] && str[index + substr.length() - 1] == substr[substr.length() - 1])
+	
+	if ((str.length() - index) >= substr.size() && substr.size() > 0)
+		if (CheckFirstAndLastSymbols(str[index], substr[0], str[index + substr.length() - 1], substr.back()))
 			return (str.substr(index, substr.length()) == substr);
 	return false;
+
 }
 
 string ReplaceString(const string & str, const string & searchStr, const string & replaceStr)
 {
 	string outputStr;
 	bool canReplace = searchStr.size() > 0;
-	if (canReplace) 
+	if (canReplace)
 	{
-		for (size_t i = 0; i < str.length();) 
+		for (size_t i = 0; i < str.length();)
 		{
 			if (FindSubstr(str, i, searchStr))
 			{
@@ -80,6 +87,8 @@ string ReplaceString(const string & str, const string & searchStr, const string 
 			}
 		}
 	}
+	else
+		outputStr = str;
 	return outputStr;
 }
 
@@ -90,9 +99,8 @@ void Run(char* argv[])
 	string searchString = argv[3];
 	string replaceString = argv[4];
 	string buffStr;
-	while (!fin.eof())
+	while (getline(fin, buffStr))
 	{
-		getline(fin, buffStr);
 		buffStr += '\n';
 		string outputStr = ReplaceString(buffStr, searchString, replaceString);
 		WriteInFile(fout, outputStr);
@@ -108,5 +116,7 @@ int main(int argc, char* argv[])
 {
 	if (CheckInputValidation(argc, argv))
 		Run(argv);
+	else
+		return 1;
 	return 0;
 }
