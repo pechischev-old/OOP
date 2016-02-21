@@ -33,8 +33,8 @@ void Push(Field & field, size_t i, size_t j, Queue & paths) {
 				field[i][j] = '.';
 			paths.push_back({ i + 1, j });
 			paths.push_back({ i - 1, j });
-			paths.push_back({ i, j + 1 });
 			paths.push_back({ i, j - 1 });
+			paths.push_back({ i, j + 1 });		
 		}
 	}
 }
@@ -42,11 +42,20 @@ void Push(Field & field, size_t i, size_t j, Queue & paths) {
 void Fill(Field & field, size_t i, size_t j)
 {
 	Queue paths;
-	do {
-		if (paths.size() > 0) {
+	do 
+	{
+		if (paths.size() > 0) 
+		{
 			i = paths[0].i;
 			j = paths[0].j;
 			paths.erase(paths.begin());
+			if (i < 0 || i >= field.size())
+				continue;
+			if (i < field.size() && i >= 0)
+			{
+				if (j >= field[i].size() || j < 0)
+					continue;
+			}
 		}
 		Push(field, i, j, paths);
 	} while (!paths.empty());
@@ -68,39 +77,42 @@ void FillArray(Field & field, const string & inputFileStr)
 {
 	ifstream fin(inputFileStr);
 	string inputStr;
-	while (getline(fin, inputStr))
+	while (getline(fin, inputStr) && field.size() < MAX_SIZE)
 	{
-		if (field.size() == MAX_SIZE)
-			break;
 		vector<char> buffArray;
-		size_t length = (inputStr.length() <= MAX_SIZE) ? inputStr.length() : MAX_SIZE;
+		size_t length = (inputStr.length() < MAX_SIZE) ? inputStr.length() : MAX_SIZE;
 		for (size_t i = 0; i < length; ++i)
-		{
 			buffArray.push_back(toupper(int(inputStr[i])));
-		}
-		if (inputStr.length() > MAX_SIZE)
-			buffArray.push_back('\n');
+		
 		field.push_back(buffArray);
 	}
+}
+
+bool IsCorrectSymbol(const char & symbol)
+{
+	return (symbol == ' ' || toupper(static_cast<int>(symbol)) == 'O' || symbol == '#' || symbol == '\n' || symbol == '\0');
 }
 
 bool CheckFileContent(const string & inputFileStr) 
 {
 	ifstream fin(inputFileStr);
-	if (!fin.is_open()) {
+	if (!fin.is_open()) 
+	{
 		cout << inputFileStr + NOT_OPEN << endl;
 		return false;
 	}
-	string inputStr;
+	string inputStr = "";
 	while (getline(fin, inputStr))
 	{
-		for (auto symbol : inputStr) {
-			if (!(symbol == ' ' || toupper(static_cast<int>(symbol)) == 'O' || symbol == '#' || symbol == '\n' || symbol == '\0'))
+		for (auto symbol : inputStr) 
+		{
+			if (!IsCorrectSymbol(symbol)) 
+			{
 				cout << INVALID_CHARACTER << endl;
-			return false;
+				return false;
+			}
 		}
 	}
-
 	return true;
 }
 
@@ -108,7 +120,6 @@ bool InitProgram(int argc, char* argv[], Field & field)
 {
 	if (argc == MAX_AMOUNT_ARGUMENTS)
 	{
-		
 		if (!CheckFileContent(argv[1]))
 			return false;
 		FillArray(field, argv[1]);
@@ -122,7 +133,7 @@ bool InitProgram(int argc, char* argv[], Field & field)
 	return true;
 }
 
-void WriteInFile(Field & field, string & nameOutputFile)
+void WriteInFile(Field & field,const string & nameOutputFile)
 {
 	ofstream fout(nameOutputFile);
 	for (size_t i = 0; i < field.size(); ++i)
@@ -134,20 +145,18 @@ void WriteInFile(Field & field, string & nameOutputFile)
 		fout << '\n';
 	}
 	if (!fout.flush()) {
-		cout << "do not write to the " + nameOutputFile << endl;
+		cout << NOT_WRITE + nameOutputFile << endl;
 	}
 }
 
 int main(int argc, char* argv[])
 {
 	Field field;
-	if (InitProgram(argc, argv, field))
+ 	if (InitProgram(argc, argv, field))
 	{
 		Run(field);
-		string nameOutputFile = argv[2];
-		WriteInFile(field, nameOutputFile);
+		WriteInFile(field, argv[2]);
 	}
-	
-    	return 0;
+    return 0;
 }
 
