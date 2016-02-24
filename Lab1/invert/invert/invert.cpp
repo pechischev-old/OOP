@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <algorithm> 
 
 #include "ConstVar.h"
 
@@ -71,7 +72,7 @@ void InvertMatrix(Matrix & arrayMinor, float & determinate)
 {
 	for (size_t i = 0; i < arrayMinor.size(); ++i)
 		for (size_t j = 0; j < arrayMinor[i].size(); ++j) 
-			arrayMinor[i][j] = (1 / determinate) * SIGNS[i][j] * arrayMinor[i][j];
+			arrayMinor[i][j] = (1 / determinate) * SIGNS_REPLACE_MATRIX[i][j] * arrayMinor[i][j];
 }
 
 void Run(Matrix & matrix)
@@ -85,7 +86,7 @@ void Run(Matrix & matrix)
 	}
 	else
 	{
-		cout << NO_INVERT << endl;
+		cout << CANNOT_INVERT << endl;
 	}
 }
 
@@ -111,29 +112,29 @@ bool IsCorrectSymbol(const char & symbol)
 	return (isdigit(static_cast<int>(symbol)) || symbol == '-' || symbol == ' ' || symbol == '.' || symbol == '\t' || symbol == ',');
 }
 
-bool CheckFileContent(const string & inputFileStr) 
+bool CheckFileContent(const string & inputPath) 
 {
-	ifstream fin(inputFileStr);
+	ifstream fin(inputPath);
 	if (!fin.is_open())
 	{
-		cout << inputFileStr + NOT_OPEN << endl;
+		cout << inputPath + CANNOT_OPEN << endl;
 		return false;
 	}
 	string inputStr;
-	int numberOfLine = 0;
+	int lineCount = 0;
 	while (getline(fin, inputStr))
 	{
-		for (size_t i = 0; i < inputStr.size(); ++i) 
+		if (!inputStr.empty()) 
 		{
-			if (!IsCorrectSymbol(inputStr[i]))
+			if (any_of(inputStr.begin(), inputStr.end(), [](const char & symbol) {return !IsCorrectSymbol(symbol); }))
 			{
 				cout << INVALID_CHARACTER << endl;
 				return false;
 			}
 		}
-		++numberOfLine;
+		++lineCount;
 	}
-	if (numberOfLine != SIZE_ARRAY)
+	if (lineCount != SIZE_ARRAY)
 	{
 		cout << SIZE_EXCEED << endl;
 		return false;
@@ -143,7 +144,7 @@ bool CheckFileContent(const string & inputFileStr)
 
 bool InitProgram(int argc, char* argv[], Matrix & arr)
 {
-	if (argc == MAX_AMOUNT_ARGUMENTS) 
+	if (argc == NECESSARY_AMOUNT_ARGUMENTS) 
 	{
 		if (!CheckFileContent(argv[1])) 
 		{
@@ -164,7 +165,13 @@ int main(int argc, char* argv[])
 {
 	Matrix matrix;
 	if (InitProgram(argc, argv, matrix))
+	{
 		Run(matrix);
+	}
+	else 
+	{
+		return 1;
+	}
     return 0;
 }
 
