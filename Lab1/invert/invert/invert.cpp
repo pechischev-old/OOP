@@ -13,13 +13,13 @@ using namespace std;
 
 void OutputArray(const Matrix & matrix)
 {
-	for (size_t i = 0; i < matrix.size(); ++i)
+	for (size_t x = 0; x < matrix.size(); ++x)
 	{
-		for (size_t j = 0; j < matrix[i].size(); ++j)
+		for (size_t y = 0; y < matrix[x].size(); ++y)
 		{
-			printf("%.3f ", matrix[i][j]);
+			printf("%.3f ", matrix[x][y]);
 		}
-		cout << endl;
+		puts("\n");
 	}
 }
 
@@ -28,18 +28,18 @@ float GetDeterminateFromArray_2x2(const Matrix & matrix_2x2)
 	return matrix_2x2[0][0] * matrix_2x2[1][1] - matrix_2x2[0][1] * matrix_2x2[1][0];
 }
 
-float GetMinor(const Matrix & matrix, const size_t & column, const size_t & row)
+float GetMinor(const Matrix & matrix, size_t column, size_t row)
 {
 	Matrix matrix_2x2;
 	matrix_2x2.resize(2);
-	for (size_t i = 0; i < matrix.size(); ++i)
+	for (size_t x = 0; x < matrix.size(); ++x)
 	{
 		int k = 0;
-		for (size_t j = 0; j < matrix[i].size(); ++j)
+		for (size_t y = 0; y < matrix[x].size(); ++y)
 		{
-			if (column != j && row != i)
+			if (column != y && row != x)
 			{
-				matrix_2x2[k].push_back(matrix[i][j]);
+				matrix_2x2[k].push_back(matrix[x][y]);
 				++k;
 			}
 		}
@@ -52,8 +52,7 @@ float GetDeterminate(const Matrix & matrix)
 	float determinate = 0;
 	for (size_t column = 0; column < matrix.size(); ++column)
 	{
-		int row = 0;
-		determinate += matrix[row][column] * GetMinor(matrix, column, row) * static_cast<float>(pow(-1, column));
+		determinate += matrix[0][column] * GetMinor(matrix, column, 0) * static_cast<float>(pow(-1, column));
 	}
 	return determinate;
 }
@@ -70,12 +69,12 @@ Matrix GetMinorArray(const Matrix & matrix)
 
 void InvertMatrix(Matrix & arrayMinor, float & determinate)
 {
-	for (size_t i = 0; i < arrayMinor.size(); ++i)
-		for (size_t j = 0; j < arrayMinor[i].size(); ++j) 
-			arrayMinor[i][j] = (1 / determinate) * SIGNS_REPLACE_MATRIX[i][j] * arrayMinor[i][j];
+	for (size_t x = 0; x < arrayMinor.size(); ++x)
+		for (size_t y = 0; y < arrayMinor[x].size(); ++y) 
+			arrayMinor[x][y] = (1 / determinate) * SIGNS_REPLACE_MATRIX[x][y] * arrayMinor[x][y];
 }
 
-void Run(Matrix & matrix)
+void RunProgram(Matrix & matrix)
 {
 	float determinate = GetDeterminate(matrix);
 	if (determinate != 0) 
@@ -95,21 +94,41 @@ Matrix GetArrayFromFile(const string & inputFileStr)
 	ifstream fin(inputFileStr);
 	Matrix arr(SIZE_ARRAY);
 	
-	for (size_t i = 0; i < SIZE_ARRAY; ++i)
+	for (size_t x = 0; x < SIZE_ARRAY; ++x)
 	{
-		for (size_t j = 0; j < SIZE_ARRAY; ++j) 
+		arr[x].resize(SIZE_ARRAY);
+		for (size_t y = 0; y < SIZE_ARRAY; ++y) 
 		{
 			float number = 0;
 			fin >> number;
-			arr[i].push_back(number);
+			arr[x][y] = number;
 		}
 	}
 	return arr;
 }
 
-bool IsCorrectSymbol(const char & symbol)
+bool IsCorrectSymbol(char symbol)
 {
-	return (isdigit(static_cast<int>(symbol)) || symbol == '-' || symbol == ' ' || symbol == '.' || symbol == '\t' || symbol == ',');
+	bool isNecessarySymbol = false;
+	switch (symbol)	
+	{
+	case '-':
+		isNecessarySymbol = true;
+		break;
+	case ' ':
+		isNecessarySymbol = true;
+		break;
+	case '.':
+		isNecessarySymbol = true;
+		break;
+	case '\t':
+		isNecessarySymbol = true;
+		break;
+	case ',':
+		isNecessarySymbol = true;
+		break;
+	}
+	return (isdigit(static_cast<int>(symbol)) || isNecessarySymbol);
 }
 
 bool CheckFileContent(const string & inputPath) 
@@ -166,7 +185,7 @@ int main(int argc, char* argv[])
 	Matrix matrix;
 	if (InitProgram(argc, argv, matrix))
 	{
-		Run(matrix);
+		RunProgram(matrix);
 	}
 	else 
 	{
