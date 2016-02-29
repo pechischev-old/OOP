@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 #include "ConstVar.h"
 
@@ -22,12 +23,12 @@ struct  SProgramData
 	char sign;
 };
 
-void IntToString(const int & sourceBase, bool & wasError, string & value, const arrayInt & numbers)
+string FromArrayIntToString(const int & sourceBase, bool & wasError, const arrayInt & numbers, const int & destinationBase)
 {
 	string newValueStr;
 	for (size_t i = 0; i < numbers.size(); ++i) 
 	{
-		if (numbers[i] >= sourceBase)
+		if (numbers[i] >= destinationBase)
 		{
 			wasError = true;
 			cout << EXCESS_ERROR << endl;
@@ -38,23 +39,18 @@ void IntToString(const int & sourceBase, bool & wasError, string & value, const 
 		else 
 			newValueStr += numbers[i] + SHIFT_CHAR;
 	}
-	value = newValueStr;
+	return newValueStr;
 }
 
-arrayInt StringToInt(const int & sourceBase, bool & wasError, const string & value) 
+arrayInt FromStringToArrayInt(const int & sourceBase, bool & wasError, const string & value) 
 {
 	arrayInt arr;
-	for (size_t i = 0; i < value.size(); ++i) 
+	for (auto symbol : value) 
 	{
-		if (isdigit(value[i]) && value[i] < sourceBase + SHIFT_CHAR)
-			arr.push_back(value[i] - SHIFT_CHAR);
-		else if (char(toupper(value[i])) < (FIRST_LETTER + sourceBase - DECIMAL_BASE) && isalpha(value[i]))
-			arr.push_back(DECIMAL_BASE + char(toupper(value[i])) - FIRST_LETTER);
-		else {
-			wasError = true;
-			cout << EXCESS_ERROR << endl;
-			break;
-		}
+		if (isdigit(symbol))
+			arr.push_back(symbol - SHIFT_CHAR);
+		else if (isalpha(symbol))
+			arr.push_back(DECIMAL_BASE + char(toupper(symbol)) - FIRST_LETTER);
 	}
 	return arr;
 }
@@ -67,22 +63,23 @@ string TranslationInString(const int & valueDecimal) {
 	return valueStr;
 }
 
-void TransferToDecimalNotation(int & sourceBase, bool & wasError, string & value) 
+string TransferToDecimalNotation(int & sourceBase, bool & wasError, const string & value) 
 {
-	arrayInt arrNumbers = StringToInt(sourceBase, wasError, value); 
+	arrayInt arrNumbers = FromStringToArrayInt(sourceBase, wasError, value); 
 	wasError = arrNumbers.empty();
 	if (!wasError) 
 	{
 		int valueDecimal = 0;
-		int power = value.length() - 1;
-		for (size_t i = 0; i < value.length(); ++i)
+		size_t power = arrNumbers.size() - 1;
+		for (auto number : arrNumbers)
 		{
-			valueDecimal += (arrNumbers[i] * static_cast<int>(pow(sourceBase, power)));
+			valueDecimal += (number * static_cast<int>(pow(sourceBase, power)));
 			--power;
 		}
 		sourceBase = DECIMAL_BASE;
-		value = TranslationInString(valueDecimal);
+		return TranslationInString(valueDecimal);
 	}
+	return "";
 }
 
 void TransferIntoOtherNotation(const int & destinationBase, const int & sourceBase, bool & wasError, string & value)
@@ -92,15 +89,17 @@ void TransferIntoOtherNotation(const int & destinationBase, const int & sourceBa
 	vector<int> arrRemain;
 	if (valueInt == 0)
 		arrRemain.push_back(valueInt);
-	while (valueInt > 0) {
+	while (valueInt > 0)
+	{
 		remain = valueInt % destinationBase;
 		valueInt /= destinationBase;
 		arrRemain.insert(arrRemain.begin(), remain);
 	}
-	IntToString(sourceBase, wasError, value, arrRemain);
+
+	value = FromArrayIntToString(sourceBase, wasError, arrRemain, destinationBase);
 }
 
-void RememberSign(char & sign, string & value) // TODO: переименовать функцию
+void RememberSign(char & sign, string & value) 
 {
 	sign = !isalnum(value[0]) ? value[0] : '\0';
 	value = (sign == '-' || sign == '+') ? value.substr(1, value.length()) : value;
@@ -109,7 +108,7 @@ void RememberSign(char & sign, string & value) // TODO: переименовать функцию
 bool InitProgram(int argc, char* argv[], SProgramData & progData) 
 {
 	if (argc == MAX_AMOUNT_ARGUMENTS)
-		{ 
+	{ 
 		if (argv[1] == argv[2]) 
 		{
 			cout << COINCIDENCE_NOTATION << endl;
@@ -148,18 +147,36 @@ void Output(string value, char sign)
 		cout << value << endl;
 }
 
+bool CheckValue(const int & sourceBase, const string & value)
+{
+	for (auto symbol : value) 
+	{
+		if ((isdigit(symbol) && symbol >= (sourceBase + SHIFT_CHAR)) ||
+			(isalpha(symbol) && char(toupper(symbol)) >= (FIRST_LETTER + sourceBase - DECIMAL_BASE)))
+		{
+			cout << EXCESS_ERROR << endl;
+			return true;
+		}
+	}
+	return false;
+}
+
 void Run(SProgramData & progData) 
 {
-	if (progData.sourceNotation != DECIMAL_BASE) 
-		TransferToDecimalNotation(progData.sourceNotation, progData.wasError, progData.value);
+	progData.wasError = CheckValue(progData.sourceNotation, progData.value);
+	if (progData.sourceNotation != DECIMAL_BASE && !progData.wasError)
+	{
+		progData.value = TransferToDecimalNotation(progData.sourceNotation, progData.wasError, progData.value);
+	}
 	if (!progData.wasError)
 	{
 		TransferIntoOtherNotation(progData.destinationNotation, progData.sourceNotation, progData.wasError, progData.value);
-		if (progData.value.empty())
-			cout << EXCESS_VALUE << endl;
-		else
-			Output(progData.value, progData.sign);
 	}
+	if (!progData.wasError)
+	{
+		Output(progData.value, progData.sign);
+	}
+	
 }
 
 int main(int argc, char* argv[]) 
@@ -167,6 +184,8 @@ int main(int argc, char* argv[])
 	SProgramData progData;
 	if (InitProgram(argc, argv, progData))
 		Run(progData);
+	else
+		return 1;
     return 0;
 }
 
