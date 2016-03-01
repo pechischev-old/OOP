@@ -50,6 +50,11 @@ if errorlevel 1 goto testFailed
 fc /b 0_16_10.txt check/0_16_10.txt
 if errorlevel 1 goto testFailed
 
+echo translate from 10 to 16 value 2147483647
+%program% 10 16 2147483647 > 2147483647_10_16.txt
+if errorlevel 1 goto testFailed
+fc /b 2147483647_10_16.txt check/2147483647_10_16.txt
+if errorlevel 1 goto testFailed
 
 
 echo OK

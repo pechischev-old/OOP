@@ -39,10 +39,12 @@ string FromArrayIntToString(const int & sourceBase, bool & wasError, const array
 		else 
 			newValueStr += numbers[i] + SHIFT_CHAR;
 	}
+	if (wasError)
+		return "";
 	return newValueStr;
 }
 
-arrayInt FromStringToArrayInt(const int & sourceBase, bool & wasError, const string & value) 
+arrayInt FromStringToArrayInt(const int & sourceBase, const string & value) 
 {
 	arrayInt arr;
 	for (auto symbol : value) 
@@ -65,7 +67,7 @@ string TranslationInString(const int & valueDecimal) {
 
 string TransferToDecimalNotation(int & sourceBase, bool & wasError, const string & value) 
 {
-	arrayInt arrNumbers = FromStringToArrayInt(sourceBase, wasError, value); 
+	arrayInt arrNumbers = FromStringToArrayInt(sourceBase, value); 
 	wasError = arrNumbers.empty();
 	if (!wasError) 
 	{
@@ -82,7 +84,7 @@ string TransferToDecimalNotation(int & sourceBase, bool & wasError, const string
 	return "";
 }
 
-void TransferIntoOtherNotation(const int & destinationBase, const int & sourceBase, bool & wasError, string & value)
+string TransferIntoOtherNotation(const int & destinationBase, const int & sourceBase, bool & wasError,const string & value)
 {
 	int valueInt = atoi(value.c_str()); 
 	int remain;
@@ -96,7 +98,7 @@ void TransferIntoOtherNotation(const int & destinationBase, const int & sourceBa
 		arrRemain.insert(arrRemain.begin(), remain);
 	}
 
-	value = FromArrayIntToString(sourceBase, wasError, arrRemain, destinationBase);
+	return FromArrayIntToString(sourceBase, wasError, arrRemain, destinationBase);
 }
 
 void RememberSign(char & sign, string & value) 
@@ -170,7 +172,7 @@ void Run(SProgramData & progData)
 	}
 	if (!progData.wasError)
 	{
-		TransferIntoOtherNotation(progData.destinationNotation, progData.sourceNotation, progData.wasError, progData.value);
+		progData.value = TransferIntoOtherNotation(progData.destinationNotation, progData.sourceNotation, progData.wasError, progData.value);
 	}
 	if (!progData.wasError)
 	{
