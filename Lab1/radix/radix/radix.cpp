@@ -163,7 +163,7 @@ bool CheckValue(const int & sourceBase, const string & value)
 	return false;
 }
 
-void Run(SProgramData & progData) 
+void RunProgram(SProgramData & progData) 
 {
 	progData.wasError = CheckValue(progData.sourceNotation, progData.value);
 	if (progData.sourceNotation != DECIMAL_BASE && !progData.wasError)
@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
 {
 	SProgramData progData;
 	if (InitProgram(argc, argv, progData))
-		Run(progData);
+		RunProgram(progData);
 	else
 		return 1;
     return 0;
