@@ -1,13 +1,14 @@
 #include "stdafx.h"
 #include "VectorProcessor.h"
-#include <iterator>
-#include <iostream>
+
 
 using namespace std;
+using boost::transform;
 
-void ProcessVector(vector<double> & numbers) {
-
-	if (!numbers.empty()) {
+void ProcessVector(vector<double> & numbers) 
+{
+	if (!numbers.empty())
+	{
 		auto IsNegative = [](double number) {return number < 0; };
 
 		double minNumber = *min_element(numbers.begin(), numbers.end());
@@ -15,11 +16,10 @@ void ProcessVector(vector<double> & numbers) {
 
 		double multiply = minNumber * maxNumber;
 
-		// заменить функцией STL
-		for (auto &number : numbers) {
-			if (IsNegative(number)) {
-				number *= multiply;
-			}
-		}
+		auto MyltiplicationNegativeNumber = [multiply, &IsNegative](double number) 
+		{
+			return number = IsNegative(number) ? number * multiply : number;
+		};
+		transform(numbers, numbers.begin(), MyltiplicationNegativeNumber);
 	}
 }

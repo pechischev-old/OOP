@@ -18,7 +18,6 @@ int main()
 	ProcessVector(numbers);
 	sort(numbers.begin(), numbers.end());
 	copy(numbers.begin(), numbers.end(), ostream_iterator<double>(cout, ", "));
-
     return 0;
 }
 

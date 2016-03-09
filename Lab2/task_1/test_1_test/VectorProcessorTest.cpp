@@ -23,14 +23,14 @@ BOOST_AUTO_TEST_SUITE(ProcessVector_function)
 	BOOST_AUTO_TEST_CASE(does_not_change_vector_containing_no_negative_numbers)
 	{
 		vector<double> numbers = { 4, 0, 3 };
-		auto copy(numbers); 
+		auto copy(numbers);
 		ProcessVector(numbers);
 		BOOST_CHECK(numbers == copy);
 	}
 
 	// при обработке вектора с одним положительным числом
-	BOOST_AUTO_TEST_SUITE(when_processing_a_vector_with_one_positive_number)
-		BOOST_AUTO_TEST_CASE(should_add_this_number_to_each_element)
+	BOOST_AUTO_TEST_SUITE(when_processing_a_vector_with_one_negative_number)
+		BOOST_AUTO_TEST_CASE(should_multy_their_on_min_and_max_elements_of_vector)
 		{
 			vector<double> numbers = { -1, 3.5 };
 			ProcessVector(numbers);
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_SUITE(ProcessVector_function)
 
 	// при обработке вектора с несколькими отрицательных элементами
 	BOOST_AUTO_TEST_SUITE(when_processing_a_vector_with_several_negative_elements)
-		BOOST_AUTO_TEST_CASE(should_add_their_average_to_each_element)
+		BOOST_AUTO_TEST_CASE(should_multy_their_on_min_and_max_elements_of_vector )
 		{
 			vector<double> numbers = { -1, 1, 2, 3, -0.5, 0 };
 			ProcessVector(numbers);
@@ -49,6 +49,17 @@ BOOST_AUTO_TEST_SUITE(ProcessVector_function)
 			const double multiply = -1 * 3;
 			BOOST_CHECK(VectorsAreEqual(numbers,{ (-1 * multiply), (1), (2), (3), (-0.5 * multiply), (0) } ));
 		}		
+	BOOST_AUTO_TEST_SUITE_END()
+
+	// при обработке вектора с одинаковыми отрицательными элементами
+	BOOST_AUTO_TEST_SUITE(when_processing_a_vector_with_equal_negative_elements)
+		BOOST_AUTO_TEST_CASE(should_multy_their_on_min_and_max_elements_of_vector)
+		{
+			vector<double> numbers = { -1, -1, -1, -1, -1, -1 };
+			auto copy(numbers);
+			ProcessVector(numbers);		
+			BOOST_CHECK(VectorsAreEqual(numbers, copy));
+		}
 	BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE_END()
