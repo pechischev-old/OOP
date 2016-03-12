@@ -1,4 +1,4 @@
-#include "MapProcess.h"
+п»ї#include "MapProcess.h"
 
 using namespace std;
 
@@ -6,7 +6,7 @@ bool AddNewWordInDictionary(Dictionary & dict, Dictionary & dictNewWords, string
 {
 	if (!value.empty())
 	{
-		// TODO: регистр key
+		// TODO: СЂРµРіРёСЃС‚СЂ key
 		dict.emplace(move(key), move(value));
 		dictNewWords.emplace(move(key), move(value));
 		return true;
@@ -16,52 +16,72 @@ bool AddNewWordInDictionary(Dictionary & dict, Dictionary & dictNewWords, string
 
 string FindValueOnKey(Dictionary & dict, string key)
 {
-	// TODO: регистр
+	// TODO: СЂРµРіРёСЃС‚СЂ
 	auto iterator = dict.find(key);
 	if (iterator != dict.end())
 		return iterator->second;
 	return "";
 }
 
-void UserInteraction(Dictionary & dict, std::string const & fileName) // TODO: слишком кривая реализация
-{ // TODO: учитывает пустую строку
-	string inputStr; // TODO: переименовать
+void UserInteraction(Dictionary & dict, std::string const & fileName) // TODO: СЃР»РёС€РєРѕРј РєСЂРёРІР°СЏ СЂРµР°Р»РёР·Р°С†РёСЏ
+{ 
+	string inputStr; // TODO: РїРµСЂРµРёРјРµРЅРѕРІР°С‚СЊ
 	Dictionary dictNewWords;
-	bool hasAdded = false;
+	bool wasAdd = false;
 	
-	while (getline(cin, inputStr))
+	while (cout << ">" && getline(cin, inputStr))
 	{
 		if (inputStr == "...")
 		{
 			break;
 		}
+		else if (inputStr.empty())
+		{
+			continue;
+		}
+		//--
 		string findedValue = FindValueOnKey(dict, inputStr);
 		if (!findedValue.empty()) 
 		{
 			cout << findedValue << endl;
 			continue;
 		}
-		cout << "Неизвестное слово “" << inputStr << "”. Введите перевод или пустую строку для отказа." << endl;
+		
+		cout << "РќРµРёР·РІРµСЃС‚РЅРѕРµ СЃР»РѕРІРѕ вЂњ" << inputStr << "вЂќ. Р’РІРµРґРёС‚Рµ РїРµСЂРµРІРѕРґ РёР»Рё РїСѓСЃС‚СѓСЋ СЃС‚СЂРѕРєСѓ РґР»СЏ РѕС‚РєР°Р·Р°." << endl;
 		string value;
 		getline(cin, value);
 		if (AddNewWordInDictionary(dict, dictNewWords, inputStr, value))
 		{
-			cout << "Слово “" << inputStr << "” сохранено в словаре как “" << value << "”" << endl;
-			hasAdded = true;
+			cout << "РЎР»РѕРІРѕ вЂњ" << inputStr << "вЂќ СЃРѕС…СЂР°РЅРµРЅРѕ РІ СЃР»РѕРІР°СЂРµ РєР°Рє вЂњ" << value << "вЂќ" << endl;
+			wasAdd = true;
 			continue;
 		}
-		cout << "Слово “" << inputStr << "” проигнорировано." << endl;
+		cout << "РЎР»РѕРІРѕ вЂњ" << inputStr << "вЂќ РїСЂРѕРёРіРЅРѕСЂРёСЂРѕРІР°РЅРѕ." << endl;
+		//------
 	} 
-	cout << "ended" << endl;
-	if (hasAdded) {
-		char change;
-		cout << "В словарь были внесены изменения. Введите Y или N для сохранения перед выходом : ";
-		cin >> change;
-		if (toupper(change) == 'Y')
-		{
-			// запись в файл dictNewWords, т.е. добавление в конец файла
-			cout << "Изменения сохранены. До свидания." << endl;
-		}
+	if (wasAdd) {
+		WillSave(dictNewWords, fileName);
+	}
+}
+
+void WriteNewWordsInFile(Dictionary & dictNewWords, std::string const & fileName)
+{
+	ofstream fout(fileName, ios_base::app);
+	for (auto it : dictNewWords)
+	{
+		fout << it.first << ":" << it.second << endl;
+	}
+}
+
+void WillSave(Dictionary & dictNewWords, std::string const & fileName)
+{
+	char change;
+	cout << "Р’ СЃР»РѕРІР°СЂСЊ Р±С‹Р»Рё РІРЅРµСЃРµРЅС‹ РёР·РјРµРЅРµРЅРёСЏ. Р’РІРµРґРёС‚Рµ Y РёР»Рё N РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ РїРµСЂРµРґ РІС‹С…РѕРґРѕРј: ";
+	cin >> change;
+	if (toupper(change) == 'Y')
+	{
+		WriteNewWordsInFile(dictNewWords, fileName);
+		cout << "РР·РјРµРЅРµРЅРёСЏ СЃРѕС…СЂР°РЅРµРЅС‹. Р”Рѕ СЃРІРёРґР°РЅРёСЏ." << endl;
 	}
 }
 
@@ -70,6 +90,5 @@ void ProcessMap(Dictionary & dict, std::string const & fileName)
 	SetConsoleOutputCP(1251);
 	SetConsoleCP(1251);
 	UserInteraction(dict, fileName);
-
 }
 

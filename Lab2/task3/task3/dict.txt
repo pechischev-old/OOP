@@ -1,0 +1,8 @@
+The Red Square: расна€ площадь
+cat:кот
+new:новый
+news:новости
+ball:м€ч
+mouse:мышь
+task:задача
+low:низкий

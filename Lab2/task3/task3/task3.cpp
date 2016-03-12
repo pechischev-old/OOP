@@ -47,7 +47,11 @@ int main(int argc, char *argv[])
 	if (argc <= 2) 
 	{
 		Dictionary dict;
-		string fileName = "";//argv[1];
+		string fileName = argv[1];
+		if (fileName.empty())
+		{
+			return 0;
+		}
 		if (IsFileNotEmpty(fileName))
 		{
 			FillDictionary(fileName, dict);
