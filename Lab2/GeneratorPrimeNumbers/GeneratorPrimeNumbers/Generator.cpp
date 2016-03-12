@@ -1,4 +1,5 @@
 #include "Generator.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -8,16 +9,15 @@ set<int> GeneratePrimeNumbersSet(int upperBound)
 {
 	vector<bool> isSingleNumbers(upperBound, true);
 	set<int> primeNumbersSet;
-
+	int  primeNumber = 2;
 	SieveEratosthenes(upperBound, isSingleNumbers);
-
-	for (int primeNumber = 2; primeNumber < upperBound; ++primeNumber)
-	{
-		if (isSingleNumbers[primeNumber])
+	for_each(isSingleNumbers.begin() + 2, isSingleNumbers.end(), [&](bool isSingleNumber) {
+		if (isSingleNumber)
 		{
 			primeNumbersSet.emplace(primeNumber);
 		}
-	}
+		++primeNumber;
+	});
 	return primeNumbersSet;
 }
 

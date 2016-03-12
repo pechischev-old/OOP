@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 		int upperBound = atoi(argv[1]);
 		if (upperBound > 100000000)
 		{
-			return 0;
+			return 1;
 		}
 		auto primeNumberSet = GeneratePrimeNumbersSet(upperBound);
 		for (auto const &iterator : primeNumberSet)
