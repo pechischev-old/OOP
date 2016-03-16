@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_SUITE(Replace_function)
 		BOOST_CHECK(FindAndReplace(subject, search, replace) == "mamamama");
 	}
 
-	BOOST_AUTO_TEST_CASE(make_123true5_from_search_1231234_and_replace_true_and_subject_12312312345)
+	BOOST_AUTO_TEST_CASE(make_123QWE5_from_search_1231234_and_replace_QWE_and_subject_12312312345)
 	{
 		string subject = "12312312345";
 		string search = "1231234";

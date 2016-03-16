@@ -2,13 +2,29 @@
 
 using namespace std;
 
-bool AddNewWordInDictionary(Dictionary & dict, Dictionary & dictNewWords, string const & key, string const & value) 
+bool CheckWord(string word)
 {
-	if (!value.empty())
+	/*for (auto letter : word) {
+		bool isRussianLetter = 'А' <= toupper(int(letter)) && toupper(int(letter)) <= 'Я';
+		bool isEnglishLetter = 'A' <= toupper(int(letter)) && toupper(int(letter)) <= 'Z';
+		if (!isRussianLetter && !isEnglishLetter) 
+			return false;
+	}
+	return true;*/
+	return all_of(word.begin(), word.end(), [](char letter) 
+	{ 
+		bool isRussianLetter = 'А' <= toupper(letter) && toupper(letter) <= 'Я';
+		bool isEnglishLetter = 'A' <= toupper(int(letter)) && toupper(int(letter)) <= 'Z';
+		return isEnglishLetter && isRussianLetter;
+	});
+}
+
+bool AddNewWordInDictionary(Dictionary & dict, string const & key, string const & value) 
+{
+	if ((!value.empty()) && (!key.empty()))
 	{
 		// TODO: регистр key
 		dict.emplace(move(key), move(value));
-		dictNewWords.emplace(move(key), move(value));
 		return true;
 	}
 	return false;
@@ -50,8 +66,9 @@ void UserInteraction(Dictionary & dict, std::string const & fileName) // TODO: �
 		cout << "Неизвестное слово “" << inputStr << "”. Введите перевод или пустую строку для отказа." << endl;
 		string value;
 		getline(cin, value);
-		if (AddNewWordInDictionary(dict, dictNewWords, inputStr, value))
+		if (AddNewWordInDictionary(dict, inputStr, value))
 		{
+			AddNewWordInDictionary(dictNewWords, inputStr, value);
 			cout << "Слово “" << inputStr << "” сохранено в словаре как “" << value << "”" << endl;
 			wasAdd = true;
 			continue;
@@ -92,3 +109,30 @@ void ProcessMap(Dictionary & dict, std::string const & fileName)
 	UserInteraction(dict, fileName);
 }
 
+bool IsFileNotEmpty(string const & fileName)
+{
+	ifstream fin(fileName);
+	if (fin.is_open())
+	{
+		fin.seekg(0, std::ios::end);
+		size_t size = static_cast<size_t>(fin.tellg());
+		fin.seekg(0, std::ios::beg);
+		return size != 0;
+	}
+	return false;
+}
+
+void FillDictionary(string const & fileName, Dictionary & dict)
+{
+	if (IsFileNotEmpty(fileName))
+	{
+		ifstream fin(fileName);
+		string inputString;
+		while (getline(fin, inputString))
+		{
+			vector<string> pairDict;
+			boost::split(pairDict, inputString, boost::is_any_of(":"));
+			dict.emplace(move(pairDict[0]), move(pairDict[1]));
+		}
+	}
+}
