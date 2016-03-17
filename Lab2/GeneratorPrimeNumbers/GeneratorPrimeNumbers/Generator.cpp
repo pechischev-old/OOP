@@ -3,38 +3,53 @@
 
 using namespace std;
 
+const int FIRST_PRIME_NUMBER = 2;
 
 
-set<int> GeneratePrimeNumbersSet(int upperBound)
+set<unsigned int> GeneratePrimeNumbersSet(unsigned int upperBound)
 {
-	vector<bool> isSingleNumbers(upperBound, true);
-	set<int> primeNumbersSet;
-	int  primeNumber = 2;
-	SieveEratosthenes(upperBound, isSingleNumbers);
-	for_each(isSingleNumbers.begin() + 2, isSingleNumbers.end(), [&](bool isSingleNumber) {
-		if (isSingleNumber)
+	if (upperBound >= FIRST_PRIME_NUMBER && upperBound <= MAX_NUMBER)
+	{
+		vector<bool> isSingleNumbers(upperBound, true);
+		isSingleNumbers[0] = false;
+		isSingleNumbers[1] = false;
+		
+		SieveEratosthenes(upperBound, isSingleNumbers);
+
+		unsigned int  primeNumber = 0;
+		set<unsigned int> primeNumbersSet;
+		for (auto isSingleNumber : isSingleNumbers) 
 		{
-			primeNumbersSet.emplace(primeNumber);
+			if (isSingleNumber)
+			{
+				primeNumbersSet.insert(primeNumber);
+			}
+			++primeNumber;
 		}
-		++primeNumber;
-	});
-	return primeNumbersSet;
+
+		//int  primeNumber = FIRST_PRIME_NUMBER;
+		/*for_each(isSingleNumbers.begin() + FIRST_PRIME_NUMBER, isSingleNumbers.end(), [&](bool isSingleNumber) {
+			if (isSingleNumber)
+			{
+				primeNumbersSet.insert(primeNumber);
+			}
+			++primeNumber;
+		});*/
+		return primeNumbersSet;
+	}
+	return {};
 }
 
-void SieveEratosthenes(int upperBound, std::vector<bool> & isSingleNumbers)
+void SieveEratosthenes(unsigned int const & upperBound, std::vector<bool> & isSingleNumbers)
 {
-	int primeNumber = 2; 
-	while (primeNumber * primeNumber <= upperBound)
+	for (size_t primeNumber = FIRST_PRIME_NUMBER; primeNumber * primeNumber <= upperBound; ++primeNumber)
 	{
-		int i = primeNumber * primeNumber; 
 		if (isSingleNumbers[primeNumber])
 		{
-			while (i < upperBound)
+			for (size_t i = primeNumber * primeNumber; i < upperBound; i += primeNumber)
 			{
 				isSingleNumbers[i] = false;
-				i += primeNumber;
 			}
 		}
-		++primeNumber; 
 	}
 }
