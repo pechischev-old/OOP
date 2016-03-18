@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_SUITE(AddNewWordInDictionary_function)
 	}
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE(AddNewWordInDictionary_function)
+BOOST_AUTO_TEST_SUITE(FindValueOnKey_function)
 	BOOST_AUTO_TEST_CASE(find_value_on_key)
 	{
 		Dictionary dict = { {"cat", "кот"}, {"dog", "собака"},{ "red", "красный" } };
