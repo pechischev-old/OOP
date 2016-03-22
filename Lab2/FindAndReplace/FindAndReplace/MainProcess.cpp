@@ -1,17 +1,16 @@
 ﻿#include "MainProcess.h"
+#include <algorithm>
+#include <boost/utility/string_ref.hpp>
 
 using namespace std;
 
 
-bool CheckFirstAndLastSymbols(const char & first1, const char & first2, const char & last1, const char & last2) {
-	return first1 == first2 && last1 == last2;
-}
-
-bool FindSubstr(const string & str, const size_t & index, const string & substr)
+bool StringContainsSubstringAtPosition(const boost::string_ref & subjectRef, const string & substr, const size_t & index)
 {
-	if ((str.length() - index) >= substr.size() && substr.size() > 0)
-		if (CheckFirstAndLastSymbols(str[index], substr[0], str[index + substr.length() - 1], substr.back()))
-			return (str.substr(index, substr.length()) == substr);
+	if ((subjectRef.length() - index) >= substr.size() && substr.size() > 0)
+	{
+		return subjectRef.substr(index, substr.length()) == substr;
+	}
 	return false;
 }
 
@@ -22,17 +21,18 @@ string FindAndReplace(string const & subject, string const & search, string cons
 	if (canReplace)
 	{
 		size_t lenghtSearch = search.size();
-		for (size_t i = 0; i < subject.length();)
+		boost::string_ref subjectRef(subject);
+		for (size_t index = 0; index < subject.length();)
 		{
-			if (FindSubstr(subject, i, search))
+			if (StringContainsSubstringAtPosition(subjectRef, search, index))
 			{
-				i += lenghtSearch;
+				index += lenghtSearch;
 				outputStr += replace;
 			}
 			else
 			{
-				outputStr += subject[i];
-				++i;
+				outputStr += subject[index];
+				++index;
 			}
 		}
 	}

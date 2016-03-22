@@ -23,7 +23,7 @@ class SpecLogFormatter :
 		m_indent += 2;
 	}
 
-	virtual void test_unit_finish(std::ostream &os, boost::unit_test::test_unit const& tu, unsigned long elapsed) override
+	virtual void test_unit_finish(std::ostream &/*os*/, boost::unit_test::test_unit const& /*tu*/, unsigned long /*elapsed*/) override
 	{
 		// по окончании test unit-а уменьшаем отступ
 		m_indent -= 2;
@@ -32,7 +32,7 @@ class SpecLogFormatter :
 	int m_indent = 0;
 };
 
-boost::unit_test::test_suite* init_unit_test_suite(int argc, char* argv[])
+boost::unit_test::test_suite* init_unit_test_suite(int /*argc*/, char* /*argv*/[])
 {
 	// Заменили имя log formatter на пользовательский
 	boost::unit_test::unit_test_log.set_formatter(new SpecLogFormatter);
