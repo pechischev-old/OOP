@@ -1,4 +1,5 @@
 ﻿#include "MapProcess.h"
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 
@@ -19,11 +20,11 @@ bool CheckWord(string word)
 	});
 }
 
-bool AddNewWordInDictionary(Dictionary & dict, string const & key, string const & value) 
+bool AddNewWordInDictionary(Dictionary & dict, string key, string const & value) 
 {
 	if ((!value.empty()) && (!key.empty()))
 	{
-		// TODO: регистр key
+		boost::to_lower(key);
 		dict.emplace(move(key), move(value));
 		return true;
 	}
@@ -32,16 +33,45 @@ bool AddNewWordInDictionary(Dictionary & dict, string const & key, string const 
 
 string FindValueOnKey(Dictionary & dict, string key)
 {
-	// TODO: регистр
+	boost::to_lower(key);
 	auto iterator = dict.find(key);
 	if (iterator != dict.end())
+	{
 		return iterator->second;
+	}
 	return "";
 }
 
-void UserInteraction(Dictionary & dict, std::string const & fileName) // TODO: слишком кривая реализация
+void OutputFindedValue(string const & value)
+{
+	cout << value << endl;
+}
+
+string InputValue(string const & key)
+{
+	cout << "Неизвестное слово “" << key << "”. Введите перевод или пустую строку для отказа." << endl;
+	string value;
+	getline(cin, value);
+	return value;
+}
+
+void InterectWithValue(string const & key, bool & wasAdd, Dictionary & dict, Dictionary & dictNewWords, string value)
+{
+	if (AddNewWordInDictionary(dict, key, value))
+	{
+		AddNewWordInDictionary(dictNewWords, key, value);
+		cout << "Слово “" << key << "” сохранено в словаре как “" << value << "”" << endl;
+		wasAdd = true;
+	}
+	else
+	{
+		cout << "Слово “" << key << "” проигнорировано." << endl;
+	}
+}
+
+void UserInteraction(Dictionary & dict, std::string const & fileName) 
 { 
-	string inputStr; // TODO: переименовать
+	string inputStr; 
 	Dictionary dictNewWords;
 	bool wasAdd = false;
 	
@@ -55,26 +85,15 @@ void UserInteraction(Dictionary & dict, std::string const & fileName) // TODO: �
 		{
 			continue;
 		}
-		//--
 		string findedValue = FindValueOnKey(dict, inputStr);
 		if (!findedValue.empty()) 
 		{
-			cout << findedValue << endl;
-			continue;
+			OutputFindedValue(findedValue);
 		}
-		
-		cout << "Неизвестное слово “" << inputStr << "”. Введите перевод или пустую строку для отказа." << endl;
-		string value;
-		getline(cin, value);
-		if (AddNewWordInDictionary(dict, inputStr, value))
+		else
 		{
-			AddNewWordInDictionary(dictNewWords, inputStr, value);
-			cout << "Слово “" << inputStr << "” сохранено в словаре как “" << value << "”" << endl;
-			wasAdd = true;
-			continue;
+			InterectWithValue(inputStr, wasAdd, dict, dictNewWords, InputValue(inputStr));
 		}
-		cout << "Слово “" << inputStr << "” проигнорировано." << endl;
-		//------
 	} 
 	if (wasAdd) {
 		WillSave(dictNewWords, fileName);

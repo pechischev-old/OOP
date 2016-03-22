@@ -8,23 +8,17 @@ BOOST_AUTO_TEST_SUITE(AddNewWordInDictionary_function)
 	BOOST_AUTO_TEST_CASE(add_pair_words_in_dictionary)
 	{
 		Dictionary dict;
-		string key = "cat";
-		string value = "кот";
-		BOOST_CHECK(AddNewWordInDictionary(dict, key, value) );
+		BOOST_CHECK(AddNewWordInDictionary(dict, "cat", "кот") );
 	}
 	BOOST_AUTO_TEST_CASE(add_only_key_in_dictionary)
 	{
 		Dictionary dict;
-		string key = "cat";
-		string value = "";
-		BOOST_CHECK(!AddNewWordInDictionary(dict, key, value) && dict.size() == 0);
+		BOOST_CHECK(!AddNewWordInDictionary(dict, "cat", "") && dict.size() == 0);
 	}
 	BOOST_AUTO_TEST_CASE(add_only_value_in_dictionary)
 	{
 		Dictionary dict;
-		string key = "";
-		string value = "кот";
-		BOOST_CHECK(!AddNewWordInDictionary(dict, key, value) && dict.size() == 0);
+		BOOST_CHECK(!AddNewWordInDictionary(dict, "", "кот") && dict.size() == 0);
 	}
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -38,6 +32,13 @@ BOOST_AUTO_TEST_SUITE(FindValueOnKey_function)
 	{
 		Dictionary dict;
 		BOOST_CHECK(!(FindValueOnKey(dict, "dog") == "собака"));
+	}
+	BOOST_AUTO_TEST_CASE(find_values_in__dictionary_when_key_is_recorded_in_different_register)
+	{
+		Dictionary dict;
+		BOOST_CHECK(!(FindValueOnKey(dict, "dOg") == "собака"));
+		BOOST_CHECK(!(FindValueOnKey(dict, "BalL") == "мяч"));
+		BOOST_CHECK(!(FindValueOnKey(dict, "LOW") == "низкий"));
 	}
 BOOST_AUTO_TEST_SUITE_END()
 

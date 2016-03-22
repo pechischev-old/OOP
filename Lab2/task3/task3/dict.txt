@@ -6,3 +6,5 @@ ball:м€ч
 mouse:мышь
 task:задача
 low:низкий
+key:ключ
+value:значение

@@ -16,7 +16,7 @@ void ProcessMap(Dictionary & dict, std::string const & fileName);
 
 void UserInteraction(Dictionary & dict, std::string const & fileName);
 
-bool AddNewWordInDictionary(Dictionary & dict, std::string const & key, std::string const & value);
+bool AddNewWordInDictionary(Dictionary & dict, std::string key, std::string const & value);
 std::string FindValueOnKey(Dictionary & dict, std::string key);
 void WriteNewWordsInFile(Dictionary & dictNewWords, std::string const & fileName);
 void WillSave(Dictionary & dictNewWords, std::string const & fileName);
