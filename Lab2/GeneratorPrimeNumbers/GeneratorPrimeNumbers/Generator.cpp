@@ -8,7 +8,7 @@ const int FIRST_PRIME_NUMBER = 2;
 
 set<unsigned int> GeneratePrimeNumbersSet(unsigned int upperBound)
 {
-	if (upperBound >= FIRST_PRIME_NUMBER && upperBound <= MAX_NUMBER)
+	if ( FIRST_PRIME_NUMBER <= upperBound && upperBound <= MAX_NUMBER)
 	{
 		vector<bool> isSingleNumbers(upperBound, true);
 		isSingleNumbers[0] = false;
