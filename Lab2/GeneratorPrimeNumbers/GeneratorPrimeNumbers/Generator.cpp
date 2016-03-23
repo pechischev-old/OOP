@@ -10,7 +10,7 @@ set<unsigned int> GeneratePrimeNumbersSet(unsigned int upperBound)
 {
 	if ( FIRST_PRIME_NUMBER <= upperBound && upperBound <= MAX_NUMBER)
 	{
-		vector<bool> isSingleNumbers(upperBound, true);
+		vector<bool> isSingleNumbers(upperBound + 1, true);
 		isSingleNumbers[0] = false;
 		isSingleNumbers[1] = false;
 		
@@ -46,7 +46,7 @@ void SieveEratosthenes(unsigned int const & upperBound, std::vector<bool> & isSi
 	{
 		if (isSingleNumbers[primeNumber])
 		{
-			for (size_t i = primeNumber * primeNumber; i < upperBound; i += primeNumber)
+			for (size_t i = primeNumber * primeNumber; i <= upperBound; i += primeNumber)
 			{
 				isSingleNumbers[i] = false;
 			}

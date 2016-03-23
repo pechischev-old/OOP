@@ -17,7 +17,9 @@ BOOST_AUTO_TEST_SUITE(GeneratePrimeNumbersSet_function)
 		checkPrimeSet = { 2, 3, 5, 7, 11, 13, 17, 19 };
 		BOOST_CHECK(GeneratePrimeNumbersSet(20) == checkPrimeSet);
 		checkPrimeSet = { 2 };
-		BOOST_CHECK(GeneratePrimeNumbersSet(2).size() == 0);
+		BOOST_CHECK(GeneratePrimeNumbersSet(2) == checkPrimeSet);
+		checkPrimeSet = { 2, 3 };
+		BOOST_CHECK(GeneratePrimeNumbersSet(3) == checkPrimeSet);
 	}
 
 	BOOST_AUTO_TEST_CASE(return_empty_set_when_exceeding_the_maximum_permissible_number)
