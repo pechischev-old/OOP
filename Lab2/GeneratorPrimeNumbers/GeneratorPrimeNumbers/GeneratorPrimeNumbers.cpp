@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "Generator.h"
+#include <sstream>
 
 using namespace std;
 
@@ -11,15 +12,18 @@ int main(int argc, char *argv[])
 {
 	if (argc == 2)
 	{
-		unsigned int upperBound = atoi(argv[1]);
+		stringstream ss(argv[1]);
+		unsigned upperBound;
+		ss >> upperBound;
 		if (upperBound > MAX_NUMBER)
 		{
+			cout << "Exceed the maximum permissible number" << endl;
 			return 1;
 		}
 		auto primeNumberSet = GeneratePrimeNumbersSet(upperBound);
-		for (auto const & iterator : primeNumberSet)
+		for (auto const & primeNumber : primeNumberSet)
 		{
-			cout << iterator << endl;
+			cout << primeNumber << endl;
 		}
 	}
     return 0;

@@ -11,7 +11,7 @@ BOOST_AUTO_TEST_SUITE(GeneratePrimeNumbersSet_function)
 
 	BOOST_AUTO_TEST_CASE(return_not_empty_set_when_the_number_complies)
 	{
-		std::set<unsigned int> checkPrimeSet = { 2, 3, 5, 7 };
+		std::set<unsigned> checkPrimeSet = { 2, 3, 5, 7 };
 		BOOST_CHECK(GeneratePrimeNumbersSet(9) == checkPrimeSet);
 
 		checkPrimeSet = { 2, 3, 5, 7, 11, 13, 17, 19 };

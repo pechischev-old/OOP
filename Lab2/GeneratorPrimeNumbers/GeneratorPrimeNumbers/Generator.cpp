@@ -6,7 +6,7 @@ using namespace std;
 const int FIRST_PRIME_NUMBER = 2;
 
 
-set<unsigned int> GeneratePrimeNumbersSet(unsigned int upperBound)
+set<unsigned> GeneratePrimeNumbersSet(unsigned upperBound)
 {
 	if ( FIRST_PRIME_NUMBER <= upperBound && upperBound <= MAX_NUMBER)
 	{
@@ -16,8 +16,8 @@ set<unsigned int> GeneratePrimeNumbersSet(unsigned int upperBound)
 		
 		SieveEratosthenes(upperBound, isSingleNumbers);
 
-		unsigned int  primeNumber = 0;
-		set<unsigned int> primeNumbersSet;
+		unsigned primeNumber = 0;
+		set<unsigned> primeNumbersSet;
 		for (auto isSingleNumber : isSingleNumbers) 
 		{
 			if (isSingleNumber)
@@ -40,7 +40,7 @@ set<unsigned int> GeneratePrimeNumbersSet(unsigned int upperBound)
 	return {};
 }
 
-void SieveEratosthenes(unsigned int const & upperBound, std::vector<bool> & isSingleNumbers)
+void SieveEratosthenes(unsigned const & upperBound, std::vector<bool> & isSingleNumbers)
 {
 	for (size_t primeNumber = FIRST_PRIME_NUMBER; primeNumber * primeNumber <= upperBound; ++primeNumber)
 	{
