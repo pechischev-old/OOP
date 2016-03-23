@@ -5,11 +5,11 @@
 using namespace std;
 
 
-bool StringContainsSubstringAtPosition(const boost::string_ref & subjectRef, const string & substr, const size_t & index)
+bool StringContainsSubstringAtPosition(boost::string_ref subjectRef, boost::string_ref searchRef, const size_t & index)
 {
-	if ((subjectRef.length() - index) >= substr.size() && substr.size() > 0)
+	if ((subjectRef.length() - index) >= searchRef.length())
 	{
-		return subjectRef.substr(index, substr.length()) == substr;
+		return subjectRef.substr(index, searchRef.length()) == searchRef;
 	}
 	return false;
 }
@@ -18,27 +18,26 @@ string FindAndReplace(string const & subject, string const & search, string cons
 {
 	string outputStr;
 	bool canReplace = search.size() > 0;
-	if (canReplace)
-	{
-		size_t lenghtSearch = search.size();
-		boost::string_ref subjectRef(subject);
-		for (size_t index = 0; index < subject.length();)
-		{
-			if (StringContainsSubstringAtPosition(subjectRef, search, index))
-			{
-				index += lenghtSearch;
-				outputStr += replace;
-			}
-			else
-			{
-				outputStr += subject[index];
-				++index;
-			}
-		}
-	}
-	else
+	if (!canReplace)
 	{
 		return subject;
 	}
+	
+	boost::string_ref subjectRef(subject);
+	boost::string_ref searchRef(search);
+	for (size_t index = 0; index < subject.length();)
+	{
+		if (StringContainsSubstringAtPosition(subjectRef, searchRef, index))
+		{
+			index += search.size();
+			outputStr += replace;
+		}
+		else
+		{
+			outputStr += subject[index];
+			++index;
+		}
+	}
+	
 	return outputStr;
 }
