@@ -5,24 +5,16 @@ using namespace std;
 
 bool CheckWord(string word)
 {
-	/*for (auto letter : word) {
-		bool isRussianLetter = 'А' <= toupper(int(letter)) && toupper(int(letter)) <= 'Я';
-		bool isEnglishLetter = 'A' <= toupper(int(letter)) && toupper(int(letter)) <= 'Z';
-		if (!isRussianLetter && !isEnglishLetter) 
-			return false;
-	}
-	return true;*/
-	return all_of(word.begin(), word.end(), [](char letter) 
-	{ 
-		bool isRussianLetter = 'А' <= toupper(letter) && toupper(letter) <= 'Я';
-		bool isEnglishLetter = 'A' <= toupper(int(letter)) && toupper(int(letter)) <= 'Z';
-		return isEnglishLetter && isRussianLetter;
+	std::locale loc("");
+	return all_of(word.begin(), word.end(), [&](char letter) 
+	{
+		return std::isalpha(letter, loc);
 	});
 }
 
-bool AddNewWordInDictionary(Dictionary & dict, string key, string const & value) 
+bool AddNewWordToDictionary(Dictionary & dict, string key, string const & value) 
 {
-	if ((!value.empty()) && (!key.empty()))
+	if ((!value.empty() && CheckWord(value)) && (!key.empty() && CheckWord(key)))
 	{
 		boost::to_lower(key);
 		dict.emplace(move(key), move(value));
@@ -31,7 +23,7 @@ bool AddNewWordInDictionary(Dictionary & dict, string key, string const & value)
 	return false;
 }
 
-string FindValueOnKey(Dictionary & dict, string key)
+string FindValueByKey(Dictionary & dict, string key)
 {
 	boost::to_lower(key);
 	auto iterator = dict.find(key);
@@ -57,9 +49,9 @@ string InputValue(string const & key)
 
 void InterectWithValue(string const & key, bool & wasAdd, Dictionary & dict, Dictionary & dictNewWords, string value)
 {
-	if (AddNewWordInDictionary(dict, key, value))
+	if (AddNewWordToDictionary(dict, key, value))
 	{
-		AddNewWordInDictionary(dictNewWords, key, value);
+		AddNewWordToDictionary(dictNewWords, key, value);
 		cout << "Слово “" << key << "” сохранено в словаре как “" << value << "”" << endl;
 		wasAdd = true;
 	}
@@ -75,7 +67,7 @@ void UserInteraction(Dictionary & dict, std::string const & fileName)
 	Dictionary dictNewWords;
 	bool wasAdd = false;
 	
-	while (cout << ">" && getline(cin, inputStr))
+	while ((cout << ">") && getline(cin, inputStr))
 	{
 		if (inputStr == "...")
 		{
@@ -85,7 +77,7 @@ void UserInteraction(Dictionary & dict, std::string const & fileName)
 		{
 			continue;
 		}
-		string findedValue = FindValueOnKey(dict, inputStr);
+		string findedValue = FindValueByKey(dict, inputStr);
 		if (!findedValue.empty()) 
 		{
 			OutputFindedValue(findedValue);
@@ -95,12 +87,13 @@ void UserInteraction(Dictionary & dict, std::string const & fileName)
 			InterectWithValue(inputStr, wasAdd, dict, dictNewWords, InputValue(inputStr));
 		}
 	} 
-	if (wasAdd) {
-		WillSave(dictNewWords, fileName);
+	if (wasAdd) 
+	{
+		AskForSaveBeforeExit(dictNewWords, fileName);
 	}
 }
 
-void WriteNewWordsInFile(Dictionary & dictNewWords, std::string const & fileName)
+void WriteNewWordsToFile(Dictionary & dictNewWords, std::string const & fileName)
 {
 	ofstream fout(fileName, ios_base::app);
 	for (auto it : dictNewWords)
@@ -109,22 +102,20 @@ void WriteNewWordsInFile(Dictionary & dictNewWords, std::string const & fileName
 	}
 }
 
-void WillSave(Dictionary & dictNewWords, std::string const & fileName)
+void AskForSaveBeforeExit(Dictionary & dictNewWords, std::string const & fileName)
 {
-	char change;
+	char change = 0;
 	cout << "В словарь были внесены изменения. Введите Y или N для сохранения перед выходом: ";
 	cin >> change;
-	if (toupper(change) == 'Y')
+	if (toupper(change) == 'Y' )
 	{
-		WriteNewWordsInFile(dictNewWords, fileName);
+		WriteNewWordsToFile(dictNewWords, fileName);
 		cout << "Изменения сохранены. До свидания." << endl;
 	}
 }
 
 void ProcessMap(Dictionary & dict, std::string const & fileName)
 {
-	SetConsoleOutputCP(1251);
-	SetConsoleCP(1251);
 	UserInteraction(dict, fileName);
 }
 

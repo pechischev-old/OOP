@@ -4,41 +4,41 @@
 
 using namespace std;
 
-BOOST_AUTO_TEST_SUITE(AddNewWordInDictionary_function)
-	BOOST_AUTO_TEST_CASE(add_pair_words_in_dictionary)
+BOOST_AUTO_TEST_SUITE(AddNewWordToDictionary_function)
+	BOOST_AUTO_TEST_CASE(adds_non_empty_words_to_dict)
 	{
 		Dictionary dict;
-		BOOST_CHECK(AddNewWordInDictionary(dict, "cat", "кот") );
+		BOOST_CHECK(AddNewWordToDictionary(dict, "cat", "кот") );
 	}
-	BOOST_AUTO_TEST_CASE(add_only_key_in_dictionary)
+	BOOST_AUTO_TEST_CASE(cannot_add_empty_translation)
 	{
 		Dictionary dict;
-		BOOST_CHECK(!AddNewWordInDictionary(dict, "cat", "") && dict.size() == 0);
+		BOOST_CHECK(!AddNewWordToDictionary(dict, "cat", "") && dict.size() == 0);
 	}
-	BOOST_AUTO_TEST_CASE(add_only_value_in_dictionary)
+	BOOST_AUTO_TEST_CASE(cannot_add_empty_word)
 	{
 		Dictionary dict;
-		BOOST_CHECK(!AddNewWordInDictionary(dict, "", "кот") && dict.size() == 0);
+		BOOST_CHECK(!AddNewWordToDictionary(dict, "", "кот") && dict.size() == 0);
 	}
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE(FindValueOnKey_function)
-	BOOST_AUTO_TEST_CASE(find_value_on_key)
+BOOST_AUTO_TEST_SUITE(FindValueByKey_function)
+	BOOST_AUTO_TEST_CASE(return_value_by_finding_key)
 	{
 		Dictionary dict = { {"cat", "кот"}, {"dog", "собака"},{ "red", "красный" } };
-		BOOST_CHECK(FindValueOnKey(dict, "dog") == "собака");
+		BOOST_CHECK(FindValueByKey(dict, "dog") == "собака");
 	}
-	BOOST_AUTO_TEST_CASE(find_value_in_empty_dictionary)
+	BOOST_AUTO_TEST_CASE(canot_find_value_in_empty_dictionary)
 	{
 		Dictionary dict;
-		BOOST_CHECK(!(FindValueOnKey(dict, "dog") == "собака"));
+		BOOST_CHECK(!(FindValueByKey(dict, "dog") == "собака"));
 	}
-	BOOST_AUTO_TEST_CASE(find_values_in__dictionary_when_key_is_recorded_in_different_register)
+	BOOST_AUTO_TEST_CASE(find_values_in_dictionary_when_key_is_recorded_in_different_register)
 	{
 		Dictionary dict;
-		BOOST_CHECK(!(FindValueOnKey(dict, "dOg") == "собака"));
-		BOOST_CHECK(!(FindValueOnKey(dict, "BalL") == "мяч"));
-		BOOST_CHECK(!(FindValueOnKey(dict, "LOW") == "низкий"));
+		BOOST_CHECK(!(FindValueByKey(dict, "dOg") == "собака"));
+		BOOST_CHECK(!(FindValueByKey(dict, "BalL") == "мяч"));
+		BOOST_CHECK(!(FindValueByKey(dict, "LOW") == "низкий"));
 	}
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -57,17 +57,19 @@ BOOST_AUTO_TEST_SUITE(FillDictionary_function)
 	}
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE(WriteNewWordsInFile_function)
+BOOST_AUTO_TEST_SUITE(WriteNewWordsToFile_function)
 	BOOST_AUTO_TEST_CASE(write_empty_dictionary_in_file)
 	{
 		Dictionary dict;
-		WriteNewWordsInFile(dict, "empty.txt");
+		WriteNewWordsToFile(dict, "empty.txt");
 		BOOST_CHECK(!IsFileNotEmpty("empty.txt"));
+		remove("empty.txt");
 	}
 	BOOST_AUTO_TEST_CASE(write_dictionary_in_file)
 	{
 		Dictionary dict = { { "cat", "кот" },{ "dog", "собака" },{ "red", "красный" } };
-		WriteNewWordsInFile(dict, "out.txt");
+		WriteNewWordsToFile(dict, "out.txt");
 		BOOST_CHECK(IsFileNotEmpty("out.txt"));
+		remove("out.txt");
 	}
 BOOST_AUTO_TEST_SUITE_END()
