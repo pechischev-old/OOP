@@ -1,26 +1,39 @@
 #pragma once
+#include <iostream>
 
-enum class SDirectionMove 
+enum class Direction 
 {
-	FORWARD,
-	BACK,
-	STAND
+	BACK = -1,
+	STAND,
+	FORWARD
+};
+
+enum class Gear
+{
+	reverse = -1,
+	neutral,
+	first,
+	second,
+	third,
+	fourth,
+	fifth
 };
 
 class CCar
 {
 public:
-	bool IsTurnedOn();
+	bool IsTurnedOn() const;
 	bool TurnOnEngine();
 	bool TurnOffEngine();
 	bool SetGear(int gear);
 	bool SetSpeed(unsigned speed);
-	int GetGear();
-	unsigned GetSpeed();
+	int GetGear() const;
+	unsigned GetSpeed() const;
+	int GetDirection() const;
 private:
 	bool m_isOn = false;
-	int m_gear = 0;
+	Gear m_gear = Gear::neutral;
 	unsigned m_currentSpeed = 0;
-	SDirectionMove m_direction = SDirectionMove::STAND;
+	Direction m_direction = Direction::STAND;
 };
 
