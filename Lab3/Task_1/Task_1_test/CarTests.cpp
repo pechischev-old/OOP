@@ -97,6 +97,10 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			BOOST_CHECK(!car.SetGear(2));
 			BOOST_CHECK_EQUAL(car.GetGear(), 1);
 		}
+		// переключение со 2-й на 4-ю
+		// переключение с 4-й на 5-ю
+		// переключение с 5-й, 4-й на нейтралку
+		// выключение на скорости и на нейтралке
 		BOOST_AUTO_TEST_CASE(switching_gears)
 		{
 			car.SetGear(1);
@@ -122,11 +126,6 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			BOOST_CHECK(car.SetGear(0));
 			BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
 		}
-		// переключение со 2-й на 4-ю
-		// переключение с 4-й на 5-ю
-		// переключение с 5-й, 4-й, 3-й, 2-й на нейтралку
-		// переключение с 5-й на 1-ю
-		// выключение на скорости и на нейтралке
 		BOOST_AUTO_TEST_CASE(cannot_turn_off_when_speed_is_greater_than_0)
 		{
 
@@ -169,7 +168,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 		}
 
 	BOOST_AUTO_TEST_SUITE_END()
-		//повторное включение
+	//повторное включение
 	BOOST_AUTO_TEST_CASE(reclosing)
 	{
 		car.TurnOnEngine();
