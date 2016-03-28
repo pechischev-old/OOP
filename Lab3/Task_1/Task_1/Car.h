@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 
+static const int MAX_SPEED = 150;
+
 enum class Direction 
 {
 	BACK = -1,
@@ -30,6 +32,8 @@ public:
 	int GetGear() const;
 	unsigned GetSpeed() const;
 	int GetDirection() const;
+private:
+	bool IscorrespondsGearAndRangeOfSpeeds(int gear);
 private:
 	bool m_isOn = false;
 	Gear m_gear = Gear::neutral;
