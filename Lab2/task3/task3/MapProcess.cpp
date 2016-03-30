@@ -3,7 +3,7 @@
 
 using namespace std;
 
-bool CheckWord(string word)
+static bool CheckWord(string const & word)
 {
 	std::locale loc("");
 	return all_of(word.begin(), word.end(), [&](char letter) 

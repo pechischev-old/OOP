@@ -26,15 +26,6 @@ set<unsigned> GeneratePrimeNumbersSet(unsigned upperBound)
 			}
 			++primeNumber;
 		}
-
-		//int  primeNumber = FIRST_PRIME_NUMBER;
-		/*for_each(isSingleNumbers.begin() + FIRST_PRIME_NUMBER, isSingleNumbers.end(), [&](bool isSingleNumber) {
-			if (isSingleNumber)
-			{
-				primeNumbersSet.insert(primeNumber);
-			}
-			++primeNumber;
-		});*/
 		return primeNumbersSet;
 	}
 	return {};

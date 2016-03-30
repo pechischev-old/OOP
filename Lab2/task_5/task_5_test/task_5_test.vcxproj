@@ -71,6 +71,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>\\LibForVS\boost_1_60_0;$(IncludePath)</IncludePath>
+    <LibraryPath>\\LibForVS\boost_1_60_0\stage\lib;.\SFML-2.3.2_32bit\SFML\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -149,10 +151,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\task_5\ExpandTemplate.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\task_5\ExpandTemplate.cpp" />
     <ClCompile Include="ExpandTemplateTests.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="task_5_test.cpp" />
