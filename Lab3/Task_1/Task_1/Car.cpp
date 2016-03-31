@@ -71,7 +71,6 @@ bool CCar::SetGear(int gear) // TODO: переключение на нейтралку как осуществл€ет
 			if (m_gear == Gear::reverse || m_currentSpeed >= 0)
 			{
 				m_direction = Direction::STAND; //car standed
-				SetSpeed(0);
 				canSwitch = true;
 			}
 		}

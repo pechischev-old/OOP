@@ -116,15 +116,12 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			BOOST_CHECK(car.SetGear(4));
 			BOOST_CHECK_EQUAL(car.GetGear(), 4);
 			BOOST_CHECK(car.SetGear(0));
-			BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
 
-			car.SetGear(1);
-			BOOST_CHECK(car.SetSpeed(120));
 			BOOST_CHECK(car.SetGear(5));
+			BOOST_CHECK(car.SetSpeed(120));
 			BOOST_CHECK_EQUAL(car.GetGear(), 5);
 			BOOST_CHECK(!car.SetSpeed(170));
 			BOOST_CHECK(car.SetGear(0));
-			BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
 		}
 		BOOST_AUTO_TEST_CASE(cannot_turn_off_when_speed_is_greater_than_0)
 		{

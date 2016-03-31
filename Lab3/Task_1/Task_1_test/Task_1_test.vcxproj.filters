@@ -35,9 +35,6 @@
     <ClCompile Include="Task_1_test.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="ControllerVirtualCarTests.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
     <ClCompile Include="CarTests.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
