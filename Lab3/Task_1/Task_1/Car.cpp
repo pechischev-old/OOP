@@ -9,7 +9,8 @@ bool CCar::IsTurnedOn() const
 
 bool CCar::TurnOnEngine()
 {
-	if (m_isOn) {
+	if (m_isOn) 
+	{
 		return false;
 	}
 	m_isOn = true;
@@ -18,8 +19,8 @@ bool CCar::TurnOnEngine()
 
 bool CCar::TurnOffEngine()
 {
-	bool cannotTurnOff = m_currentSpeed > 0 && m_gear != Gear::neutral;
-	if (m_isOn && cannotTurnOff) 
+	bool cannotTurnOff = !m_isOn || m_currentSpeed > 0 || m_gear != Gear::neutral;
+	if (cannotTurnOff) 
 	{
 		return false;
 	}
@@ -27,96 +28,65 @@ bool CCar::TurnOffEngine()
 	return true;
 }
 
-bool CCar::IscorrespondsGearAndRangeOfSpeeds(int gear)
+bool CCar::IsCorrespondsGearAndRangeOfSpeeds(int gear, unsigned speed)
 {
 	switch (static_cast<Gear>(gear))
 	{
 	case Gear::reverse:
-		return 0 <= m_currentSpeed && m_currentSpeed <= 20;
+		return 0 <= speed && speed <= 20;
 	case Gear::first:
-		return 0 <= m_currentSpeed && m_currentSpeed <= 30;
+		return 0 <= speed && speed <= 30;
 	case Gear::second:
-		return 20 <= m_currentSpeed && m_currentSpeed <= 50;
+		return 20 <= speed && speed <= 50;
 	case Gear::third:
-		return 30 <= m_currentSpeed && m_currentSpeed <= 60;
+		return 30 <= speed && speed <= 60;
 	case Gear::fourth:
-		return 40 <= m_currentSpeed && m_currentSpeed <= 90;
+		return 40 <= speed && speed <= 90;
 	case Gear::fifth:
-		return 50 <= m_currentSpeed && m_currentSpeed <= 150;
+		return 50 <= speed && speed <= 150;
 	default:
 		return false;
 	}
 }
 
-bool CCar::SetGear(int gear) // TODO: переключение на нейтралку как осуществляется?
-{                            // TODO: упростить метод
+bool CCar::SetGear(int gear) 
+{                            
 	bool canSwitch = false;
 	if (m_isOn)
 	{
-		if (static_cast<Gear>(gear) == Gear::reverse && IscorrespondsGearAndRangeOfSpeeds(gear))
+		if (static_cast<Gear>(gear) == Gear::reverse && IsCorrespondsGearAndRangeOfSpeeds(gear, m_currentSpeed))
 		{
 			if (m_gear == Gear::neutral)
 			{
-				m_direction = Direction::BACK; // move back
 				canSwitch = true;
 			}
 			else if (m_gear == Gear::first && m_currentSpeed == 0)
 			{
-				m_direction = Direction::BACK; // move back
 				canSwitch = true;
 			}
 		}
-		else if (static_cast<Gear>(gear) == Gear::neutral)
+		else if (static_cast<Gear>(gear) == Gear::first && (m_gear == Gear::reverse || m_gear == Gear::neutral))
 		{
-			if (m_gear == Gear::reverse || m_currentSpeed >= 0)
+			if (m_currentSpeed == 0)
 			{
-				m_direction = Direction::STAND; //car standed
 				canSwitch = true;
 			}
-		}
-		else if (static_cast<Gear>(gear) == Gear::first && IscorrespondsGearAndRangeOfSpeeds(gear))
-		{
-			if (m_gear == Gear::reverse && m_currentSpeed == 0)
+			else if (m_direction == Direction::STAND)
 			{
-				m_direction = Direction::FORWARD; // move forward
-				canSwitch = true;
-			}
-			else if (m_gear == Gear::neutral && m_direction == Direction::STAND)
-			{
-				m_direction = Direction::FORWARD; // move forward
-				canSwitch = true;
-			}
-			else
-			{
-				m_direction = Direction::FORWARD; // move forward
 				canSwitch = true;
 			}
 		}
-		else if (static_cast<Gear>(gear) == Gear::second && IscorrespondsGearAndRangeOfSpeeds(gear))
+		else if (IsCorrespondsGearAndRangeOfSpeeds(gear, m_currentSpeed))
 		{
-			m_direction = Direction::FORWARD; // move forward
-			canSwitch = true;
-		}
-		else if (static_cast<Gear>(gear) == Gear::third && IscorrespondsGearAndRangeOfSpeeds(gear))
-		{
-			m_direction = Direction::FORWARD; // move forward
-			canSwitch = true;
-		}
-		else if (static_cast<Gear>(gear) == Gear::fourth && IscorrespondsGearAndRangeOfSpeeds(gear))
-		{
-			m_direction = Direction::FORWARD; // move forward
-			canSwitch = true;
-		}
-		else if (static_cast<Gear>(gear) == Gear::fifth && IscorrespondsGearAndRangeOfSpeeds(gear))
-		{
-			m_direction = Direction::FORWARD; // move forward
 			canSwitch = true;
 		}
 	}
-	else if (static_cast<Gear>(gear) == Gear::neutral)
+	if (static_cast<Gear>(gear) == Gear::neutral)
 	{
-		m_direction = Direction::STAND; //car standed
-		canSwitch = true;
+		if (m_gear == Gear::reverse || m_currentSpeed >= 0)
+		{
+			canSwitch = true;
+		}
 	}
 
 	if (canSwitch)
@@ -130,6 +100,25 @@ bool CCar::SetGear(int gear) // TODO: переключение на нейтралку как осуществляет
 int CCar::GetGear() const
 {
 	return static_cast<int>(m_gear);
+}
+
+void CCar::SetDirection()
+{
+	if (m_currentSpeed != 0)
+	{
+		if (m_gear == Gear::reverse)
+		{
+			m_direction = Direction::BACK;
+		}
+		else if (m_gear != Gear::neutral)
+		{
+			m_direction = Direction::FORWARD;
+		}
+	}
+	else
+	{
+		m_direction = Direction::STAND;
+	}
 }
 
 unsigned CCar::GetSpeed() const
@@ -148,11 +137,13 @@ bool CCar::SetSpeed(unsigned speed)
 	{
 		if (speed == 0 && m_gear == Gear::neutral)
 		{
+			m_direction = Direction::STAND;
 			return true;
 		}
-		if (m_isOn && m_gear != Gear::neutral)
+		if (m_isOn && m_gear != Gear::neutral && IsCorrespondsGearAndRangeOfSpeeds(static_cast<int>(m_gear), speed))
 		{
 			m_currentSpeed = speed;
+			SetDirection();
 			return true;
 		}
 	}

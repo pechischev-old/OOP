@@ -33,7 +33,8 @@ public:
 	unsigned GetSpeed() const;
 	int GetDirection() const;
 private:
-	bool IscorrespondsGearAndRangeOfSpeeds(int gear);
+	bool IsCorrespondsGearAndRangeOfSpeeds(int gear, unsigned speed);
+	void SetDirection();
 private:
 	bool m_isOn = false;
 	Gear m_gear = Gear::neutral;
