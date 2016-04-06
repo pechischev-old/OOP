@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(cannot_set_speed_is_greater_than_0_for_neutral_gear)
 	BOOST_CHECK(car.SetSpeed(0));
 	BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
 }
-BOOST_AUTO_TEST_CASE(switching_to_neutral_when_transmission_is_neutral)
+BOOST_AUTO_TEST_CASE(can_switching_to_neutral_when_transmission_is_neutral)
 {
 	BOOST_CHECK(car.SetGear(0));
 }
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(check_inability_of_switching_first_transmission_to_reverse)
 	BOOST_CHECK(car.SetGear(0));
 	BOOST_CHECK_EQUAL(car.GetDirection(), 1);
 }
-BOOST_AUTO_TEST_CASE(switching_to_reverse_gear)
+BOOST_AUTO_TEST_CASE(can_switching_to_reverse_gear)
 {
 	BOOST_CHECK_EQUAL(car.GetGear(), 0);
 	BOOST_CHECK(car.SetGear(-1));
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(switching_to_reverse_gear)
 	BOOST_CHECK(car.SetGear(-1));
 	BOOST_CHECK_EQUAL(car.GetGear(), -1);
 }
-BOOST_AUTO_TEST_CASE(switching_from_first_gear_to_second_gear_and_back)
+BOOST_AUTO_TEST_CASE(can_switching_from_first_gear_to_second_gear_and_back)
 {
 	car.SetGear(1);
 	BOOST_CHECK(car.SetSpeed(30));
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(cannot_switching_to_second_gear_when_not_enough_speed)
 // переключение с 4-й на 5-ю
 // переключение с 5-й, 4-й на нейтралку
 // выключение на скорости и на нейтралке
-BOOST_AUTO_TEST_CASE(switching_gears)
+BOOST_AUTO_TEST_CASE(can_switching_gears)
 {
 	car.SetGear(1);
 	car.SetSpeed(20);
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(is_turned_off)
 {
 	BOOST_CHECK(!car.IsTurnedOn());
 }
-BOOST_AUTO_TEST_CASE(repeat_turn_off)
+BOOST_AUTO_TEST_CASE(cannot_repeat_turn_off)
 {
 	BOOST_CHECK(!car.TurnOffEngine());
 }
