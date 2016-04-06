@@ -13,12 +13,16 @@ public:
 	bool SetFunction(std::string varFunction, std::string var);
 	bool SetFunction(std::string varFunction, std::string firstOperand, std::string operatorFn, std::string secondOperand);
 	std::string Print(std::string var);
+
+	std::list<std::string> PrintVars();
+	std::list<std::string> PrintFns();
 private:
 	bool CheckNameVar(std::string const & nameVar);
 	bool IsVar(std::string const & var);
-	double CalculateValueFunction(double const & firstValue, OperatorType const & operatorFn, double const & secondValue);
+	std::string GetCalculatingFn(SFnInfo fnInfo);
+	void CalculateValueFunction(SFnInfo & fnInfo);
 	bool IsFunction(std::string const & nameFunction);
-	std::map<std::string, double> m_variables;
-	Function m_function;
+	std::map<std::string, SVarInfo> m_variables;
+	Function m_function; 
 };
 
