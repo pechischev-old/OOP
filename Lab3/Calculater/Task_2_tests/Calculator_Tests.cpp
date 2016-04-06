@@ -14,9 +14,16 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 	{
 		BOOST_CHECK(!calculator.SetVar(""));
 	}
+	BOOST_AUTO_TEST_CASE(returns_false_if_the_variable_name_does_not_match_demand)
+	{
+		BOOST_CHECK(!calculator.SetVar("1abcd"));
+		BOOST_CHECK(!calculator.SetVar("_abcd"));
+	}
 	BOOST_AUTO_TEST_CASE(returns_true_if_the_variable_is_set)
 	{
 		BOOST_CHECK(calculator.SetVar("xyz"));
+		BOOST_CHECK(calculator.SetVar("xyz3"));
+		BOOST_CHECK(calculator.SetVar("xy_z"));
 	}
 	BOOST_AUTO_TEST_CASE(cannot_set_variable_when_it_is_already_taken)
 	{
@@ -37,5 +44,28 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 	{
 		BOOST_CHECK(calculator.SetLet("someVar", "somevar"));
 	}
+	struct when_set_variables_ : SCalculator
+	{
+		when_set_variables_()
+		{
+			calculator.SetVar("y0");
+			calculator.SetLet("x0", 15);
+			calculator.SetLet("z0", -8);
+		}
+	};
+	BOOST_FIXTURE_TEST_SUITE(when_set_variables, when_set_variables_)
+		BOOST_AUTO_TEST_CASE(function_can_be_set_to_name_of_the_variable)
+		{
+			BOOST_CHECK(calculator.SetFunction("SomeFunction", "x0"));
+		}
+		BOOST_AUTO_TEST_CASE(function_takes_the_value_of_the_expression)
+		{
+			BOOST_CHECK(calculator.SetFunction("SomeFunction1", "x0", "/", "z0"));
+			BOOST_CHECK(calculator.SetFunction("SomeFunction2", "x0", "+", "z0"));
+			BOOST_CHECK(calculator.SetFunction("SomeFunction3", "x0", "-", "z0"));
+			BOOST_CHECK(calculator.SetFunction("SomeFunction4", "y0", "*", "z0"));
+		}
+
+	BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE_END()
