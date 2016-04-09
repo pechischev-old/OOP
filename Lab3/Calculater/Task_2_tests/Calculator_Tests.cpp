@@ -8,7 +8,6 @@ bool VerefyLists(list<string> const & sourceList, list<string> const & reference
 	return sourceList == reference;
 };
 
-
 struct SCalculator
 {
 	CCalculator calculator;
@@ -81,17 +80,17 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 
 		BOOST_AUTO_TEST_CASE(display_values_by_one_name_variable)
 		{
-			BOOST_CHECK_EQUAL(calculator.Print("z"), "-8.000000");
+			BOOST_CHECK_EQUAL(calculator.Print("z"), "-8.00");
 			BOOST_CHECK_EQUAL(calculator.Print("y"), "nan");
 			calculator.SetFunction("SomeFunction2", "x", "+", "z");
-			BOOST_CHECK_EQUAL(calculator.Print("SomeFunction2"), "7.000000");
+			BOOST_CHECK_EQUAL(calculator.Print("SomeFunction2"), "7.00");
 			calculator.SetFunction("SomeFunction2", "y", "+", "z");
 			BOOST_CHECK_EQUAL(calculator.Print("SomeFunction2"), "nan");
 		}
 
 		BOOST_AUTO_TEST_CASE(display_valyes_all_vars)
 		{
-			list<string> reference = {"x:15.000000", "y:nan", "z:-8.000000"};
+			list<string> reference = {"x:15.00", "y:nan", "z:-8.00"};
 			BOOST_CHECK(VerefyLists(calculator.PrintVars(), reference));
 		}
 
@@ -106,7 +105,7 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 			calculator.SetFunction("Fn2", "x", "+", "z");
 			calculator.SetFunction("Fn", "y", "+", "z");
 			calculator.SetFunction("FnZ", "x", "*", "z");
-			list<string> reference = { "Fn:nan", "Fn2:7.000000", "FnZ:-120.000000" };
+			list<string> reference = { "Fn:nan", "Fn2:7.00", "FnZ:-120.00" };
 			BOOST_CHECK(VerefyLists(calculator.PrintFns(), reference));
 		}
 
@@ -133,21 +132,16 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 
 	BOOST_AUTO_TEST_CASE(calculate_Fibonacci_sequence)
 	{
-		list<string> reference = { "fib0:0.000000",
-			"fib1:1.000000",
-			"fib2:1.000000",
-			"fib3:2.000000",
-			"fib4:3.000000",
-			"fib5:5.000000",
-			"fib6:8.000000"
+		list<string> reference = { "fib0:0.00",
+			"fib1:1.00",
+			"fib2:1.00",
+			"fib3:2.00",
+			"fib4:3.00",
+			"fib5:5.00",
+			"fib6:8.00"
 		};
 		SetFibonacciSequence(calculator, 6);
-		for (auto it : calculator.PrintFns())
-		{
-			cout << it << endl;
-		}
 		BOOST_CHECK(VerefyLists(calculator.PrintFns(), reference));
 	}
-
 
 BOOST_AUTO_TEST_SUITE_END()

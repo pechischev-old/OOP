@@ -1,4 +1,5 @@
 #include "Calculator.h"
+#include <boost/format.hpp>
 
 using namespace std;
 
@@ -160,6 +161,11 @@ void CCalculator::CalculateValueFunction(SFnInfo & fnInfo)
 	}
 }
 
+string GetFormatingString(double const & value)
+{
+	return str(boost::format("%.2f") % value);
+}
+
 std::string CCalculator::Print(std::string var)
 {
 	if (IsFunction(var))
@@ -168,14 +174,14 @@ std::string CCalculator::Print(std::string var)
 	}
 	else if (IsVar(var))
 	{
-		return (m_variables[var].isDeterminate ? to_string(m_variables[var].value) : "nan");
+		return (m_variables[var].isDeterminate ? GetFormatingString(m_variables[var].value) : "nan");
 	}
 	return string();
 }
 
 std::string CCalculator::GetStringCalculatingFn(SFnInfo fn)
 {	
-	return (fn.isDeterminate ? to_string(fn.value) : "nan");
+	return (fn.isDeterminate ? GetFormatingString(fn.value) : "nan");
 }
 
 std::list<std::string> CCalculator::PrintVars()
@@ -185,7 +191,7 @@ std::list<std::string> CCalculator::PrintVars()
 		list<string> resultList;
 		for (auto it : m_variables)
 		{
-			resultList.push_back(it.first + ":" + (it.second.isDeterminate ? to_string(it.second.value) : "nan"));
+			resultList.push_back(it.first + ":" + (it.second.isDeterminate ? GetFormatingString(it.second.value) : "nan"));
 		}
 		return resultList;
 	}
