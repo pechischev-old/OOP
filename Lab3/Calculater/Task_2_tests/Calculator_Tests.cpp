@@ -1,7 +1,12 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "../Calculater/Calculator.h"
 
 using namespace std;
+
+bool VerefyLists(list<string> const & sourceList, list<string> const & reference)
+{
+	return sourceList == reference;
+};
 
 
 struct SCalculator
@@ -35,6 +40,9 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 	{
 		calculator.SetVar("somevar");
 		BOOST_CHECK(calculator.SetLet("somevar", 5));
+		BOOST_CHECK_EQUAL(calculator.GetValueLet("somevar"), 5);
+		BOOST_CHECK(calculator.SetLet("s", 5));
+		BOOST_CHECK_EQUAL(calculator.GetValueLet("s"), 5);
 	}
 	BOOST_AUTO_TEST_CASE(can_set_the_value_when_it_the_variable_is_not_set)
 	{
@@ -48,47 +56,42 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 	{
 		when_set_variables_()
 		{
-			calculator.SetVar("y0");
-			calculator.SetLet("x0", 15);
-			calculator.SetLet("z0", -8);
+			calculator.SetVar("y");
+			calculator.SetLet("x", 15);
+			calculator.SetLet("z", -8);
 		}
 	};
 	BOOST_FIXTURE_TEST_SUITE(when_set_variables, when_set_variables_)
 		BOOST_AUTO_TEST_CASE(function_can_be_set_to_name_of_the_variable)
 		{
-			BOOST_CHECK(calculator.SetFunction("SomeFunction", "x0"));
+			BOOST_CHECK(calculator.SetFunction("SomeFunction", "x"));
 		}
 		BOOST_AUTO_TEST_CASE(function_cannot_be_set_to_the_name_if_it_does_not_match_demand)
 		{
-			BOOST_CHECK(!calculator.SetFunction("2omeFunction", "x0"));
-			BOOST_CHECK(!calculator.SetFunction("", "x0"));
+			BOOST_CHECK(!calculator.SetFunction("2omeFunction", "x"));
+			BOOST_CHECK(!calculator.SetFunction("", "x"));
 		}
 		BOOST_AUTO_TEST_CASE(function_takes_the_value_of_the_expression)
 		{
-			BOOST_CHECK(calculator.SetFunction("SomeFunction1", "x0", "/", "z0"));
-			BOOST_CHECK(calculator.SetFunction("SomeFunction2", "x0", "+", "z0"));
-			BOOST_CHECK(calculator.SetFunction("SomeFunction3", "x0", "-", "z0"));
-			BOOST_CHECK(calculator.SetFunction("SomeFunction2", "y0", "*", "z0"));
+			BOOST_CHECK(calculator.SetFunction("SomeFunction1", "x", "/", "z"));
+			BOOST_CHECK(calculator.SetFunction("SomeFunction2", "x", "+", "z"));
+			BOOST_CHECK(calculator.SetFunction("SomeFunction3", "x", "-", "z"));
+			BOOST_CHECK(calculator.SetFunction("SomeFunction2", "y", "*", "z"));
 		}
 
 		BOOST_AUTO_TEST_CASE(display_values_by_one_name_variable)
 		{
-			BOOST_CHECK_EQUAL(calculator.Print("z0"), "-8.000000");
-			BOOST_CHECK_EQUAL(calculator.Print("y0"), "nan");
-			calculator.SetFunction("SomeFunction2", "x0", "+", "z0");
+			BOOST_CHECK_EQUAL(calculator.Print("z"), "-8.000000");
+			BOOST_CHECK_EQUAL(calculator.Print("y"), "nan");
+			calculator.SetFunction("SomeFunction2", "x", "+", "z");
 			BOOST_CHECK_EQUAL(calculator.Print("SomeFunction2"), "7.000000");
-			calculator.SetFunction("SomeFunction2", "y0", "+", "z0");
+			calculator.SetFunction("SomeFunction2", "y", "+", "z");
 			BOOST_CHECK_EQUAL(calculator.Print("SomeFunction2"), "nan");
 		}
 
-		bool VerefyLists(list<string> const & sourceList, list<string> const & reference)
-		{
-			return sourceList == reference;
-		};
-
 		BOOST_AUTO_TEST_CASE(display_valyes_all_vars)
 		{
-			list<string> reference = {"x0:15.000000", "y0:nan", "z0:-8.000000"};
+			list<string> reference = {"x:15.000000", "y:nan", "z:-8.000000"};
 			BOOST_CHECK(VerefyLists(calculator.PrintVars(), reference));
 		}
 
@@ -100,9 +103,9 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 
 		BOOST_AUTO_TEST_CASE(display_valyes_all_functions)
 		{
-			calculator.SetFunction("Fn2", "x0", "+", "z0");
-			calculator.SetFunction("Fn", "y0", "+", "z0");
-			calculator.SetFunction("FnZ", "x0", "*", "z0");
+			calculator.SetFunction("Fn2", "x", "+", "z");
+			calculator.SetFunction("Fn", "y", "+", "z");
+			calculator.SetFunction("FnZ", "x", "*", "z");
 			list<string> reference = { "Fn:nan", "Fn2:7.000000", "FnZ:-120.000000" };
 			BOOST_CHECK(VerefyLists(calculator.PrintFns(), reference));
 		}
@@ -113,6 +116,38 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 			BOOST_CHECK(calc.PrintFns().empty());
 		}
 
+
 	BOOST_AUTO_TEST_SUITE_END()
+
+	void SetFibonacciSequence(CCalculator & calculator, unsigned const & number)
+	{
+		calculator.SetLet("v0", 0);
+		calculator.SetLet("v1", 1);
+		calculator.SetFunction("fib0", "v0");
+		calculator.SetFunction("fib1", "v1");
+		for (size_t i = 2; i <= number; ++i)
+		{
+			calculator.SetFunction("fib" + to_string(i), "fib" + to_string(i - 2), "+", "fib" + to_string(i - 1));
+		}
+	}
+
+	BOOST_AUTO_TEST_CASE(calculate_Fibonacci_sequence)
+	{
+		list<string> reference = { "fib0:0.000000",
+			"fib1:1.000000",
+			"fib2:1.000000",
+			"fib3:2.000000",
+			"fib4:3.000000",
+			"fib5:5.000000",
+			"fib6:8.000000"
+		};
+		SetFibonacciSequence(calculator, 6);
+		for (auto it : calculator.PrintFns())
+		{
+			cout << it << endl;
+		}
+		BOOST_CHECK(VerefyLists(calculator.PrintFns(), reference));
+	}
+
 
 BOOST_AUTO_TEST_SUITE_END()

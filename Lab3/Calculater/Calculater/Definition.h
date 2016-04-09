@@ -26,8 +26,8 @@ struct SVarInfo
 struct SFnInfo
 {
 	double value = NAN;
-	std::string firstOperator;
-	std::string secondOperator;
+	std::string firstOperand;
+	std::string secondOperand;
 	bool isTwoOperands = false;
 	OperatorType type;
 	bool isDeterminate = false;
