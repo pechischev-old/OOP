@@ -28,9 +28,9 @@ bool CCar::TurnOffEngine()
 	return true;
 }
 
-bool CCar::IsCorrespondsGearAndRangeOfSpeeds(int gear, unsigned speed)
+bool const IsRangeOfSpeed(Gear gear, unsigned speed)
 {
-	switch (static_cast<Gear>(gear))
+	switch (gear)
 	{
 	case Gear::reverse:
 		return 0 <= speed && speed <= 20;
@@ -49,49 +49,32 @@ bool CCar::IsCorrespondsGearAndRangeOfSpeeds(int gear, unsigned speed)
 	}
 }
 
-bool CCar::SetGear(int gear) 
+bool CCar::SetGear(Gear gear)
 {                            
 	bool canSwitch = false;
 	if (m_isOn)
 	{
-		if (static_cast<Gear>(gear) == Gear::reverse && IsCorrespondsGearAndRangeOfSpeeds(gear, m_currentSpeed))
+		if (gear == Gear::reverse && IsRangeOfSpeed(gear, m_currentSpeed))
 		{
-			if (m_gear == Gear::neutral)
-			{
-				canSwitch = true;
-			}
-			else if (m_gear == Gear::first && m_currentSpeed == 0)
-			{
-				canSwitch = true;
-			}
+			canSwitch = ((m_gear == Gear::neutral || m_gear == Gear::first) && m_currentSpeed == 0);
 		}
-		else if (static_cast<Gear>(gear) == Gear::first && (m_gear == Gear::reverse || m_gear == Gear::neutral))
+		else if (gear == Gear::first && (m_gear == Gear::reverse || m_gear == Gear::neutral))
 		{
-			if (m_currentSpeed == 0)
-			{
-				canSwitch = true;
-			}
-			else if (m_direction == Direction::STAND)
-			{
-				canSwitch = true;
-			}
+			canSwitch = ((m_currentSpeed == 0 && m_gear == Gear::reverse) || (m_currentSpeed >= 0 && m_gear == Gear::neutral));
 		}
-		else if (IsCorrespondsGearAndRangeOfSpeeds(gear, m_currentSpeed))
+		else if (gear >= Gear::first && IsRangeOfSpeed(gear, m_currentSpeed))
 		{
 			canSwitch = true;
 		}
 	}
-	if (static_cast<Gear>(gear) == Gear::neutral)
+	if (gear == Gear::neutral && (m_gear == Gear::reverse || m_currentSpeed >= 0))
 	{
-		if (m_gear == Gear::reverse || m_currentSpeed >= 0)
-		{
-			canSwitch = true;
-		}
+		canSwitch = true;
 	}
 
 	if (canSwitch)
 	{
-		m_gear = static_cast<Gear>(gear);
+		m_gear = gear;
 		return true;
 	}
 	return false;
@@ -135,12 +118,13 @@ bool CCar::SetSpeed(unsigned speed)
 {
 	if (0 <= speed && speed <= MAX_SPEED)
 	{
-		if (speed == 0 && m_gear == Gear::neutral)
+		if (m_gear == Gear::neutral && (m_currentSpeed >= speed || speed == 0))
 		{
-			m_direction = Direction::STAND;
+			m_currentSpeed = speed;
+			SetDirection();
 			return true;
 		}
-		if (m_isOn && m_gear != Gear::neutral && IsCorrespondsGearAndRangeOfSpeeds(static_cast<int>(m_gear), speed))
+		if (m_isOn && m_gear != Gear::neutral && IsRangeOfSpeed(m_gear, speed))
 		{
 			m_currentSpeed = speed;
 			SetDirection();

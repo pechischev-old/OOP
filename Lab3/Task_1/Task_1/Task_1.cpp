@@ -36,9 +36,27 @@ void Help()
 	cout << "Help - prompts" << endl;
 }
 
-int main()
+Gear GetGear(std::string const & gear)
 {
-	CCar car;
+	if (gear == "reverse")
+		return Gear::reverse;
+	else if (gear == "neutral")
+		return Gear::neutral;
+	else if (gear == "first")
+		return Gear::first;
+	else if (gear == "second")
+		return Gear::second;
+	else if (gear == "third")
+		return Gear::third;
+	else if (gear == "fourth")
+		return Gear::fourth;
+	else if (gear == "fifth")
+		return Gear::fifth;
+	return Gear::neutral;
+}
+
+void UserInterface(CCar & car)
+{
 	std::string string;
 	int argument;
 	Help();
@@ -62,8 +80,9 @@ int main()
 		}
 		else if (string == "SetGear")
 		{
-			std::cin >> argument;
-			car.SetGear(argument);
+			std::string gear;
+			std::cin >> gear;
+			car.SetGear(GetGear(gear));
 		}
 		else if (string == "Info")
 		{
@@ -78,6 +97,12 @@ int main()
 			std::cout << "Invalid command!" << std::endl;
 		}
 	}
+}
+
+int main()
+{
+	CCar car;
+	UserInterface(car);
 
     return 0;
 }

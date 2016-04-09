@@ -27,13 +27,12 @@ public:
 	bool IsTurnedOn() const;
 	bool TurnOnEngine();
 	bool TurnOffEngine();
-	bool SetGear(int gear);
+	bool SetGear(Gear gear);
 	bool SetSpeed(unsigned speed);
 	int GetGear() const;
 	unsigned GetSpeed() const;
 	int GetDirection() const;
 private:
-	bool IsCorrespondsGearAndRangeOfSpeeds(int gear, unsigned speed);
 	void SetDirection();
 private:
 	bool m_isOn = false;
@@ -42,3 +41,4 @@ private:
 	Direction m_direction = Direction::STAND;
 };
 
+static bool const IsRangeOfSpeed(Gear gear, unsigned speed);

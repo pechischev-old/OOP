@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "../Task_1/Car.h"
 
 using namespace std;
@@ -7,169 +7,353 @@ struct CCarFixture
 {
 	CCar car;
 };
+// TODO: РїСЂРѕРІРµСЂРёС‚СЊ РєР°Р¶РґСѓСЋ РїРµСЂРµРґР°С‡Сѓ РїРѕ РѕС‚РґРµР»СЊРЅРѕСЃС‚Рё
 
-// Автомобиль
+// РђРІС‚РѕРјРѕР±РёР»СЊ
 BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
-// изначально выключен
-BOOST_AUTO_TEST_CASE(is_turned_off_by_default)
-{
-	BOOST_CHECK(!car.IsTurnedOn());
-}
+	// РёР·РЅР°С‡Р°Р»СЊРЅРѕ РІС‹РєР»СЋС‡РµРЅ
+	BOOST_AUTO_TEST_CASE(is_turned_off_by_default)
+	{
+		BOOST_CHECK(!car.IsTurnedOn());
+	}
 
-BOOST_AUTO_TEST_CASE(cannot_select_gear_when_turned_off)
-{
+	BOOST_AUTO_TEST_CASE(cannot_select_gear_when_turned_off)
+	{
 
-	BOOST_CHECK(!car.SetGear(1));
-	BOOST_CHECK_EQUAL(car.GetGear(), 0);
-}
-// может быть включен
-BOOST_AUTO_TEST_CASE(can_be_turned_on)
-{
-	BOOST_CHECK(car.TurnOnEngine());
-}
+		BOOST_CHECK(!car.SetGear(Gear::first));
+		BOOST_CHECK_EQUAL(car.GetGear(), 0);
+	}
+	// РјРѕР¶РµС‚ Р±С‹С‚СЊ РІРєР»СЋС‡РµРЅ
+	BOOST_AUTO_TEST_CASE(can_be_turned_on)
+	{
+		BOOST_CHECK(car.TurnOnEngine());
+	}
+	BOOST_AUTO_TEST_CASE(check_car_is_not_moving)
+	{
+		BOOST_CHECK_EQUAL(car.GetDirection(), 0);
+	}
 
-BOOST_AUTO_TEST_CASE(cannot_set_speed_is_greater_than_0_for_neutral_gear)
-{
-	BOOST_CHECK_EQUAL(car.GetGear(), 0);
-	BOOST_CHECK(!car.SetSpeed(20));
-	BOOST_CHECK_EQUAL(car.GetGear(), 0);
-	BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
-	BOOST_CHECK(car.SetSpeed(0));
-	BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
-}
-BOOST_AUTO_TEST_CASE(can_switching_to_neutral_when_transmission_is_neutral)
-{
-	BOOST_CHECK(car.SetGear(0));
-}
+	BOOST_AUTO_TEST_CASE(cannot_set_speed_is_greater_than_0_for_neutral_gear)
+	{
+		BOOST_CHECK_EQUAL(car.GetGear(), 0);
+		BOOST_CHECK(!car.SetSpeed(20));
+		BOOST_CHECK_EQUAL(car.GetGear(), 0);
+		BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
+		BOOST_CHECK(car.SetSpeed(0));
+		BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
+	}
+	BOOST_AUTO_TEST_CASE(can_switching_to_neutral_when_transmission_is_neutral)
+	{
+		BOOST_CHECK(car.SetGear(Gear::neutral));
+	}
 
-struct when_turned_on_ : CCarFixture
-{
-	when_turned_on_()
+	struct when_turned_on_ : CCarFixture
+	{
+		when_turned_on_()
+		{
+			car.TurnOnEngine();
+		}
+	};
+
+	BOOST_FIXTURE_TEST_SUITE(when_turned_on, when_turned_on_)
+	// РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РµС‰Рµ СЂР°Р· РІРєР»СЋС‡РµРЅ РµСЃР»Рё СѓР¶Рµ РІРєР»СЋС‡РµРЅ
+		BOOST_AUTO_TEST_CASE(cannot_turned_on_if_already_turned_on)
+		{
+			BOOST_CHECK(!car.TurnOnEngine());
+		}
+		BOOST_AUTO_TEST_CASE(check_value_car_by_default)
+		{
+			BOOST_CHECK_EQUAL(car.GetGear(), 0);
+			BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
+		}
+		BOOST_AUTO_TEST_CASE(can_switching_to_first_gear)
+		{
+			BOOST_CHECK(car.SetGear(Gear::first));
+		}
+		BOOST_AUTO_TEST_CASE(can_move_back_to_the_reverse_gear)
+		{
+			BOOST_CHECK(car.SetGear(Gear::reverse));
+			BOOST_CHECK(car.SetSpeed(15));
+			BOOST_CHECK_EQUAL(car.GetDirection(), -1);
+		}
+		BOOST_AUTO_TEST_CASE(can_turn_off_the_engine_in_neutral_gear)
+		{
+			BOOST_CHECK(car.SetGear(Gear::first));
+			BOOST_CHECK(!car.TurnOffEngine());
+			BOOST_CHECK(car.SetGear(Gear::reverse));
+			BOOST_CHECK(!car.TurnOffEngine());
+
+			BOOST_CHECK(car.SetGear(Gear::neutral));
+			BOOST_CHECK(car.TurnOffEngine());
+		}
+
+		//---------------- РџР•Р Р’РђРЇ РџР•Р Р•Р”РђР§Рђ -------------------
+		struct when_first_gear_ : when_turned_on_
+		{
+			when_first_gear_()
+			{
+				car.SetGear(Gear::first);
+			}
+		};
+
+		BOOST_FIXTURE_TEST_SUITE(when_first_gear, when_first_gear_)
+
+			BOOST_AUTO_TEST_CASE(can_accelerates_from_0_to_30)
+			{
+				BOOST_CHECK(car.SetSpeed(0));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
+
+				BOOST_CHECK(car.SetSpeed(30));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 30);
+
+				BOOST_CHECK(!car.SetSpeed(31));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 30);
+			}
+			BOOST_AUTO_TEST_CASE(can_switching_to_neutral_gear)
+			{
+				BOOST_CHECK(car.SetGear(Gear::neutral));
+			}
+			BOOST_AUTO_TEST_CASE(can_switching_to_reverse_gear_when_velocity_is_0)
+			{
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
+				BOOST_CHECK(car.SetGear(Gear::reverse));
+			}
+			BOOST_AUTO_TEST_CASE(can_switching_to_second_gear_when_velocity_is_20)
+			{
+				BOOST_CHECK(car.SetSpeed(20));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 20);
+				BOOST_CHECK(car.SetGear(Gear::second));
+			}
+
+		BOOST_AUTO_TEST_SUITE_END()
+
+		//---------------- РќР•Р™РўР РђР›Р¬РќРђРЇ РџР•Р Р•Р”РђР§Рђ -------------------
+		struct in_neutral_gear_when_moving_ : when_first_gear_
+		{
+			in_neutral_gear_when_moving_()
+			{
+				car.SetSpeed(15);
+				car.SetGear(Gear::neutral);
+			}
+		};
+		BOOST_FIXTURE_TEST_SUITE(in_neutral_gear_when_moving, in_neutral_gear_when_moving_)
+			BOOST_AUTO_TEST_CASE(cannot_increase_speed)
+			{
+				BOOST_CHECK(!car.SetSpeed(18));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 15);
+			}
+			BOOST_AUTO_TEST_CASE(reduces_the_rate_or_leave_earlier)
+			{
+				BOOST_CHECK(car.SetSpeed(15));
+
+				BOOST_CHECK(car.SetSpeed(10));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 10);
+			}
+			BOOST_AUTO_TEST_CASE(can_enables_the_transmission_of_valid)
+			{
+				BOOST_CHECK(!car.SetGear(Gear::second));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 15);
+				BOOST_CHECK(car.SetGear(Gear::first));
+			}
+			BOOST_AUTO_TEST_CASE(cannot_turn_off_engine)
+			{
+				BOOST_CHECK(!car.TurnOffEngine());
+			}
+			BOOST_AUTO_TEST_CASE(cannot_swithing_to_reverse_gear)
+			{
+				BOOST_CHECK(!car.SetGear(Gear::reverse));
+			}
+		
+		BOOST_AUTO_TEST_SUITE_END()
+
+		//---------------- Р’РўРћР РђРЇ РџР•Р Р•Р”РђР§Рђ -------------------
+		struct when_second_gear_ : when_first_gear_
+		{
+			when_second_gear_()
+			{
+				car.SetSpeed(20);
+				car.SetGear(Gear::second);
+			}
+		};
+
+		BOOST_FIXTURE_TEST_SUITE(when_second_gear, when_second_gear_)
+			BOOST_AUTO_TEST_CASE(can_accelerates_from_20_to_50)
+			{
+				BOOST_CHECK(!car.SetSpeed(19));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 20);
+
+				BOOST_CHECK(car.SetSpeed(50));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 50);
+
+				BOOST_CHECK(!car.SetSpeed(51));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 50);
+			}
+			BOOST_AUTO_TEST_CASE(can_switching_to_first_gear_when_velocity_is_20)
+			{
+				BOOST_CHECK(car.SetSpeed(20));
+				BOOST_CHECK(car.SetGear(Gear::first));
+			}
+
+			BOOST_AUTO_TEST_CASE(can_switching_to_third_gear_when_velocity_is_40)
+			{
+				BOOST_CHECK(car.SetSpeed(40));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 40);
+				BOOST_CHECK(car.SetGear(Gear::third));
+			}
+
+			BOOST_AUTO_TEST_CASE(cannot_switching_to_reverse_gear_when_velocity_is_30)
+			{
+				BOOST_CHECK(car.SetSpeed(30));
+				BOOST_CHECK(!car.SetGear(Gear::reverse));
+			}
+			BOOST_AUTO_TEST_CASE(can_switching_to_neutral_gear)
+			{
+				BOOST_CHECK(car.SetGear(Gear::neutral));
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+
+		//---------------- РўР Р•РўР¬РЇ РџР•Р Р•Р”РђР§Рђ -------------------
+		struct when_third_gear_ : when_second_gear_
+		{
+			when_third_gear_()
+			{
+				car.SetSpeed(30);
+				car.SetGear(Gear::third);
+			}
+		};
+
+		BOOST_FIXTURE_TEST_SUITE(when_third_gear, when_third_gear_)
+			BOOST_AUTO_TEST_CASE(can_accelerates_from_30_to_60)
+			{
+				BOOST_CHECK(!car.SetSpeed(29));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 30);
+
+				BOOST_CHECK(car.SetSpeed(60));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 60);
+
+				BOOST_CHECK(!car.SetSpeed(61));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 60);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+
+		//---------------- Р§Р•РўР’Р•Р РўРђРЇ РџР•Р Р•Р”РђР§Рђ -------------------
+		struct when_fourth_gear_ : when_third_gear_
+		{
+			when_fourth_gear_()
+			{
+				car.SetSpeed(40);
+				car.SetGear(Gear::fourth);
+			}
+		};
+
+		BOOST_FIXTURE_TEST_SUITE(when_fourth_gear, when_fourth_gear_)
+			BOOST_AUTO_TEST_CASE(can_accelerates_from_40_to_90)
+			{
+				BOOST_CHECK(!car.SetSpeed(39));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 40);
+
+				BOOST_CHECK(car.SetSpeed(90));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 90);
+
+				BOOST_CHECK(!car.SetSpeed(91));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 90);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+
+		//---------------- РџРЇРўРђРЇ РџР•Р Р•Р”РђР§Рђ -------------------
+		struct when_fifth_gear_ : when_fourth_gear_
+		{
+			when_fifth_gear_()
+			{
+				car.SetSpeed(50);
+				car.SetGear(Gear::fifth);
+			}
+		};
+
+		BOOST_FIXTURE_TEST_SUITE(when_fifth_gear, when_fifth_gear_)
+			BOOST_AUTO_TEST_CASE(can_accelerates_from_50_to_150)
+			{
+				BOOST_CHECK(!car.SetSpeed(49));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 50);
+
+				BOOST_CHECK(car.SetSpeed(150));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 150);
+
+				BOOST_CHECK(!car.SetSpeed(151));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 150);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+		
+		//---------------- Р—РђР”РќРЇРЇ РџР•Р Р•Р”РђР§Рђ -------------------
+		struct when_reverse_gear_ : when_turned_on_
+		{
+			when_reverse_gear_()
+			{
+				car.SetGear(Gear::reverse);
+			}
+		};
+
+		BOOST_FIXTURE_TEST_SUITE(when_reverse_gear, when_reverse_gear_)
+			
+			BOOST_AUTO_TEST_CASE(can_accelerates_from_0_to_20)
+			{
+				BOOST_CHECK(car.SetSpeed(0));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
+
+				BOOST_CHECK(car.SetSpeed(20));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 20);
+
+				BOOST_CHECK(!car.SetSpeed(21));
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 20);
+			}
+			BOOST_AUTO_TEST_CASE(can_switching_to_first_gear_when_speed_is_0)
+			{
+				BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
+				BOOST_CHECK(car.SetGear(Gear::first));
+			}
+			BOOST_AUTO_TEST_CASE(can_switching_to_neutral_gear_when_speed_is_greater_than_zero)
+			{
+				car.SetSpeed(10);
+				BOOST_CHECK(car.SetGear(Gear::neutral));
+				BOOST_CHECK_EQUAL(car.GetDirection(), -1);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+
+	BOOST_AUTO_TEST_SUITE_END()
+
+	struct when_turned_off_ : CCarFixture
+	{
+		when_turned_off_()
+		{
+			car.TurnOffEngine();
+		}
+	};
+
+	BOOST_FIXTURE_TEST_SUITE(when_turned_off, when_turned_off_)
+		BOOST_AUTO_TEST_CASE(is_turned_off)
+		{
+			BOOST_CHECK(!car.IsTurnedOn());
+		}
+		BOOST_AUTO_TEST_CASE(cannot_repeat_turn_off)
+		{
+			BOOST_CHECK(!car.TurnOffEngine());
+		}
+		BOOST_AUTO_TEST_CASE(Unable_to_switch_to_first_gear_and_set_speed)
+		{
+			BOOST_CHECK(!car.SetGear(Gear::first));
+			BOOST_CHECK_EQUAL(car.GetGear(), 0);
+			BOOST_CHECK(!car.SetSpeed(5));
+			BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
+			BOOST_CHECK(car.SetGear(Gear::neutral));
+		}
+
+	BOOST_AUTO_TEST_SUITE_END()
+	//РїРѕРІС‚РѕСЂРЅРѕРµ РІРєР»СЋС‡РµРЅРёРµ
+	BOOST_AUTO_TEST_CASE(reclosing)
 	{
 		car.TurnOnEngine();
+		BOOST_CHECK_EQUAL(car.GetGear(), 0);
+		BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
 	}
-};
-
-BOOST_FIXTURE_TEST_SUITE(when_turned_on, when_turned_on_)
-// не может быть еще раз включен если уже включен
-BOOST_AUTO_TEST_CASE(cannot_turned_on_if_already_turned_on)
-{
-	BOOST_CHECK(!car.TurnOnEngine());
-}
-BOOST_AUTO_TEST_CASE(displays_value_by_default)
-{
-	BOOST_CHECK_EQUAL(car.GetGear(), 0);
-	BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
-}
-
-BOOST_AUTO_TEST_CASE(check_inability_of_switching_first_transmission_to_reverse)
-{
-	BOOST_CHECK(car.SetGear(1));
-	BOOST_CHECK(car.SetSpeed(3));
-	BOOST_CHECK(!car.SetGear(-1));
-	BOOST_CHECK(car.SetGear(0));
-	BOOST_CHECK_EQUAL(car.GetDirection(), 1);
-}
-BOOST_AUTO_TEST_CASE(can_switching_to_reverse_gear)
-{
-	BOOST_CHECK_EQUAL(car.GetGear(), 0);
-	BOOST_CHECK(car.SetGear(-1));
-	BOOST_CHECK_EQUAL(car.GetGear(), -1);
-	car.SetGear(1);
-	BOOST_CHECK(car.SetGear(-1));
-	BOOST_CHECK_EQUAL(car.GetGear(), -1);
-}
-BOOST_AUTO_TEST_CASE(can_switching_from_first_gear_to_second_gear_and_back)
-{
-	car.SetGear(1);
-	BOOST_CHECK(car.SetSpeed(30));
-	BOOST_CHECK(car.SetGear(2));
-	BOOST_CHECK_EQUAL(car.GetGear(), 2);
-	BOOST_CHECK(car.SetSpeed(20));
-	BOOST_CHECK(car.SetGear(1));
-	BOOST_CHECK_EQUAL(car.GetGear(), 1);
-}
-BOOST_AUTO_TEST_CASE(cannot_switching_to_second_gear_when_not_enough_speed)
-{
-	car.SetGear(1);
-	BOOST_CHECK(car.SetSpeed(15));
-	BOOST_CHECK(!car.SetGear(2));
-	BOOST_CHECK_EQUAL(car.GetGear(), 1);
-}
-// переключение со 2-й на 4-ю
-// переключение с 4-й на 5-ю
-// переключение с 5-й, 4-й на нейтралку
-// выключение на скорости и на нейтралке
-BOOST_AUTO_TEST_CASE(can_switching_gears)
-{
-	car.SetGear(1);
-	car.SetSpeed(20);
-	car.SetGear(2);
-	BOOST_CHECK(!car.SetGear(4));
-	car.SetSpeed(50);
-	BOOST_CHECK(car.SetGear(4));
-	BOOST_CHECK_EQUAL(car.GetGear(), 4);
-	car.SetSpeed(90);
-	BOOST_CHECK(car.SetGear(5));
-	BOOST_CHECK_EQUAL(car.GetGear(), 5);
-	BOOST_CHECK(car.SetGear(4));
-	BOOST_CHECK_EQUAL(car.GetGear(), 4);
-	BOOST_CHECK(car.SetGear(0));
-
-	BOOST_CHECK(car.SetGear(5));
-	BOOST_CHECK(car.SetSpeed(120));
-	BOOST_CHECK_EQUAL(car.GetGear(), 5);
-	BOOST_CHECK(!car.SetSpeed(170));
-	BOOST_CHECK(car.SetGear(0));
-}
-BOOST_AUTO_TEST_CASE(cannot_turn_off_when_speed_is_greater_than_0)
-{
-
-	BOOST_CHECK(car.SetGear(0));
-	BOOST_CHECK(car.SetGear(1));
-	BOOST_CHECK(car.SetSpeed(20));
-	BOOST_CHECK(!car.TurnOffEngine());
-}
-BOOST_AUTO_TEST_CASE(can_turn_off_when_speed_is_0_and_transmission_is_neutral)
-{
-	BOOST_CHECK(car.TurnOffEngine());
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
-struct when_turned_off_ : CCarFixture
-{
-	when_turned_off_()
-	{
-		car.TurnOffEngine();
-	}
-};
-
-BOOST_FIXTURE_TEST_SUITE(when_turned_off, when_turned_off_)
-BOOST_AUTO_TEST_CASE(is_turned_off)
-{
-	BOOST_CHECK(!car.IsTurnedOn());
-}
-BOOST_AUTO_TEST_CASE(cannot_repeat_turn_off)
-{
-	BOOST_CHECK(!car.TurnOffEngine());
-}
-BOOST_AUTO_TEST_CASE(Unable_to_switch_to_first_gear_and_set_speed)
-{
-	BOOST_CHECK(!car.SetGear(1));
-	BOOST_CHECK_EQUAL(car.GetGear(), 0);
-	BOOST_CHECK(!car.SetSpeed(5));
-	BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
-	BOOST_CHECK(car.SetGear(0));
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-//повторное включение
-BOOST_AUTO_TEST_CASE(reclosing)
-{
-	car.TurnOnEngine();
-	BOOST_CHECK_EQUAL(car.GetGear(), 0);
-	BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
-}
 
 BOOST_AUTO_TEST_SUITE_END()

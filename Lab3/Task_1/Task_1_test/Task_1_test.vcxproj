@@ -155,7 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Task_1\Car.cpp" />
-    <ClCompile Include="CarTests.cpp" />
     <ClCompile Include="MyCarTests.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Task_1_test.cpp" />
