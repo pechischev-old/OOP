@@ -7,20 +7,20 @@ class CCalculator
 {
 public:
 	CCalculator() = default;
-	bool SetVar(std::string var);
-	bool SetLet(std::string m_var, std::string var);
-	bool SetLet(std::string m_var, double value);
-	bool SetFunction(std::string varFunction, std::string var);
-	bool SetFunction(std::string varFunction, std::string firstOperand, std::string operatorFn, std::string secondOperand);
-	double GetValueLet(std::string var);
-	SFnInfo GetValueFunction(std::string function);
-	std::string Print(std::string var);
+	SPerform SetVar(std::string const & var);
+	SPerform SetLet(std::string const & m_var, std::string const & var);
+	SPerform SetLet(std::string const & m_var, float const & value);
+	SPerform SetFunction(std::string const & varFunction, std::string const & var);
+	SPerform SetFunction(std::string const & varFunction, std::string const &firstOperand, std::string const &operatorFn, std::string const &secondOperand);
+	float GetValueLet(std::string const & var);
+	SFnInfo GetValueFunction(std::string const & function);
+	std::string Print(std::string const &var);
 
 	std::list<std::string> GetVars();
 	std::list<std::string> GetFns();
 private:
-	std::string GetStringCalculatingFn(SFnInfo fnInfo);
-	double GetCalculateValue(std::string const & name);
+	std::string GetStringCalculatingFn(SFnInfo const & fnInfo);
+	float GetCalculateValue(std::string const & name);
 	bool CheckNameVar(std::string const & nameVar);
 	bool IsVar(std::string const & var);
 	bool IsFunction(std::string const & nameFunction);

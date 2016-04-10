@@ -23,7 +23,34 @@ double StringToInt(std::string const & numberStr)
 	return upperBound;
 }
 
-std::vector<std::string> SplitStringBySymbol(std::string const & expression, std::string symbol)
+void CDisplay::OutputErrors(ErrorType const & error)
+{
+	switch (error)
+	{
+	case uncorrectNameVar:
+		std::cout << "ERROR: The variable name is named incorrectly.\n For example: some_var_1 or someVar1" << std::endl;
+		break;
+	case cannotBeFunction:
+		std::cout << "ERROR: Variable can not be a function. Please, enter the variable" << std::endl;
+		break;
+	case cannotBeVariables:
+		std::cout << "ERROR: Function can not be a variable. Please, enter the function" << std::endl;
+		break;
+	case nameDuplication:
+		std::cout << "ERROR: Variable already declared" << std::endl;
+		break;
+	case emptyOperand:
+		std::cout << "ERROR: Transferred to an empty argument" << std::endl;
+		break;
+	case noVariable:
+		std::cout << "ERROR: Variable is not declared" << std::endl;
+		break;
+	case notError:
+		break;
+	}
+}
+
+std::vector<std::string> SplitStringBySymbol(std::string const & expression, std::string const & symbol)
 {
 	std::vector<std::string> splitingString;
 	boost::split(splitingString, expression, boost::is_any_of(symbol));
@@ -44,7 +71,7 @@ void DisplayListString(std::list<std::string> const & listString)
 	{
 		for (auto it : listString)
 		{
-			if (!it.empty())
+			if (it != std::string())
 			{
 				std::cout << it << std::endl;
 			}
@@ -63,10 +90,7 @@ void CDisplay::InputCommand(std::string const & command)
 {
 	if (command == "var")
 	{
-		if (!m_calculator.SetVar(InputExpession()))
-		{
-			std::cout << "ERROR: The variable name is named incorrectly.\n For example: some_var_1 or someVar1" << std::endl;
-		}
+		OutputErrors(m_calculator.SetVar(InputExpession()).GetError());
 	}
 	else if (command == "print")
 	{
@@ -92,7 +116,6 @@ void CDisplay::InputCommand(std::string const & command)
 	{
 		std::cout << "Invalid command!" << std::endl;
 	}
-
 }
 
 void CDisplay::SetLet()
@@ -102,11 +125,11 @@ void CDisplay::SetLet()
 	{
 		if (IsNumber(splitingExpression.back()))
 		{
-			m_calculator.SetLet(splitingExpression.front(), StringToInt(splitingExpression.back()));
+			OutputErrors(m_calculator.SetLet(splitingExpression.front(), StringToInt(splitingExpression.back())).GetError());
 		}
 		else
 		{
-			m_calculator.SetLet(splitingExpression.front(), splitingExpression.back());
+			OutputErrors(m_calculator.SetLet(splitingExpression.front(), splitingExpression.back()).GetError());
 		}
 	}
 	else
@@ -145,14 +168,15 @@ void CDisplay::SetFn()
 		std::string operatorExpression = FindOperator(splitingExpression.back());
 		if (operatorExpression.empty())
 		{
-			m_calculator.SetFunction(splitingExpression.front(), splitingExpression.back());
+			OutputErrors(m_calculator.SetFunction(splitingExpression.front(), splitingExpression.back()).GetError());
 		}
 		else
 		{
 			std::vector<std::string> operands = SplitStringBySymbol(splitingExpression.back(), operatorExpression);
 			if (operands.size() == 2 && !operands.empty())
 			{
-				m_calculator.SetFunction(splitingExpression.front(), operands.front(), operatorExpression, operands.back());
+				OutputErrors(m_calculator.SetFunction(splitingExpression.front(), 
+								operands.front(), operatorExpression, operands.back()).GetError());
 			}
 		}
 	}

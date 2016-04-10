@@ -8,7 +8,37 @@
 #include <functional>
 #include <Math.h>
 
+enum ErrorType
+{
+	uncorrectNameVar,
+	cannotBeFunction,
+	cannotBeVariables,
+	nameDuplication,
+	emptyOperand,
+	noVariable,
+	notError
+};
 
+struct SPerform
+{
+public:
+	SPerform(bool isSuccesful = true, ErrorType error = notError)
+		: m_isSuccesful(isSuccesful)
+		, m_error(error)
+	{
+	};
+	bool IsSuccesful() const
+	{
+		return m_isSuccesful;
+	};
+	ErrorType GetError() const
+	{
+		return m_error;
+	};
+private:
+	bool m_isSuccesful;
+	ErrorType m_error;
+};
 
 enum class OperatorType
 {
@@ -20,13 +50,13 @@ enum class OperatorType
 
 struct SVarInfo
 {
-	double value = NAN;
+	float value = NAN;
 	bool isDeterminate = false;
 };
 
 struct SFnInfo
 {
-	double value = NAN;
+	float value = NAN;
 	std::string firstOperand;
 	std::string secondOperand;
 	bool isTwoOperands = false;
