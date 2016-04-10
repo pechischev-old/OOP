@@ -16,8 +16,8 @@ public:
 	SFnInfo GetValueFunction(std::string function);
 	std::string Print(std::string var);
 
-	std::list<std::string> PrintVars();
-	std::list<std::string> PrintFns();
+	std::list<std::string> GetVars();
+	std::list<std::string> GetFns();
 private:
 	std::string GetStringCalculatingFn(SFnInfo fnInfo);
 	double GetCalculateValue(std::string const & name);

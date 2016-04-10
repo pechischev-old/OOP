@@ -9,8 +9,8 @@ bool CCalculator::CheckNameVar(std::string const & nameVar)
 	{
 		return nameVar != "" && isalpha(int(nameVar.front()));
 	}
-	return nameVar != "" && isalpha(int(nameVar.front())) && any_of(nameVar.begin() + 1, nameVar.end(), [](char symbol) {
-		return isalnum(int(symbol)) || symbol == '_';
+	return nameVar != "" && isalpha(int(nameVar.front())) && all_of(nameVar.begin() + 1, nameVar.end(), [](char symbol) {
+		return (isalnum(int(symbol)) || symbol == '_');
 	});
 }
 
@@ -184,7 +184,7 @@ std::string CCalculator::GetStringCalculatingFn(SFnInfo fn)
 	return (fn.isDeterminate ? GetFormatingString(fn.value) : "nan");
 }
 
-std::list<std::string> CCalculator::PrintVars()
+std::list<std::string> CCalculator::GetVars()
 {
 	if (!m_variables.empty())
 	{
@@ -198,7 +198,7 @@ std::list<std::string> CCalculator::PrintVars()
 	return list<string>();
 }
 
-std::list<std::string> CCalculator::PrintFns() 
+std::list<std::string> CCalculator::GetFns() 
 {
 	if (!m_function.empty())
 	{

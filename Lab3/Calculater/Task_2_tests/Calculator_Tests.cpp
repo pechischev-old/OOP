@@ -91,13 +91,13 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 		BOOST_AUTO_TEST_CASE(display_valyes_all_vars)
 		{
 			list<string> reference = {"x:15.00", "y:nan", "z:-8.00"};
-			BOOST_CHECK(VerefyLists(calculator.PrintVars(), reference));
+			BOOST_CHECK(VerefyLists(calculator.GetVars(), reference));
 		}
 
 		BOOST_AUTO_TEST_CASE(display_valyes_when_the_variables_are_not_declared)
 		{
 			CCalculator calc;
-			BOOST_CHECK(calc.PrintVars().empty());
+			BOOST_CHECK(calc.GetVars().empty());
 		}
 
 		BOOST_AUTO_TEST_CASE(display_valyes_all_functions)
@@ -106,13 +106,13 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 			calculator.SetFunction("Fn", "y", "+", "z");
 			calculator.SetFunction("FnZ", "x", "*", "z");
 			list<string> reference = { "Fn:nan", "Fn2:7.00", "FnZ:-120.00" };
-			BOOST_CHECK(VerefyLists(calculator.PrintFns(), reference));
+			BOOST_CHECK(VerefyLists(calculator.GetFns(), reference));
 		}
 
 		BOOST_AUTO_TEST_CASE(display_valyes_when_the_functions_are_not_declared)
 		{
 			CCalculator calc;
-			BOOST_CHECK(calc.PrintFns().empty());
+			BOOST_CHECK(calc.GetFns().empty());
 		}
 
 
@@ -141,7 +141,7 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 			"fib6:8.00"
 		};
 		SetFibonacciSequence(calculator, 6);
-		BOOST_CHECK(VerefyLists(calculator.PrintFns(), reference));
+		BOOST_CHECK(VerefyLists(calculator.GetFns(), reference));
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
