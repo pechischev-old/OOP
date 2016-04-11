@@ -150,12 +150,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Lab4\Body.h" />
+    <ClInclude Include="..\Lab4\Parallelepiped.h" />
     <ClInclude Include="..\Lab4\Sphere.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lab4\Body.cpp" />
+    <ClCompile Include="..\Lab4\Parallelepiped.cpp" />
     <ClCompile Include="..\Lab4\Sphere.cpp" />
     <ClCompile Include="Lab4_Tests.cpp" />
     <ClCompile Include="ParallelepipedTests.cpp" />
