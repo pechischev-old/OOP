@@ -15,10 +15,10 @@ CDisplay::~CDisplay()
 {
 }
 
-double StringToInt(std::string const & numberStr)
+float StringToInt(std::string const & numberStr)
 {
 	std::stringstream ss(numberStr);
-	unsigned upperBound = 0;
+	float upperBound = 0;
 	ss >> upperBound;
 	return upperBound;
 }
@@ -44,6 +44,9 @@ void CDisplay::OutputErrors(ErrorType const & error)
 		break;
 	case noVariable:
 		std::cout << "ERROR: Variable is not declared" << std::endl;
+		break;
+	case notDetermined:
+		std::cout << "ERROR: Variable is not determined" << std::endl;
 		break;
 	case notError:
 		break;
@@ -94,7 +97,7 @@ void CDisplay::InputCommand(std::string const & command)
 	}
 	else if (command == "print")
 	{
-		std::cout << m_calculator.Print(InputExpession()) << std::endl;
+		std::cout << m_calculator.GetValue(InputExpession()) << std::endl;
 	}
 	else if (command == "printvars")
 	{

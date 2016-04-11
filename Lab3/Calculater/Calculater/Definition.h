@@ -16,6 +16,7 @@ enum ErrorType
 	nameDuplication,
 	emptyOperand,
 	noVariable,
+	notDetermined,
 	notError
 };
 

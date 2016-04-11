@@ -3,7 +3,7 @@
 
 using namespace std;
 
-bool CCalculator::CheckNameVar(std::string const & nameVar)
+bool IsCorrectName(std::string const & nameVar)
 {
 	if (nameVar.size() == 1)
 	{
@@ -16,7 +16,7 @@ bool CCalculator::CheckNameVar(std::string const & nameVar)
 
 SPerform CCalculator::SetVar(string const & variable)
 {
-	if (!CheckNameVar(variable))
+	if (!IsCorrectName(variable))
 		return SPerform(false, uncorrectNameVar);
 	else if (IsFunction(variable))
 		return SPerform(false, cannotBeFunction);
@@ -28,39 +28,47 @@ SPerform CCalculator::SetVar(string const & variable)
 	return SPerform(false, nameDuplication);
 }
 
-SPerform CCalculator::SetLet(std::string const & m_variable, std::string const & variable)
+SPerform CCalculator::SetLet(std::string const & var, std::string const & otherVar)
 {
-	if (!IsVar(variable))
-		return SPerform(false, noVariable);
-	if (IsFunction(variable))
-		return SPerform(false, cannotBeFunction);
-	if (!IsVar(m_variable))
+	if (otherVar.empty())
+		return SPerform(false, emptyOperand);
+	if (!IsVar(otherVar) && !IsFunction(otherVar))
+		return SPerform(false, notDetermined);
+	if (!IsVar(var))
 	{
-		SPerform perform = SetVar(m_variable);
+		SPerform perform = SetVar(var);
 		if (!perform.IsSuccesful())
 		{
 			return perform;
 		}
 	}
-	m_variables[m_variable] = m_variables[variable];
+	if (IsFunction(otherVar))
+	{
+		SFnInfo result = GetValueFunction(otherVar);
+		m_variables[var].isDeterminate = result.isDeterminate;
+		m_variables[var].value = result.value;
+	}
+	else
+	{
+		m_variables[var] = m_variables[otherVar];
+	}
 	return SPerform();
 }
 
-SPerform CCalculator::SetLet(std::string const & m_var, float const & value)
+SPerform CCalculator::SetLet(std::string const & var, float const & value)
 {
-	if (IsFunction(m_var))
+	if (IsFunction(var))
 		return SPerform(false, cannotBeFunction);
-	if (!IsVar(m_var))
+	if (!IsVar(var))
 	{
-		SPerform perform = SetVar(m_var);
+		SPerform perform = SetVar(var);
 		if (!perform.IsSuccesful())
 		{
 			return perform;
 		}
 	}
-	m_variables[m_var].value = value;
-	cout << m_variables[m_var].value << " = " << value << endl;
-	m_variables[m_var].isDeterminate = true;
+	m_variables[var].value = value;
+	m_variables[var].isDeterminate = true;
 	return SPerform();
 }
 
@@ -87,7 +95,7 @@ SPerform CCalculator::SetFunction(std::string const & varFunction, std::string c
 	}
 	if (!IsFunction(varFunction))
 	{
-		if (!CheckNameVar(varFunction) )
+		if (!IsCorrectName(varFunction) )
 		{
 			return SPerform(false, uncorrectNameVar);
 		}
@@ -122,7 +130,7 @@ SPerform CCalculator::SetFunction(std::string const & varFunction, std::string c
 	fnInfo.type = OPERATOR_MAP.find(operatorFn)->second;
 	if (!IsFunction(varFunction))
 	{	
-		if (!CheckNameVar(varFunction))
+		if (!IsCorrectName(varFunction))
 		{ 
 			return SPerform(false, uncorrectNameVar);
 		}
@@ -187,7 +195,7 @@ string GetFormatingString(double const & value)
 	return str(boost::format("%.2f") % value);
 }
 
-std::string CCalculator::Print(std::string const &var)
+std::string CCalculator::GetValue(std::string const &var)
 {
 	if (IsFunction(var))
 	{

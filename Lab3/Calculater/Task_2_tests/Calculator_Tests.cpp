@@ -85,12 +85,12 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 
 		BOOST_AUTO_TEST_CASE(display_values_by_one_name_variable)
 		{
-			BOOST_CHECK_EQUAL(calculator.Print("z"), "-8.00");
-			BOOST_CHECK_EQUAL(calculator.Print("y"), "nan");
+			BOOST_CHECK_EQUAL(calculator.GetValue("z"), "-8.00");
+			BOOST_CHECK_EQUAL(calculator.GetValue("y"), "nan");
 			calculator.SetFunction("SomeFunction2", "x", "+", "z");
-			BOOST_CHECK_EQUAL(calculator.Print("SomeFunction2"), "7.00");
+			BOOST_CHECK_EQUAL(calculator.GetValue("SomeFunction2"), "7.00");
 			calculator.SetFunction("SomeFunction2", "y", "+", "z");
-			BOOST_CHECK_EQUAL(calculator.Print("SomeFunction2"), "nan");
+			BOOST_CHECK_EQUAL(calculator.GetValue("SomeFunction2"), "nan");
 		}
 
 		BOOST_AUTO_TEST_CASE(display_valyes_all_vars)
