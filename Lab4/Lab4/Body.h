@@ -5,16 +5,17 @@
 class CBody
 {
 public:
-	CBody() = default;
-	virtual ~CBody() {};
-	virtual void SetMass(unsigned mass) = 0;
-	virtual void SetDensity(unsigned density) = 0;
-	virtual void SetVolume(unsigned volume) = 0;
-	virtual std::string GetInfo() = 0;
+	CBody(const std::string & type, double density);
+
+	double GetDensity() const;
+	virtual double GetVolume() const = 0;
+	double GetMass() const;
+	std::string ToString() const;
+
+	virtual ~CBody();
 protected:
-	unsigned m_density;
-	unsigned m_volume;
-	unsigned m_mass;
+	virtual void AppendProperties(std::ostream & strm) const = 0;
+private:
+	double m_density;
 	std::string m_type;
 };
-

@@ -4,16 +4,16 @@
 #include "Body.h"
 
 
-class CSphere : public CBody
+class CSphere final : public CBody
 {
 public:
-	CSphere();
-	~CSphere();
-	void SetMass(unsigned mass) override;
-	void SetDensity(unsigned density) override;
-	void SetVolume(unsigned volume) override;
-	std::string GetInfo() override;
+	CSphere(double density, double radius);
+
+	double GetRadius() const;
+	double GetVolume() const override;
+protected:
+	void AppendProperties(std::ostream & strm) const override;
 private:
-	unsigned m_radius;
+	double m_radius;
 };
 
