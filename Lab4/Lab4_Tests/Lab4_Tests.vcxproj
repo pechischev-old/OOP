@@ -150,6 +150,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Lab4\Body.h" />
+    <ClInclude Include="..\Lab4\Cone.h" />
+    <ClInclude Include="..\Lab4\Cylinder.h" />
     <ClInclude Include="..\Lab4\Parallelepiped.h" />
     <ClInclude Include="..\Lab4\Sphere.h" />
     <ClInclude Include="stdafx.h" />
@@ -157,10 +159,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lab4\Body.cpp" />
+    <ClCompile Include="..\Lab4\Cone.cpp" />
+    <ClCompile Include="..\Lab4\Cylinder.cpp" />
     <ClCompile Include="..\Lab4\Parallelepiped.cpp" />
     <ClCompile Include="..\Lab4\Sphere.cpp" />
+    <ClCompile Include="ConeTests.cpp" />
     <ClCompile Include="Lab4_Tests.cpp" />
     <ClCompile Include="ParallelepipedTests.cpp" />
+    <ClCompile Include="CylinderTests.cpp" />
     <ClCompile Include="SphereTests.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
