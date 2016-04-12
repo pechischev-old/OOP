@@ -9,7 +9,7 @@ bool IsCorrectName(std::string const & nameVar)
 	{
 		return !nameVar.empty() && isalpha(int(nameVar.front()));
 	}
-	return!nameVar.empty() && isalpha(int(nameVar.front())) && all_of(nameVar.begin() + 1, nameVar.end(), [](char symbol) {
+	return !nameVar.empty() && isalpha(int(nameVar.front())) && all_of(nameVar.begin() + 1, nameVar.end(), [](char symbol) {
 		return (isalnum(int(symbol)) || symbol == '_');
 	});
 }

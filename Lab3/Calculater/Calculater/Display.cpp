@@ -82,11 +82,25 @@ void DisplayListString(std::list<std::string> const & listString)
 	}
 }
 
+bool IsNotCommand(std::string const & nameVar)
+{
+	std::vector<std::string> arrayCommands = { "var", "print", "printvars", "printfns", "let", "fn" };
+	return std::all_of(arrayCommands.begin(), arrayCommands.end(), [&](std::string const & command)
+	{
+		return command != nameVar;
+	});
+}
+
 std::string InputExpession()
 {
 	std::string expression;
 	std::cin >> expression;
-	return expression;
+	if (IsNotCommand(expression))
+	{
+		return expression;
+	}
+	std::cout << "Can not use the name command as a variable" << std::endl;
+	return "";
 }
 
 void CDisplay::InputCommand(std::string const & command)
@@ -124,7 +138,7 @@ void CDisplay::InputCommand(std::string const & command)
 void CDisplay::SetLet()
 {
 	std::vector<std::string> splitingExpression = SplitStringBySymbol(InputExpession(), "=");
-	if (splitingExpression.size() == 2 && !splitingExpression.empty())
+	if (splitingExpression.size() == 2 && !splitingExpression[0].empty() && !splitingExpression[1].empty())
 	{
 		if (IsNumber(splitingExpression.back()))
 		{
