@@ -12,13 +12,13 @@ enum class Direction
 
 enum class Gear
 {
-	reverse = -1,
-	neutral,
-	first,
-	second,
-	third,
-	fourth,
-	fifth
+	REVERSE = -1,
+	NEUTRAL,
+	FIRST,
+	SECOND,
+	THIRD,
+	FOURTH,
+	FIFTH
 };
 
 class CCar
@@ -31,12 +31,12 @@ public:
 	bool SetSpeed(unsigned speed);
 	int GetGear() const;
 	unsigned GetSpeed() const;
-	int GetDirection() const;
+	Direction GetDirection() const;
 private:
-	void SetDirection();
+	void UpdateDirection();
 private:
 	bool m_isOn = false;
-	Gear m_gear = Gear::neutral;
+	Gear m_gear = Gear::NEUTRAL;
 	unsigned m_currentSpeed = 0;
 	Direction m_direction = Direction::STAND;
 };

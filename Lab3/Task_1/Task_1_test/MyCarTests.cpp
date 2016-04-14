@@ -7,7 +7,6 @@ struct CCarFixture
 {
 	CCar car;
 };
-// TODO: проверить каждую передачу по отдельности
 
 // Автомобиль
 BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
@@ -20,7 +19,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 	BOOST_AUTO_TEST_CASE(cannot_select_gear_when_turned_off)
 	{
 
-		BOOST_CHECK(!car.SetGear(Gear::first));
+		BOOST_CHECK(!car.SetGear(Gear::FIRST));
 		BOOST_CHECK_EQUAL(car.GetGear(), 0);
 	}
 	// может быть включен
@@ -30,7 +29,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 	}
 	BOOST_AUTO_TEST_CASE(check_car_is_not_moving)
 	{
-		BOOST_CHECK_EQUAL(car.GetDirection(), 0);
+		BOOST_CHECK(car.GetDirection() == Direction::STAND);
 	}
 
 	BOOST_AUTO_TEST_CASE(cannot_set_speed_is_greater_than_0_for_neutral_gear)
@@ -44,7 +43,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 	}
 	BOOST_AUTO_TEST_CASE(can_switching_to_neutral_when_transmission_is_neutral)
 	{
-		BOOST_CHECK(car.SetGear(Gear::neutral));
+		BOOST_CHECK(car.SetGear(Gear::NEUTRAL));
 	}
 
 	struct when_turned_on_ : CCarFixture
@@ -68,22 +67,22 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 		}
 		BOOST_AUTO_TEST_CASE(can_switching_to_first_gear)
 		{
-			BOOST_CHECK(car.SetGear(Gear::first));
+			BOOST_CHECK(car.SetGear(Gear::FIRST));
 		}
 		BOOST_AUTO_TEST_CASE(can_move_back_to_the_reverse_gear)
 		{
-			BOOST_CHECK(car.SetGear(Gear::reverse));
+			BOOST_CHECK(car.SetGear(Gear::REVERSE));
 			BOOST_CHECK(car.SetSpeed(15));
-			BOOST_CHECK_EQUAL(car.GetDirection(), -1);
+			BOOST_CHECK(car.GetDirection() == Direction::BACK);
 		}
 		BOOST_AUTO_TEST_CASE(can_turn_off_the_engine_in_neutral_gear)
 		{
-			BOOST_CHECK(car.SetGear(Gear::first));
+			BOOST_CHECK(car.SetGear(Gear::FIRST));
 			BOOST_CHECK(!car.TurnOffEngine());
-			BOOST_CHECK(car.SetGear(Gear::reverse));
+			BOOST_CHECK(car.SetGear(Gear::REVERSE));
 			BOOST_CHECK(!car.TurnOffEngine());
 
-			BOOST_CHECK(car.SetGear(Gear::neutral));
+			BOOST_CHECK(car.SetGear(Gear::NEUTRAL));
 			BOOST_CHECK(car.TurnOffEngine());
 		}
 
@@ -92,7 +91,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 		{
 			when_first_gear_()
 			{
-				car.SetGear(Gear::first);
+				car.SetGear(Gear::FIRST);
 			}
 		};
 
@@ -111,18 +110,18 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			}
 			BOOST_AUTO_TEST_CASE(can_switching_to_neutral_gear)
 			{
-				BOOST_CHECK(car.SetGear(Gear::neutral));
+				BOOST_CHECK(car.SetGear(Gear::NEUTRAL));
 			}
 			BOOST_AUTO_TEST_CASE(can_switching_to_reverse_gear_when_velocity_is_0)
 			{
 				BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
-				BOOST_CHECK(car.SetGear(Gear::reverse));
+				BOOST_CHECK(car.SetGear(Gear::REVERSE));
 			}
 			BOOST_AUTO_TEST_CASE(can_switching_to_second_gear_when_velocity_is_20)
 			{
 				BOOST_CHECK(car.SetSpeed(20));
 				BOOST_CHECK_EQUAL(car.GetSpeed(), 20);
-				BOOST_CHECK(car.SetGear(Gear::second));
+				BOOST_CHECK(car.SetGear(Gear::SECOND));
 			}
 
 		BOOST_AUTO_TEST_SUITE_END()
@@ -133,7 +132,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			in_neutral_gear_when_moving_()
 			{
 				car.SetSpeed(15);
-				car.SetGear(Gear::neutral);
+				car.SetGear(Gear::NEUTRAL);
 			}
 		};
 		BOOST_FIXTURE_TEST_SUITE(in_neutral_gear_when_moving, in_neutral_gear_when_moving_)
@@ -151,9 +150,9 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			}
 			BOOST_AUTO_TEST_CASE(can_enables_the_transmission_of_valid)
 			{
-				BOOST_CHECK(!car.SetGear(Gear::second));
+				BOOST_CHECK(!car.SetGear(Gear::SECOND));
 				BOOST_CHECK_EQUAL(car.GetSpeed(), 15);
-				BOOST_CHECK(car.SetGear(Gear::first));
+				BOOST_CHECK(car.SetGear(Gear::FIRST));
 			}
 			BOOST_AUTO_TEST_CASE(cannot_turn_off_engine)
 			{
@@ -161,7 +160,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			}
 			BOOST_AUTO_TEST_CASE(cannot_swithing_to_reverse_gear)
 			{
-				BOOST_CHECK(!car.SetGear(Gear::reverse));
+				BOOST_CHECK(!car.SetGear(Gear::REVERSE));
 			}
 		
 		BOOST_AUTO_TEST_SUITE_END()
@@ -172,7 +171,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			when_second_gear_()
 			{
 				car.SetSpeed(20);
-				car.SetGear(Gear::second);
+				car.SetGear(Gear::SECOND);
 			}
 		};
 
@@ -191,24 +190,24 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			BOOST_AUTO_TEST_CASE(can_switching_to_first_gear_when_velocity_is_20)
 			{
 				BOOST_CHECK(car.SetSpeed(20));
-				BOOST_CHECK(car.SetGear(Gear::first));
+				BOOST_CHECK(car.SetGear(Gear::FIRST));
 			}
 
 			BOOST_AUTO_TEST_CASE(can_switching_to_third_gear_when_velocity_is_40)
 			{
 				BOOST_CHECK(car.SetSpeed(40));
 				BOOST_CHECK_EQUAL(car.GetSpeed(), 40);
-				BOOST_CHECK(car.SetGear(Gear::third));
+				BOOST_CHECK(car.SetGear(Gear::THIRD));
 			}
 
 			BOOST_AUTO_TEST_CASE(cannot_switching_to_reverse_gear_when_velocity_is_30)
 			{
 				BOOST_CHECK(car.SetSpeed(30));
-				BOOST_CHECK(!car.SetGear(Gear::reverse));
+				BOOST_CHECK(!car.SetGear(Gear::REVERSE));
 			}
 			BOOST_AUTO_TEST_CASE(can_switching_to_neutral_gear)
 			{
-				BOOST_CHECK(car.SetGear(Gear::neutral));
+				BOOST_CHECK(car.SetGear(Gear::NEUTRAL));
 			}
 		BOOST_AUTO_TEST_SUITE_END()
 
@@ -218,7 +217,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			when_third_gear_()
 			{
 				car.SetSpeed(30);
-				car.SetGear(Gear::third);
+				car.SetGear(Gear::THIRD);
 			}
 		};
 
@@ -242,7 +241,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			when_fourth_gear_()
 			{
 				car.SetSpeed(40);
-				car.SetGear(Gear::fourth);
+				car.SetGear(Gear::FOURTH);
 			}
 		};
 
@@ -266,7 +265,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			when_fifth_gear_()
 			{
 				car.SetSpeed(50);
-				car.SetGear(Gear::fifth);
+				car.SetGear(Gear::FIFTH);
 			}
 		};
 
@@ -289,7 +288,7 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 		{
 			when_reverse_gear_()
 			{
-				car.SetGear(Gear::reverse);
+				car.SetGear(Gear::REVERSE);
 			}
 		};
 
@@ -309,13 +308,13 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 			BOOST_AUTO_TEST_CASE(can_switching_to_first_gear_when_speed_is_0)
 			{
 				BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
-				BOOST_CHECK(car.SetGear(Gear::first));
+				BOOST_CHECK(car.SetGear(Gear::FIRST));
 			}
 			BOOST_AUTO_TEST_CASE(can_switching_to_neutral_gear_when_speed_is_greater_than_zero)
 			{
 				car.SetSpeed(10);
-				BOOST_CHECK(car.SetGear(Gear::neutral));
-				BOOST_CHECK_EQUAL(car.GetDirection(), -1);
+				BOOST_CHECK(car.SetGear(Gear::NEUTRAL));
+				BOOST_CHECK(car.GetDirection() == Direction::BACK);
 			}
 		BOOST_AUTO_TEST_SUITE_END()
 
@@ -340,11 +339,11 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 		}
 		BOOST_AUTO_TEST_CASE(Unable_to_switch_to_first_gear_and_set_speed)
 		{
-			BOOST_CHECK(!car.SetGear(Gear::first));
+			BOOST_CHECK(!car.SetGear(Gear::FIRST));
 			BOOST_CHECK_EQUAL(car.GetGear(), 0);
 			BOOST_CHECK(!car.SetSpeed(5));
 			BOOST_CHECK_EQUAL(car.GetSpeed(), 0);
-			BOOST_CHECK(car.SetGear(Gear::neutral));
+			BOOST_CHECK(car.SetGear(Gear::NEUTRAL));
 		}
 
 	BOOST_AUTO_TEST_SUITE_END()
