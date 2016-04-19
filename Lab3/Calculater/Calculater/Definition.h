@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <functional>
 #include <Math.h>
+#include <limits>
+#include <boost/optional.hpp>
 
 enum ErrorType
 {
@@ -23,25 +25,19 @@ enum ErrorType
 struct SPerform
 {
 public:
-	SPerform(bool isSuccesful = true, ErrorType error = notError)
-		: m_isSuccesful(isSuccesful)
-		, m_error(error)
+	SPerform(ErrorType error = notError)
+		: m_error(error)
 	{
-	};
-	bool IsSuccesful() const
-	{
-		return m_isSuccesful;
 	};
 	ErrorType GetError() const
 	{
 		return m_error;
 	};
 private:
-	bool m_isSuccesful;
 	ErrorType m_error;
 };
 
-enum class OperatorType
+enum class BinaryOperation
 {
 	Add,
 	Multiply,
@@ -51,26 +47,23 @@ enum class OperatorType
 
 struct SVarInfo
 {
-	float value = NAN;
-	bool isDeterminate = false;
+	boost::optional<double> value = std::numeric_limits<double>::quiet_NaN();
 };
 
-struct SFnInfo
+struct SFnInfo : public SVarInfo
 {
-	float value = NAN;
-	std::string firstOperand;
-	std::string secondOperand;
-	bool isTwoOperands = false;
-	OperatorType type;
-	bool isDeterminate = false;
+	std::string leftOperand;
+	std::string rightOperand;
+	bool isBinary = false;
+	BinaryOperation type;
 };
 
 using Function = std::map<std::string, SFnInfo>;
 
-static const std::map<std::string, OperatorType> OPERATOR_MAP
+static const std::map<std::string, BinaryOperation> OPERATOR_MAP
 {
-	{ "+", OperatorType::Add },
-	{ "-", OperatorType::Substr },
-	{ "/", OperatorType::Div },
-	{ "*", OperatorType::Multiply }
+	{ "+", BinaryOperation::Add },
+	{ "-", BinaryOperation::Substr },
+	{ "/", BinaryOperation::Div },
+	{ "*", BinaryOperation::Multiply }
 };

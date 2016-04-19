@@ -7,7 +7,7 @@
 
 int main()
 {
-	CDisplay userInterface;
+	CInterpreter userInterface;
 	std::string command;
 	while (!std::cin.eof() && !std::cin.fail())
 	{

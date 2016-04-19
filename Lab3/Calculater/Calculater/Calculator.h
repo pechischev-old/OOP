@@ -7,22 +7,21 @@ class CCalculator
 {
 public:
 	CCalculator() = default;
-	SPerform SetVar(std::string const & var);
-	SPerform SetLet(std::string const & var, std::string const & otherVar);
-	SPerform SetLet(std::string const & var, float const & value);
-	SPerform SetFunction(std::string const & varFunction, std::string const & var);
-	SPerform SetFunction(std::string const & varFunction, std::string const &firstOperand, std::string const &operatorFn, std::string const &secondOperand);
-	float GetValueLet(std::string const & var);
-	SFnInfo GetValueFunction(std::string const & function);
+	SPerform DefineVar(std::string const & var);
+	SPerform AssignVar(std::string const & var, std::string const & otherVar); 
+	SPerform SetValue(std::string const & var, double const & value); 
+	SPerform DefineFunction(std::string const & varFunction, std::string const & var); 
+	SPerform DefineFunction(std::string const & varFunction, std::string const &firstOperand, BinaryOperation const & operatorFn, std::string const &secondOperand);
+	SFnInfo FindFunction(std::string const & function); 
 
 	std::string GetValue(std::string const &var);
-	std::list<std::string> GetVars();
-	std::list<std::string> GetFns();
+	std::list<std::string> DumpVars() const;
+	std::list<std::string> DumpFns();
 private:
-	std::string GetStringCalculatingFn(SFnInfo const & fnInfo);
-	float GetCalculateValue(std::string const & name);
-	bool IsVar(std::string const & var);
-	bool IsFunction(std::string const & nameFunction);
+	std::string GetStringCalculatingFn(SFnInfo const & fnInfo) const;
+	double GetCalculateValue(std::string const & name);
+	bool IsVar(std::string const & var) const;
+	bool IsFunction(std::string const & nameFunction) const;
 	void CalculateValueFunction(SFnInfo & fnInfo);
 private:
 	Function m_function;

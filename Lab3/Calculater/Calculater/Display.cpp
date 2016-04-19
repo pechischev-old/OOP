@@ -6,12 +6,12 @@
 #include <vector>
 
 
-CDisplay::CDisplay()
+CInterpreter::CInterpreter()
 {
 }
 
 
-CDisplay::~CDisplay()
+CInterpreter::~CInterpreter()
 {
 }
 
@@ -23,7 +23,7 @@ float StringToInt(std::string const & numberStr)
 	return upperBound;
 }
 
-void CDisplay::OutputErrors(ErrorType const & error)
+void CInterpreter::OutputErrors(ErrorType const & error)
 {
 	switch (error)
 	{
@@ -103,11 +103,11 @@ std::string InputExpession()
 	return "";
 }
 
-void CDisplay::InputCommand(std::string const & command)
+void CInterpreter::InputCommand(std::string const & command)
 {
 	if (command == "var")
 	{
-		OutputErrors(m_calculator.SetVar(InputExpession()).GetError());
+		OutputErrors(m_calculator.DefineVar(InputExpession()).GetError());
 	}
 	else if (command == "print")
 	{
@@ -115,11 +115,11 @@ void CDisplay::InputCommand(std::string const & command)
 	}
 	else if (command == "printvars")
 	{
-		DisplayListString(m_calculator.GetVars());
+		DisplayListString(m_calculator.DumpVars());
 	}
 	else if (command == "printfns")
 	{
-		DisplayListString(m_calculator.GetFns());
+		DisplayListString(m_calculator.DumpFns());
 	}
 	else if (command == "let")
 	{
@@ -135,18 +135,18 @@ void CDisplay::InputCommand(std::string const & command)
 	}
 }
 
-void CDisplay::SetLet()
+void CInterpreter::SetLet()
 {
 	std::vector<std::string> splitingExpression = SplitStringBySymbol(InputExpession(), "=");
 	if (splitingExpression.size() == 2 && !splitingExpression[0].empty() && !splitingExpression[1].empty())
 	{
 		if (IsNumber(splitingExpression.back()))
 		{
-			OutputErrors(m_calculator.SetLet(splitingExpression.front(), StringToInt(splitingExpression.back())).GetError());
+			OutputErrors(m_calculator.SetValue(splitingExpression.front(), StringToInt(splitingExpression.back())).GetError());
 		}
 		else
 		{
-			OutputErrors(m_calculator.SetLet(splitingExpression.front(), splitingExpression.back()).GetError());
+			OutputErrors(m_calculator.AssignVar(splitingExpression.front(), splitingExpression.back()).GetError());
 		}
 	}
 	else
@@ -174,10 +174,10 @@ std::string FindOperator(std::string const & expression)
 	{
 		return "/";
 	}
-	return std::string();
+	return "";
 }
 
-void CDisplay::SetFn()
+void CInterpreter::SetFn()
 {
 	std::vector<std::string> splitingExpression = SplitStringBySymbol(InputExpession(), "=");
 	if (splitingExpression.size() == 2 && !splitingExpression.back().empty())
@@ -185,15 +185,15 @@ void CDisplay::SetFn()
 		std::string operatorExpression = FindOperator(splitingExpression.back());
 		if (operatorExpression.empty())
 		{
-			OutputErrors(m_calculator.SetFunction(splitingExpression.front(), splitingExpression.back()).GetError());
+			OutputErrors(m_calculator.DefineFunction(splitingExpression.front(), splitingExpression.back()).GetError());
 		}
 		else
 		{
 			std::vector<std::string> operands = SplitStringBySymbol(splitingExpression.back(), operatorExpression);
 			if (operands.size() == 2 && !operands.empty())
 			{
-				OutputErrors(m_calculator.SetFunction(splitingExpression.front(), 
-								operands.front(), operatorExpression, operands.back()).GetError());
+				OutputErrors(m_calculator.DefineFunction(splitingExpression.front(), 
+								operands.front(), OPERATOR_MAP.find(operatorExpression)->second, operands.back()).GetError());
 			}
 		}
 	}
