@@ -8,6 +8,7 @@
 #include <functional>
 #include <Math.h>
 #include <limits>
+#include <set>
 #include <boost/optional.hpp>
 
 enum ErrorType
@@ -18,24 +19,12 @@ enum ErrorType
 	nameDuplication,
 	emptyOperand,
 	noVariable,
-	notDetermined,
-	notError
+	notDetermined
 };
 
-struct SPerform
-{
-public:
-	SPerform(ErrorType error = notError)
-		: m_error(error)
-	{
-	};
-	ErrorType GetError() const
-	{
-		return m_error;
-	};
-private:
-	ErrorType m_error;
-};
+using SPerform = boost::optional<ErrorType>;
+
+static std::set<std::string> COMMANDS { "var", "print", "printvars", "printfns", "let", "fn" };
 
 enum class BinaryOperation
 {

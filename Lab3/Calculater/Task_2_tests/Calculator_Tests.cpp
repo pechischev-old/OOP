@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "../Calculater/Calculator.h"
+#include "../Calculater/Display.h"
 
 using namespace std;
 
@@ -17,45 +18,52 @@ struct SCalculator
 BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 	BOOST_AUTO_TEST_CASE(returns_false_if_the_variable_is_not_set)
 	{
-		BOOST_CHECK(calculator.DefineVar("").GetError() != ErrorType::notError);
+		BOOST_CHECK(calculator.DefineVar("").is_initialized());
 	}
 	BOOST_AUTO_TEST_CASE(returns_false_if_the_variable_name_does_not_match_demand)
 	{
-		BOOST_CHECK(calculator.DefineVar("1abcd").GetError() != ErrorType::notError);
-		BOOST_CHECK(calculator.DefineVar("_abcd").GetError() != ErrorType::notError);
+		BOOST_CHECK(calculator.DefineVar("1abcd").is_initialized());
+		BOOST_CHECK(calculator.DefineVar("_abcd").is_initialized());
 	}
 	BOOST_AUTO_TEST_CASE(returns_true_if_the_variable_is_set)
 	{
-		BOOST_CHECK(calculator.DefineVar("xyz").GetError() == ErrorType::notError);
-		BOOST_CHECK(calculator.DefineVar("xyz3").GetError() == ErrorType::notError);
-		BOOST_CHECK(calculator.DefineVar("xy_z").GetError() == ErrorType::notError);
+		BOOST_CHECK(!calculator.DefineVar("xyz").is_initialized());
+		BOOST_CHECK(!calculator.DefineVar("xyz3").is_initialized());
+		BOOST_CHECK(!calculator.DefineVar("xy_z").is_initialized());
 	}
 	BOOST_AUTO_TEST_CASE(cannot_set_variable_when_it_is_already_taken)
 	{
 		calculator.DefineVar("somevar");
-		BOOST_CHECK(calculator.DefineVar("somevar").GetError() != ErrorType::notError);
+		BOOST_CHECK(calculator.DefineVar("somevar").is_initialized());
+	}
+
+	BOOST_AUTO_TEST_CASE(cannot_set_variable_when_value_uncorrect)
+	{
+		BOOST_CHECK(IsNumber("10.100."));
+		BOOST_CHECK(IsNumber("10.100"));
+		BOOST_CHECK(IsNumber("10.100.555"));
 	}
 
 	BOOST_AUTO_TEST_CASE(can_set_the_value_of_an_existing_variable)
 	{
 		calculator.DefineVar("somevar");
-		BOOST_CHECK(calculator.SetValue("somevar", 5).GetError() == ErrorType::notError);
+		BOOST_CHECK(!calculator.SetValue("somevar", 5).is_initialized());
 		BOOST_CHECK_EQUAL(calculator.GetValue("somevar"), "5.00");
-		BOOST_CHECK(calculator.SetValue("s", 5).GetError() == ErrorType::notError);
+		BOOST_CHECK(!calculator.SetValue("s", 5).is_initialized());
 		BOOST_CHECK_EQUAL(calculator.GetValue("s"), "5.00");
 	}
 	BOOST_AUTO_TEST_CASE(can_set_the_value_when_it_the_variable_is_not_set)
 	{
-		BOOST_CHECK(calculator.SetValue("someVar", 5).GetError() == ErrorType::notError);
+		BOOST_CHECK(!calculator.SetValue("someVar", 5).is_initialized());
 	}
 	BOOST_AUTO_TEST_CASE(cannot_pass_the_value_of_another_variable_when_other_variable_is_not_determinate)
 	{
-		BOOST_CHECK(calculator.AssignVar("someVar", "somevar").GetError() != ErrorType::notError);
+		BOOST_CHECK(calculator.AssignVar("someVar", "somevar").is_initialized());
 	}
 	BOOST_AUTO_TEST_CASE(can_pass_the_value_of_another_variable_when_other_variable_is_determinate)
 	{
 		calculator.DefineVar("somevar");
-		BOOST_CHECK(calculator.AssignVar("someVar", "somevar").GetError() == ErrorType::notError);
+		BOOST_CHECK(!calculator.AssignVar("someVar", "somevar").is_initialized());
 	}
 	struct when_set_variables_ : SCalculator
 	{
@@ -69,19 +77,19 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, SCalculator)
 	BOOST_FIXTURE_TEST_SUITE(when_set_variables, when_set_variables_)
 		BOOST_AUTO_TEST_CASE(function_can_be_set_to_name_of_the_variable)
 		{
-			BOOST_CHECK(calculator.DefineFunction("SomeFunction", "x").GetError() == ErrorType::notError);
+			BOOST_CHECK(!calculator.DefineFunction("SomeFunction", "x").is_initialized());
 		}
 		BOOST_AUTO_TEST_CASE(function_cannot_be_set_to_the_name_if_it_does_not_match_demand)
 		{
-			BOOST_CHECK(calculator.DefineFunction("2omeFunction", "x").GetError() != ErrorType::notError);
-			BOOST_CHECK(calculator.DefineFunction("", "x").GetError() != ErrorType::notError);
+			BOOST_CHECK(calculator.DefineFunction("2omeFunction", "x").is_initialized());
+			BOOST_CHECK(calculator.DefineFunction("", "x").is_initialized());
 		}
 		BOOST_AUTO_TEST_CASE(function_takes_the_value_of_the_expression)
 		{
-			BOOST_CHECK(calculator.DefineFunction("SomeFunction1", "x", BinaryOperation::Div, "z").GetError() == ErrorType::notError);
-			BOOST_CHECK(calculator.DefineFunction("SomeFunction2", "x", BinaryOperation::Add, "z").GetError() == ErrorType::notError);
-			BOOST_CHECK(calculator.DefineFunction("SomeFunction3", "x", BinaryOperation::Substr, "z").GetError() == ErrorType::notError);
-			BOOST_CHECK(calculator.DefineFunction("SomeFunction2", "y", BinaryOperation::Multiply, "z").GetError() == ErrorType::notError);
+			BOOST_CHECK(!calculator.DefineFunction("SomeFunction1", "x", BinaryOperation::Div, "z").is_initialized());
+			BOOST_CHECK(!calculator.DefineFunction("SomeFunction2", "x", BinaryOperation::Add, "z").is_initialized());
+			BOOST_CHECK(!calculator.DefineFunction("SomeFunction3", "x", BinaryOperation::Substr, "z").is_initialized());
+			BOOST_CHECK(!calculator.DefineFunction("SomeFunction2", "y", BinaryOperation::Multiply, "z").is_initialized());
 		}
 
 		BOOST_AUTO_TEST_CASE(display_values_by_one_name_variable)

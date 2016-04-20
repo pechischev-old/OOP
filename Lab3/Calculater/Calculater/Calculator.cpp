@@ -17,9 +17,13 @@ bool IsCorrectName(std::string const & nameVar)
 SPerform CCalculator::DefineVar(string const & variable)
 {
 	if (!IsCorrectName(variable))
+	{
 		return SPerform(uncorrectNameVar);
+	}
 	else if (IsFunction(variable))
+	{
 		return SPerform(cannotBeFunction);
+	}
 	else if (!IsVar(variable))
 	{
 		m_variables.insert(pair<string, SVarInfo>(variable, SVarInfo()));
@@ -31,13 +35,17 @@ SPerform CCalculator::DefineVar(string const & variable)
 SPerform CCalculator::AssignVar(std::string const & var, std::string const & otherVar)
 {
 	if (otherVar.empty())
+	{
 		return SPerform(emptyOperand);
+	}
 	if (!IsVar(otherVar) && !IsFunction(otherVar))
+	{
 		return SPerform(notDetermined);
+	}
 	if (!IsVar(var))
 	{
 		SPerform perform = DefineVar(var);
-		if (perform.GetError() != ErrorType::notError)
+		if (perform.is_initialized())
 		{
 			return perform;
 		}
@@ -57,11 +65,13 @@ SPerform CCalculator::AssignVar(std::string const & var, std::string const & oth
 SPerform CCalculator::SetValue(std::string const & var, double const & value)
 {
 	if (IsFunction(var))
+	{
 		return SPerform(cannotBeFunction);
+	}
 	if (!IsVar(var))
 	{
 		SPerform perform = DefineVar(var);
-		if (perform.GetError() != ErrorType::notError)
+		if (perform.is_initialized())
 		{
 			return perform;
 		}
@@ -85,8 +95,9 @@ bool CCalculator::IsFunction(std::string const & nameFunction) const
 SPerform CCalculator::DefineFunction(std::string const & varFunction, std::string const & var)
 {
 	if (IsVar(varFunction))
+	{
 		return SPerform(cannotBeVariables);
-
+	}
 	if (var.empty())
 	{
 		return SPerform(emptyOperand);
@@ -146,8 +157,11 @@ double CCalculator::GetCalculateValue(std::string const & name)
 {
 	if (IsFunction(name))
 	{
+		
 		if (m_function[name].value.is_initialized())
+		{
 			return m_function[name].value.get();
+		}
 		else
 		{
 			CalculateValueFunction(m_function[name]);
@@ -200,7 +214,7 @@ std::string CCalculator::GetValue(std::string const &var)
 	}
 	else if (IsVar(var))
 	{
-		return (m_variables[var].value.is_initialized() ? GetFormatingString(m_variables[var].value.get()) : "nan");
+		return (m_variables[var].value.is_initialized() ? GetFormatingString(m_variables[var].value.value()) : "nan");
 	}
 	return string();
 }
@@ -226,38 +240,35 @@ std::list<std::string> CCalculator::DumpVars() const
 
 std::list<std::string> CCalculator::DumpFns()
 {
-	if (!m_function.empty())
+	list<string> resultList;
+	for (auto it : m_function)
 	{
-		list<string> resultList;
-		for (auto it : m_function)
-		{
-			resultList.push_back(it.first + ":" + GetStringCalculatingFn(FindFunction(it.first)));
-		}
-		return resultList;
+		resultList.push_back(it.first + ":" + GetStringCalculatingFn(FindFunction(it.first)));
 	}
-	return list<string>();
+	return resultList;
 }
 
-SFnInfo CCalculator::FindFunction(std::string const & function) 
+SFnInfo CCalculator::FindFunction(std::string const & functionName) 
 {
-	if (IsFunction(function))
+	if (IsFunction(functionName))
 	{
-		if (m_function[function].isBinary)
+		auto & function = m_function[functionName];
+		if (function.isBinary)
 		{
-			CalculateValueFunction(m_function[function]);
+			CalculateValueFunction(function);
 		}
 		else
 		{
-			if (IsFunction(m_function[function].leftOperand))
+			if (IsFunction(function.leftOperand))
 			{
-				m_function[function].value = m_function[m_function[function].leftOperand].value;
+				function.value = m_function[function.leftOperand].value;
 			}
 			else
 			{
-				m_function[function].value = m_variables[m_function[function].leftOperand].value;
+				function.value = m_variables[function.leftOperand].value;
 			}
 		}
-		return m_function[function];
+		return function;
 	}
 	return SFnInfo();
 }
