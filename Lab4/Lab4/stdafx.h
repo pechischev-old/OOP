@@ -15,6 +15,9 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <vector>
+#include <iostream>
+#include <memory>
 
 
 // TODO: Установите здесь ссылки на дополнительные заголовки, требующиеся для программы
