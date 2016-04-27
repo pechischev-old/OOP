@@ -2,25 +2,18 @@
 
 
 
-CSolidBody::CSolidBody(double density, double radius, double height, std::string name)
+CSolidBody::CSolidBody(double density, std::string name)
 	:CBody(name, density)
-	, m_radius(radius)
-	, m_height(height)
+	, m_density(density)
 {
 }
 
-double CSolidBody::GetRadius() const
+double CSolidBody::GetMass() const
 {
-	return m_radius;
+	return GetDensity() * GetVolume();
 }
 
-double CSolidBody::GetHeight() const
+double CSolidBody::GetDensity() const
 {
-	return m_height;
-}
-
-void CSolidBody::AppendProperties(std::ostream & strm) const
-{
-	strm << "\tradius = " << GetRadius() << std::endl;
-	strm << "\theight = " << GetHeight() << std::endl;
+	return m_density;
 }

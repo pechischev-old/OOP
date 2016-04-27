@@ -13,7 +13,7 @@ struct Cone_
 	{}
 };
 
-// Сфера
+// Конус
 BOOST_FIXTURE_TEST_SUITE(Cone, Cone_)
 	// является объемным телом
 	BOOST_AUTO_TEST_CASE(is_a_body)
@@ -25,7 +25,7 @@ BOOST_FIXTURE_TEST_SUITE(Cone, Cone_)
 	{
 		BOOST_CHECK_EQUAL(cone.GetRadius(), expectedRadius);
 	}
-	// имеет радиус
+	// имеет высоту
 	BOOST_AUTO_TEST_CASE(has_a_height)
 	{
 		BOOST_CHECK_EQUAL(cone.GetHeight(), expectedHeight);

@@ -3,7 +3,7 @@
 
 
 CCone::CCone(double density, double radius, double height)
-	: CSolidBody(density, radius, height, "Cone")
+	: CVolumeBody(density, radius, height, "Cone")
 {
 }
 

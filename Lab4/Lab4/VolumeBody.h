@@ -2,16 +2,15 @@
 #include "stdafx.h"
 #include "SolidBody.h"
 
-
-class CSphere final : public CSolidBody
+class CVolumeBody : public CSolidBody
 {
 public:
-	CSphere(double density, double radius);
+	CVolumeBody(double density, double radius, double height, std::string name);
 	double GetRadius() const;
-	double GetVolume() const override;
+	double GetHeight() const;
 protected:
 	void AppendProperties(std::ostream & strm) const override;
-private:
 	double m_radius;
+	double m_height;
 };
 

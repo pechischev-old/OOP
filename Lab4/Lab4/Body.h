@@ -7,15 +7,15 @@ class CBody
 public:
 	CBody(const std::string & type, double density);
 
-	double GetDensity() const;
+	virtual double GetDensity() const = 0;
 	virtual double GetVolume() const = 0;
-	double GetMass() const;
+	virtual double GetMass() const = 0;
 	std::string ToString() const;
 
 	virtual ~CBody();
 protected:
 	virtual void AppendProperties(std::ostream & strm) const = 0;
-private:
 	double m_density;
+private:
 	std::string m_type;
 };

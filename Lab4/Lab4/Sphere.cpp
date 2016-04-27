@@ -2,7 +2,7 @@
 
 
 CSphere::CSphere(double density, double radius)
-	: CBody("Sphere", density)
+	: CSolidBody(density, "Sphere")
 	, m_radius(radius)
 {
 }

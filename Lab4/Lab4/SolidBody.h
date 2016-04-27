@@ -6,12 +6,10 @@
 class CSolidBody : public CBody
 {
 public:
-	CSolidBody(double density, double radius, double height, std::string name);
-	double GetRadius() const;
-	double GetHeight() const;
+	CSolidBody(double density, std::string name);
+	double GetMass() const override;
+	double GetDensity() const override;
 protected:
-	void AppendProperties(std::ostream & strm) const override;
-	double m_radius;
-	double m_height;
+	double m_density;
 };
 

@@ -6,19 +6,19 @@ void CInterpreter::CreateShape(std::string const & name)
 {
 	if (name == "cone")
 	{
-		shapes.push_back(make_shared<CBody *>(new CCone(GetDensity(), GetRadius(), GetHeight())));
+		shapes.push_back(make_shared<CCone>(CCone(GetDensity(), GetRadius(), GetHeight())));
 	}
 	else if (name == "cylinder")
 	{
-		shapes.push_back(make_shared<CBody *>(new CCylinder(GetDensity(), GetRadius(), GetHeight())));
+		shapes.push_back(make_shared<CCylinder>(CCylinder(GetDensity(), GetRadius(), GetHeight())));
 	}
 	else if (name == "sphere")
 	{
-		shapes.push_back(make_shared<CBody *>(new CSphere(GetDensity(), GetRadius())));
+		shapes.push_back(make_shared<CSphere>(CSphere(GetDensity(), GetRadius())));
 	}
 	else if (name == "parallelepiped")
 	{
-		shapes.push_back(make_shared<CBody *>(new CParallelepiped(GetDensity(), GetHeight(), GetWidth(), GetDepth())));
+		shapes.push_back(make_shared<CParallelepiped>(CParallelepiped(GetDensity(), GetHeight(), GetWidth(), GetDepth())));
 	}
 	else
 	{
@@ -74,13 +74,13 @@ void CInterpreter::DisplaySummaryInfo()
 	double minWeight = std::numeric_limits<double>::infinity();
 	for (auto it : shapes)
 	{
-		auto *shape = *it.get();
+		auto shape = it.get();
 		if (maxMass < shape->GetMass())
 		{
 			maxMass = shape->GetMass();
 			figureWithMaxMass = shape;
 		}
-		double weight = (shape->GetDensity() - 1000) * 10 * shape->GetVolume();
+		double weight = abs((shape->GetDensity() - 1000)) * 10 * shape->GetVolume();
 		if (minWeight > weight)
 		{
 			minWeight = weight;

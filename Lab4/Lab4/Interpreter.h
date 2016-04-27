@@ -10,7 +10,7 @@ class CInterpreter
 {
 public:
 	CInterpreter() = default;
-	void CreateShape(std::string const & name);
+	void CreateShape(std::string const & name); // TODO: use pattern Fabrics
 	void DisplaySummaryInfo();
 private:
 	// TODO: rename
@@ -20,6 +20,6 @@ private:
 	double GetDepth();
 	double GetWidth();
 private:
-	std::vector<std::shared_ptr<CBody *>> shapes;
+	std::vector<std::shared_ptr<CBody>> shapes;
 };
 
