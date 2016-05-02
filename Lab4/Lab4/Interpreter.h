@@ -6,20 +6,21 @@
 #include "Parallelepiped.h"
 #include "Sphere.h"
 
+class CBodyFactory
+{
+public:
+	static std::shared_ptr<CBody> CreateBody(std::string const & name);
+private:
+	static double GetData(std::string const & type);
+};
+
 class CInterpreter
 {
 public:
 	CInterpreter() = default;
-	void CreateShape(std::string const & name); // TODO: use pattern Fabrics
+	void SetBody(std::string const & name); 
 	void DisplaySummaryInfo();
 private:
-	// TODO: rename
-	double GetRadius();
-	double GetHeight();
-	double GetDensity();
-	double GetDepth();
-	double GetWidth();
-private:
-	std::vector<std::shared_ptr<CBody>> shapes;
+	std::vector<std::shared_ptr<CBody>> bodies;
 };
 

@@ -2,68 +2,45 @@
 
 using namespace std;
 
-void CInterpreter::CreateShape(std::string const & name)
+
+std::shared_ptr<CBody> CBodyFactory::CreateBody(std::string const & name)
 {
+	std::shared_ptr<CBody> body;
 	if (name == "cone")
 	{
-		shapes.push_back(make_shared<CCone>(CCone(GetDensity(), GetRadius(), GetHeight())));
+		body = make_shared<CCone>(CCone(GetData("density"), GetData("radius"), GetData("height")));
 	}
 	else if (name == "cylinder")
 	{
-		shapes.push_back(make_shared<CCylinder>(CCylinder(GetDensity(), GetRadius(), GetHeight())));
+		body = make_shared<CCylinder>(CCylinder(GetData("density"), GetData("radius"), GetData("height")));
 	}
 	else if (name == "sphere")
 	{
-		shapes.push_back(make_shared<CSphere>(CSphere(GetDensity(), GetRadius())));
+		body = make_shared<CSphere>(CSphere(GetData("density"), GetData("radius")));
 	}
 	else if (name == "parallelepiped")
 	{
-		shapes.push_back(make_shared<CParallelepiped>(CParallelepiped(GetDensity(), GetHeight(), GetWidth(), GetDepth())));
+		body = make_shared<CParallelepiped>(CParallelepiped(GetData("density"), GetData("height"), GetData("width"), GetData("depth")));
 	}
 	else
 	{
-		cerr << "Unknown type of shape" << endl;
+		throw::invalid_argument("Unknown type of shape");
 	}
+	return body;
 }
 
-double CInterpreter::GetRadius()
+double CBodyFactory::GetData(std::string const & type)
 {
-	double radius;
-	cout << "radius = ";
-	cin >> radius;
-	return radius;
+	double data;
+	cout << type + "= ";
+	cin >> data;
+	return data;
 }
 
-double CInterpreter::GetHeight()
-{
-	double height;
-	cout << "height = ";
-	cin >> height;
-	return height;
-}
 
-double CInterpreter::GetDensity()
+void CInterpreter::SetBody(std::string const & name)
 {
-	double density;
-	cout << "density = ";
-	cin >> density;
-	return density;
-}
-
-double CInterpreter::GetDepth()
-{
-	double depth;
-	cout << "depth = ";
-	cin >> depth;
-	return depth;
-}
-
-double CInterpreter::GetWidth()
-{
-	double width;
-	cout << "width = ";
-	cin >> width;
-	return width;
+	bodies.push_back(CBodyFactory::CreateBody(name));
 }
 
 void CInterpreter::DisplaySummaryInfo()
@@ -72,7 +49,7 @@ void CInterpreter::DisplaySummaryInfo()
 	CBody *lightFigure = nullptr;
 	double maxMass = 0;
 	double minWeight = std::numeric_limits<double>::infinity();
-	for (auto it : shapes)
+	for (auto it : bodies)
 	{
 		auto shape = it.get();
 		if (maxMass < shape->GetMass())
@@ -97,3 +74,4 @@ void CInterpreter::DisplaySummaryInfo()
 		cout << "A figure which can easily weigh in water:\n" << lightFigure->ToString() << endl;
 	}
 }
+

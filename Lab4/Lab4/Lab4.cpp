@@ -16,7 +16,7 @@ int main()
 		std::cin >> shapeName;
 		if (!std::cin.fail())
 		{
-			interpreter.CreateShape(shapeName);
+			interpreter.SetBody(shapeName);
 		}
 	}
 	interpreter.DisplaySummaryInfo();
