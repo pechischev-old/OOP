@@ -47,6 +47,17 @@ unsigned GCD(unsigned a, unsigned b)
 	return (a != 0) ? a : 1;
 }
 
+std::pair<int, CRational> CRational::ToCompoundFraction() const
+{
+	if (abs(m_numerator) > m_denominator)
+	{
+		int integerPart = m_numerator / m_denominator;
+		int numerator = m_numerator - (m_denominator * integerPart);
+		return std::pair<int, CRational>(integerPart, CRational(numerator, m_denominator));
+	}
+	return std::pair<int, CRational>(0, *this);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // TODO: 1. Реализовать метод ToDouble() согласно заданию
 //////////////////////////////////////////////////////////////////////////
@@ -89,15 +100,12 @@ CRational operator-(CRational const & rational1, CRational const & rational2)
 	rational1.GetDenominator() * rational2.GetDenominator()));
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // TODO: 5. Реализовать оператор +=
 //////////////////////////////////////////////////////////////////////////
-CRational CRational::operator+=(CRational const & right)
+CRational& CRational::operator+=(CRational const & right)
 {
-	m_numerator = right.GetDenominator() * m_numerator + right.GetNumerator() * m_denominator;
-	m_denominator *= right.GetDenominator();
-	Normalize();
+	*this = *this + right;
 	return *this;
 }
 
@@ -106,11 +114,9 @@ CRational CRational::operator+=(CRational const & right)
 // TODO: 6. Реализовать оператор -=
 //////////////////////////////////////////////////////////////////////////
 
-CRational CRational::operator-=(CRational const & right)
+CRational& CRational::operator-=(CRational const & right)
 {
-	m_numerator = right.GetDenominator() * m_numerator - right.GetNumerator() * m_denominator;
-	m_denominator *= right.GetDenominator();
-	Normalize();
+	*this = *this - right;
 	return *this;
 }
 
@@ -119,13 +125,20 @@ CRational CRational::operator-=(CRational const & right)
 // TODO: 7. Реализовать оператор *
 //////////////////////////////////////////////////////////////////////////
 
-
-
+CRational operator*(CRational const & rational1, CRational const & rational2)
+{
+	return CRational(rational1.GetNumerator() * rational2.GetNumerator(), 
+		rational1.GetDenominator() * rational2.GetDenominator());
+}
 
 //////////////////////////////////////////////////////////////////////////
 // TODO: 8. Реализовать оператор /
 //////////////////////////////////////////////////////////////////////////
-
+CRational operator/ (CRational const &rational1, CRational const &rational2)
+{
+	return CRational(rational1.GetNumerator() * rational2.GetDenominator(), 
+		rational1.GetDenominator() * rational2.GetNumerator());
+}
 
 
 
@@ -133,40 +146,95 @@ CRational CRational::operator-=(CRational const & right)
 // TODO: 9. Реализовать оператор *=
 //////////////////////////////////////////////////////////////////////////
 
-
+CRational& CRational::operator*=(CRational const & right)
+{
+	*this = *this * right;
+	return *this;
+}
 
 
 //////////////////////////////////////////////////////////////////////////
 // TODO: 10. Реализовать оператор /=
 //////////////////////////////////////////////////////////////////////////
 
-
+CRational& CRational::operator/=(CRational const & right)
+{
+	*this = *this / right;
+	return *this;
+}
 
 
 //////////////////////////////////////////////////////////////////////////
 // TODO: 11. Реализовать операторы == и !=
 //////////////////////////////////////////////////////////////////////////
 
+bool const operator== (CRational const &rational1, CRational const &rational2)
+{
+	return (rational1.GetNumerator() == rational2.GetNumerator()) && 
+		(rational1.GetDenominator() == rational2.GetDenominator());
+}
 
-
+bool const operator!= (CRational const &rational1, CRational const &rational2)
+{
+	return !(rational1 == rational2);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // TODO: 12. Реализовать операторы <, >, <=, >=
 //////////////////////////////////////////////////////////////////////////
 
+bool const operator< (CRational const &rational1, CRational const &rational2)
+{
+	return (rational1.GetNumerator() * rational2.GetDenominator() < rational2.GetNumerator() * rational1.GetDenominator());
+}
 
+bool const operator> (CRational const &rational1, CRational const &rational2)
+{
+	return (rational1.GetNumerator() * rational2.GetDenominator() > rational2.GetNumerator() * rational1.GetDenominator());
+}
+
+bool const operator<= (CRational const &rational1, CRational const &rational2)
+{
+	return (rational1.GetNumerator() * rational2.GetDenominator() <= rational2.GetNumerator() * rational1.GetDenominator());
+}
+
+bool const operator>= (CRational const &rational1, CRational const &rational2)
+{
+	return (rational1.GetNumerator() * rational2.GetDenominator() >= rational2.GetNumerator() * rational1.GetDenominator());
+}
 
 
 //////////////////////////////////////////////////////////////////////////
 // TODO: 13. Реализовать оператор вывода рационального числа в выходной поток 
 //////////////////////////////////////////////////////////////////////////
 
-
-
-
+std::ostream & operator << (std::ostream  & strm, CRational const &rational)
+{
+	return (strm << rational.GetNumerator() << '/' << rational.GetDenominator());
+}
 
 //////////////////////////////////////////////////////////////////////////
 // TODO: 14. Реализовать оператор ввода рационального числа из входного потока 
 //////////////////////////////////////////////////////////////////////////
+int StringToInt(std::string const & numberStr)
+{
+	std::stringstream ss(numberStr);
+	int upperBound = 0;
+	ss >> upperBound;
+	return upperBound;
+}
 
+
+std::istream & operator>> (std::istream & strm, CRational &rational)
+{
+	int numerator;
+	int denominator;
+	if (strm >> numerator && strm.get() == '/' && strm >> denominator)
+	{
+		rational = CRational(numerator, denominator);
+		return strm;
+	}
+	return strm;
+
+}
 

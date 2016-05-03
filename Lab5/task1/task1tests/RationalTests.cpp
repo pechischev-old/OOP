@@ -176,24 +176,20 @@ BOOST_AUTO_TEST_CASE(has_adding_assigment_operator)
 // (1/2) -= (1/6)  → (1/3)
 // (1/2) -= 1      → (-1/2)
 //////////////////////////////////////////////////////////////////////////
+
 BOOST_AUTO_TEST_CASE(operator_minus_assignment_substract_from_rational)
 {
 	CRational rat1(3, 5);
 	CRational rat2(-3, 7);
 	rat1 -= rat2;
-	BOOST_CHECK_EQUAL(rat1.GetNumerator(), 36);
-	BOOST_CHECK_EQUAL(rat1.GetDenominator(), 35);
+	VerifyRational(rat1, 36, 35);
 	BOOST_CHECK(rat1.GetNumerator() != -36);
 	BOOST_CHECK(rat1.GetDenominator() != 39);
 	rat1 = CRational(2, 3);
 	rat2 = CRational(3, 2);
 	rat1 -= rat2;
-	BOOST_CHECK_EQUAL(rat1.GetNumerator(), -5);
-	BOOST_CHECK_EQUAL(rat1.GetDenominator(), 6);
-
+	VerifyRational(rat1, -5, 6);
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 // TODO: 7. Реализовать оператор *
@@ -204,9 +200,18 @@ BOOST_AUTO_TEST_CASE(operator_minus_assignment_substract_from_rational)
 //	(7*2) / 3     = (14/3)
 //////////////////////////////////////////////////////////////////////////
 
+BOOST_AUTO_TEST_CASE(can_multiply_rational_numbers) 
+{
+	VerifyRational(CRational(1, 2) * CRational(2, 3), 1, 3);
+	VerifyRational(CRational(1, 2) * (-3), -3, 2);
+	VerifyRational(10 * CRational(3, 5), 6, 1);
 
-
-
+	VerifyRational(CRational(1, 2) * CRational(2, 4), 1, 4);
+	VerifyRational(CRational(1, 2) * 2, 1, 1);
+	VerifyRational(2 * CRational(1, 2), 1, 1);
+	VerifyRational(0 * CRational(1, 2), 0, 1);
+	VerifyRational(-3 * CRational(1, 2), -3, 2);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // TODO: 8. Реализовать оператор /
@@ -217,9 +222,19 @@ BOOST_AUTO_TEST_CASE(operator_minus_assignment_substract_from_rational)
 //	7 ⁄ (2/3)     = (21/2)
 //////////////////////////////////////////////////////////////////////////
 
+BOOST_AUTO_TEST_CASE(can_divide_rational_numbers)
+{
+	VerifyRational(CRational(1, 2) / CRational(2, 3), 3, 4);
+	VerifyRational(CRational(1, 2) / 5, 1, 10);
+	VerifyRational(7 / CRational(2, 3), 21, 2);
+}
 
+BOOST_AUTO_TEST_CASE(can_not_be_divide_rational_on_zero)
+{
+	BOOST_REQUIRE_THROW(auto answer = CRational(1, 2) / CRational(0), std::invalid_argument::exception);
 
-
+	BOOST_REQUIRE_THROW(auto answer = CRational(1, 2) / CRational(0, 1), std::invalid_argument::exception);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // TODO: 9. Реализовать оператор *=
@@ -229,9 +244,18 @@ BOOST_AUTO_TEST_CASE(operator_minus_assignment_substract_from_rational)
 //	(1/2) *= 3     → (3/2)
 //////////////////////////////////////////////////////////////////////////
 
+BOOST_AUTO_TEST_CASE(can_multiply_the_value_of_the_first_rational_number_to_another)
+{
+	CRational rat1(1, 2);
+	rat1 *= CRational(2, 3);
+	VerifyRational(rat1, 1, 3);
 
-
-
+	CRational rat2(1, 2);
+	rat2 *= 3;
+	VerifyRational(rat2, 3, 2);
+	rat2 *= 0;
+	VerifyRational(rat2, 0, 1);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // TODO: 10. Реализовать оператор /=
@@ -241,7 +265,18 @@ BOOST_AUTO_TEST_CASE(operator_minus_assignment_substract_from_rational)
 //	(1/2) /= 3     → (1/6)
 //////////////////////////////////////////////////////////////////////////
 
+BOOST_AUTO_TEST_CASE(can_divide_the_value_of_the_first_rational_number_to_another)
+{
+	CRational rat1(1, 2);
+	rat1 /= CRational(2, 3);
+	VerifyRational(rat1, 3, 4);
 
+	CRational rat2(1, 2);
+	rat2 /= 3;
+	VerifyRational(rat2, 1, 6);
+
+	BOOST_REQUIRE_THROW(CRational(45, 7) /= 0, std::invalid_argument::exception);
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -256,7 +291,16 @@ BOOST_AUTO_TEST_CASE(operator_minus_assignment_substract_from_rational)
 //	3 != (2/3)     → true
 //////////////////////////////////////////////////////////////////////////
 
+BOOST_AUTO_TEST_CASE(can_check_equality_and_inequality_of_two_rational_numbers)
+{
+	BOOST_CHECK(CRational(1, 2) == CRational(1, 2));
+	BOOST_CHECK(CRational(4, 1) == 4);
+	BOOST_CHECK(3 == CRational(3, 1));
 
+	BOOST_CHECK(CRational(1, 2) != CRational(2, 3));
+	BOOST_CHECK(CRational(1, 2) != 7);
+	BOOST_CHECK(3 != CRational(2, 3));
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -271,6 +315,16 @@ BOOST_AUTO_TEST_CASE(operator_minus_assignment_substract_from_rational)
 //	3 >= (8/2)     → false
 //////////////////////////////////////////////////////////////////////////
 
+BOOST_AUTO_TEST_CASE(can_compare_two_rational_numbers)
+{
+	BOOST_CHECK(CRational(1, 2) >= CRational(1, 3));
+	BOOST_CHECK(! (CRational(1, 2) <= CRational(1, 3)));
+
+	BOOST_CHECK(CRational(3, 1) > 2);
+	BOOST_CHECK(CRational(1, 2) < 7);
+	BOOST_CHECK(3 <= CRational(7, 2));
+	BOOST_CHECK(!(3 >= CRational(8, 2)));
+}
 
 
 
@@ -280,7 +334,19 @@ BOOST_AUTO_TEST_CASE(operator_minus_assignment_substract_from_rational)
 //	например: 7/15
 //////////////////////////////////////////////////////////////////////////
 
+void VerifyOutputStream(CRational const & rational, std::string const & reference)
+{
+	std::ostringstream strm;
+	strm << rational;
+	BOOST_CHECK_EQUAL(strm.str(), reference);
+}
 
+BOOST_AUTO_TEST_CASE(rational_number_can_be_displayed_in_the_output_stream)
+{
+	VerifyOutputStream(CRational(1, 2), "1/2");
+	VerifyOutputStream(CRational(-8, 45), "-8/45");
+	VerifyOutputStream(0, "0/1");
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -289,6 +355,34 @@ BOOST_AUTO_TEST_CASE(operator_minus_assignment_substract_from_rational)
 //	например: 7/15
 //////////////////////////////////////////////////////////////////////////
 
+void VerifyInputStream(CRational const & rational, std::string const & inputStr)
+{
+	std::istringstream strm(inputStr);
+	CRational gettingRational;
+	strm >> gettingRational;
+	VerifyRational(gettingRational, rational.GetNumerator(), rational.GetDenominator());
+}
 
+BOOST_AUTO_TEST_CASE(rational_number_can_be_obtained_from_the_input_stream)
+{
+	VerifyInputStream(CRational(1, 2), "1/2");
+	VerifyInputStream(CRational(-8, 45), "-8/45");
+	VerifyInputStream(0, "0/1");
+	VerifyInputStream(-8, "-8/1");
+}
+
+void VerifyCompoundFraction(CRational const & rational, int const & integerPart, CRational const & rationalReference)
+{
+	std::pair<int, CRational> compoundFraction = rational.ToCompoundFraction();
+	BOOST_CHECK_EQUAL(compoundFraction.first, integerPart);
+	VerifyRational(compoundFraction.second, rationalReference.GetNumerator(), rationalReference.GetDenominator());
+}
+
+BOOST_AUTO_TEST_CASE(rational_numbers_can_be_represented_in_the_form_of_compound_fraction)
+{
+	VerifyCompoundFraction(CRational(-10, 4), -2, CRational(-2, 4));
+	VerifyCompoundFraction(CRational(9, 4), 2, CRational(1, 4));
+	VerifyCompoundFraction(CRational(2, 4), 0, CRational(1, 2));
+}
 
 BOOST_AUTO_TEST_SUITE_END()
