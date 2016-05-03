@@ -12,6 +12,6 @@ public:
 protected:
 	void AppendProperties(std::ostream & strm) const override;
 private:
-	double m_radius;
+	double m_radius = 0;
 };
 

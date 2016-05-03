@@ -5,13 +5,16 @@
 #include "Cylinder.h"
 #include "Parallelepiped.h"
 #include "Sphere.h"
+#include "Compaund.h"
 
 class CBodyFactory
 {
 public:
-	static std::shared_ptr<CBody> CreateBody(std::string const & name);
+	std::shared_ptr<CBody> CreateBody(std::string const & name);
 private:
-	static double GetData(std::string const & type);
+	CCompound CreateCompound();
+	double GetData(std::string const & type);
+	unsigned nestingLevel = 0;
 };
 
 class CInterpreter
@@ -22,5 +25,6 @@ public:
 	void DisplaySummaryInfo();
 private:
 	std::vector<std::shared_ptr<CBody>> bodies;
+	CBodyFactory m_bodyFactory;
 };
 

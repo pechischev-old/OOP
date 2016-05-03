@@ -22,11 +22,34 @@ std::shared_ptr<CBody> CBodyFactory::CreateBody(std::string const & name)
 	{
 		body = make_shared<CParallelepiped>(CParallelepiped(GetData("density"), GetData("height"), GetData("width"), GetData("depth")));
 	}
+	else if (name == "compound")
+	{
+		++nestingLevel;
+		body = make_shared<CCompound>(CreateCompound());
+	}
 	else
 	{
 		throw::invalid_argument("Unknown type of shape");
 	}
 	return body;
+}
+
+CCompound CBodyFactory::CreateCompound()
+{
+	CCompound compound;
+	string name;
+	for (;;)
+	{
+		std::cout << "In compound " << nestingLevel << " > ";
+		cin >> name;
+		if (name == "exit")
+		{
+			break;
+		}
+		compound.AppendShape(CreateBody(name));
+	}
+	--nestingLevel;
+	return compound;
 }
 
 double CBodyFactory::GetData(std::string const & type)
@@ -38,9 +61,10 @@ double CBodyFactory::GetData(std::string const & type)
 }
 
 
+
 void CInterpreter::SetBody(std::string const & name)
 {
-	bodies.push_back(CBodyFactory::CreateBody(name));
+	bodies.push_back(m_bodyFactory.CreateBody(name));
 }
 
 void CInterpreter::DisplaySummaryInfo()

@@ -11,9 +11,15 @@ CCompound::CCompound()
 // TODO: может принимать себя из самого себя
 void CCompound::AppendShape(std::shared_ptr<CBody> && shape)
 {
-	m_shapes.push_back(move(shape));
-	AddMass();
-	AddVolume();
+	auto body = static_cast<const CBody*>(this);
+	auto second = static_cast<const CBody*>(shape.get());
+	if (body != second)
+	{
+		m_shapes.push_back(move(shape));
+		AddMass();
+		AddVolume();
+	}
+	
 }
 
 size_t CCompound::GetShapesCount() const

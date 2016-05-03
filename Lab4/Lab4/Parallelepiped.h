@@ -14,8 +14,8 @@ public:
 protected:
 	void AppendProperties(std::ostream & strm) const override;
 private:
-	double m_height;
-	double m_width;
-	double m_depth;
+	double m_height = 0;
+	double m_width = 0;
+	double m_depth = 0;
 };
 

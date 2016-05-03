@@ -22,4 +22,3 @@ private:
 	double m_mass = 0;
 	double m_volume = 0;
 };
-

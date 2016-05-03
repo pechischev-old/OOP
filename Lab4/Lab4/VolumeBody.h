@@ -10,7 +10,7 @@ public:
 	double GetHeight() const;
 protected:
 	void AppendProperties(std::ostream & strm) const override;
-	double m_radius;
-	double m_height;
+	double m_radius = 0;
+	double m_height = 0;
 };
 

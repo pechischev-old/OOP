@@ -10,6 +10,6 @@ public:
 	double GetMass() const override;
 	double GetDensity() const override;
 protected:
-	double m_density;
+	double m_density = 0;
 };
 

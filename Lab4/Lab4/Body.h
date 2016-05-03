@@ -15,7 +15,7 @@ public:
 	virtual ~CBody();
 protected:
 	virtual void AppendProperties(std::ostream & strm) const = 0;
-	double m_density;
+	double m_density = 0;
 private:
 	std::string m_type;
 };
