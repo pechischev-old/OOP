@@ -5,7 +5,7 @@
 class CVolumeBody : public CSolidBody
 {
 public:
-	CVolumeBody(double density, double radius, double height, std::string name);
+	CVolumeBody(double density, double radius, double height, std::string const & name);
 	double GetRadius() const;
 	double GetHeight() const;
 protected:

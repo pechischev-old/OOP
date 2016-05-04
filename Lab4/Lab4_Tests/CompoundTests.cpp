@@ -6,25 +6,21 @@ using namespace std;
 
 struct Compound_
 {
-	CCompound compaund;
-	Compound_() 
-		:compaund()
-	{
-	}
+	shared_ptr<CCompound> pCompound = make_shared<CCompound>();
 };
 
 BOOST_FIXTURE_TEST_SUITE(Compound, Compound_)
 	// является объемным телом
 	BOOST_AUTO_TEST_CASE(is_a_body)
 	{
-		BOOST_CHECK(static_cast<const CBody*>(&compaund));
+		BOOST_CHECK(static_cast<const CBody*>(pCompound.get()));
 	}
 	BOOST_AUTO_TEST_CASE(can_add_shape)
 	{
-		BOOST_CHECK_EQUAL(compaund.GetShapesCount(), 0);
+		BOOST_CHECK_EQUAL(pCompound->GetShapesCount(), 0);
 		auto cone = CCone(15, 10, 40);
-		compaund.AppendShape(make_shared<CCone>(CCone(15, 10, 40)));
-		BOOST_CHECK_EQUAL(compaund.GetShapesCount(), 1);
+		pCompound->AppendShape(make_shared<CCone>(CCone(15, 10, 40)));
+		BOOST_CHECK_EQUAL(pCompound->GetShapesCount(), 1);
 	}
 
 	struct Consist_of_one_body_ : Compound_
@@ -35,24 +31,24 @@ BOOST_FIXTURE_TEST_SUITE(Compound, Compound_)
 		const double expectedVolume = 4188.79;
 		Consist_of_one_body_()
 		{
-			compaund.AppendShape(make_shared<CCone>(CCone(expectedDensity, expectedRadius, expectedHeight)));
+			pCompound->AppendShape(make_shared<CCone>(CCone(expectedDensity, expectedRadius, expectedHeight)));
 		}
 	};
 	BOOST_FIXTURE_TEST_SUITE(Consist_of_one_body, Consist_of_one_body_)
 		// имеет плотность
 		BOOST_AUTO_TEST_CASE(has_a_density)
 		{
-			BOOST_CHECK_EQUAL(static_cast<const CBody &>(compaund).GetDensity(), expectedDensity);
+			BOOST_CHECK_EQUAL(pCompound->GetDensity(), expectedDensity);
 		}
 		// имеет объем
 		BOOST_AUTO_TEST_CASE(has_a_volume)
 		{
-			BOOST_CHECK_CLOSE_FRACTION(static_cast<const CBody &>(compaund).GetVolume(), expectedVolume, 1e-7);
+			BOOST_CHECK_CLOSE_FRACTION(pCompound->GetVolume(), expectedVolume, 1e-7);
 		}
 		// имеет массу
 		BOOST_AUTO_TEST_CASE(has_a_mass)
 		{
-			BOOST_CHECK_CLOSE_FRACTION(static_cast<const CBody &>(compaund).GetMass(), expectedVolume * expectedDensity, 1e-7);
+			BOOST_CHECK_CLOSE_FRACTION(pCompound->GetMass(), expectedVolume * expectedDensity, 1e-7);
 		}
 		// имеет строковое представление
 		BOOST_AUTO_TEST_CASE(can_be_converted_to_string)
@@ -68,13 +64,13 @@ Cone:
 	radius = 10
 	height = 40
 )";
-			BOOST_CHECK_EQUAL(static_cast<const CBody &>(compaund).ToString(), expectedString);
+			BOOST_CHECK_EQUAL(pCompound->ToString(), expectedString);
 		}
 		BOOST_AUTO_TEST_CASE(can_not_take_itself)
-		{
-			BOOST_CHECK_EQUAL(compaund.GetShapesCount(), 1);
-			compaund.AppendShape(make_shared<CCompound>(compaund));
-			BOOST_CHECK_EQUAL(compaund.GetShapesCount(), 1);
+		{			
+			BOOST_CHECK_EQUAL(pCompound->GetShapesCount(), 1);
+			pCompound->AppendShape(pCompound);
+			BOOST_CHECK_EQUAL(pCompound->GetShapesCount(), 1);
 		}
 	BOOST_AUTO_TEST_SUITE_END()
 
