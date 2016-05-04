@@ -216,25 +216,18 @@ std::ostream & operator << (std::ostream  & strm, CRational const &rational)
 //////////////////////////////////////////////////////////////////////////
 // TODO: 14. Реализовать оператор ввода рационального числа из входного потока 
 //////////////////////////////////////////////////////////////////////////
-int StringToInt(std::string const & numberStr)
-{
-	std::stringstream ss(numberStr);
-	int upperBound = 0;
-	ss >> upperBound;
-	return upperBound;
-}
-
 
 std::istream & operator>> (std::istream & strm, CRational &rational)
 {
 	int numerator;
 	int denominator;
+	auto pos = strm.tellg();
 	if (strm >> numerator && strm.get() == '/' && strm >> denominator)
 	{
 		rational = CRational(numerator, denominator);
 		return strm;
 	}
+	strm.seekg(pos);
 	return strm;
-
 }
 
