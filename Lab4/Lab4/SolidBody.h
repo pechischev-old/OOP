@@ -6,7 +6,7 @@
 class CSolidBody : public CBody
 {
 public:
-	CSolidBody(double density, std::string name);
+	CSolidBody(double density, std::string const & name);
 	double GetMass() const override;
 	double GetDensity() const override;
 protected:

@@ -2,7 +2,7 @@
 
 
 
-CSolidBody::CSolidBody(double density, std::string name)
+CSolidBody::CSolidBody(double density, std::string const & name)
 	:CBody(name, density)
 	, m_density(density)
 {
