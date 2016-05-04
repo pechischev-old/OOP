@@ -1,4 +1,6 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "stdafx.h"
 
 class CMyString
@@ -23,7 +25,7 @@ public:
 	CMyString(CMyString && other);
 
 	// конструктор, инициализирующий строку данными из 
-	// строкистандартнойбиблиотеки C++
+	// строки стандартной библиотеки C++
 	CMyString(std::string const & stlString);
 
 	// деструктор класса - освобождает память, занимаемую символами строки
@@ -43,7 +45,9 @@ public:
 	// очистка строки (строка становится снова нулевой длины)
 	void Clear();
 private:
-	size_t m_lenght;
+	void StrCpy(const char * str);
+	size_t m_lenght = 0;
+	char* m_string = nullptr;
 };
 
 
