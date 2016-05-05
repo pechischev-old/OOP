@@ -44,10 +44,20 @@ public:
 
 	// очистка строки (строка становится снова нулевой длины)
 	void Clear();
+
+	CMyString& operator= (CMyString const & str);
+	CMyString& operator= (CMyString && str);
+
+	CMyString& operator+= (CMyString const & str);
+	friend CMyString operator+(std::string const & str1, CMyString const & str2);
+	friend CMyString operator+(const char* str1, CMyString const & str2);
 private:
 	void StrCpy(const char * str);
-	size_t m_lenght = 0;
+	size_t m_length = 0;
 	char* m_string = nullptr;
 };
 
+CMyString operator+ (CMyString & str1, CMyString const & str2);
+CMyString operator+(std::string const & str1, CMyString const & str2);
+CMyString operator+(const char* str1, CMyString const & str2);
 

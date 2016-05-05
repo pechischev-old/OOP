@@ -38,11 +38,16 @@ BOOST_FIXTURE_TEST_SUITE(before_declared_string, my_string_can_be_declared_by_de
 
 BOOST_AUTO_TEST_SUITE_END()
 
+void VerifyString(CMyString const & str, size_t length, std::string const & reference)
+{
+	BOOST_CHECK_EQUAL(str.GetLength(), length);
+	BOOST_CHECK_EQUAL(str.GetStringData(), reference);
+}
+
 BOOST_AUTO_TEST_CASE(can_create_my_string_without_null_char)
 {
 	CMyString myStr("\0");
-	BOOST_CHECK_EQUAL(myStr.GetStringData(), "\0");
-	BOOST_CHECK_EQUAL(myStr.GetLength(), 0u);
+	VerifyString(myStr, 0u, "\0");
 }
 
 BOOST_AUTO_TEST_CASE(my_string_without_null_char_in_center_str_will_be_cut)
@@ -53,19 +58,8 @@ BOOST_AUTO_TEST_CASE(my_string_without_null_char_in_center_str_will_be_cut)
 }
 
 
-void VerifyString(CMyString const & str, size_t lenght, std::string const & reference)
-{
-	BOOST_CHECK_EQUAL(str.GetLength(), lenght);
-	BOOST_CHECK_EQUAL(str.GetStringData(), reference);
-}
+BOOST_AUTO_TEST_SUITE(creating_and_object_of_class_lines)
 
-BOOST_AUTO_TEST_SUITE(CreatingAnObjectOfClassLines)
-
-	BOOST_AUTO_TEST_CASE(can_set_string_by_default)
-	{
-		CMyString str;
-		VerifyString(str, 0u, "");
-	}
 	BOOST_AUTO_TEST_CASE(can_set_string_with_other_string)
 	{
 		CMyString str("4 cats");
@@ -106,4 +100,72 @@ BOOST_AUTO_TEST_CASE(can_get_a_substring)
 	BOOST_CHECK_EQUAL(str.SubString(0, 6).GetStringData(), "123456");
 }
 
+
+BOOST_AUTO_TEST_SUITE(assignment_operator)
+
+	BOOST_AUTO_TEST_CASE(can_assign_a_string_value)
+	{
+		CMyString str;
+		CMyString someString("SomeString");
+		str = someString;
+		BOOST_CHECK_EQUAL(str.GetStringData(), "SomeString");
+	}
+	BOOST_AUTO_TEST_CASE(can_reassign_a_string_value)
+	{
+		CMyString str("master");
+		BOOST_CHECK_EQUAL(str.GetStringData(), "master");
+		CMyString someString("SomeString");
+		str = someString;
+		BOOST_CHECK_EQUAL(str.GetStringData(), "SomeString");
+	}
+
+	BOOST_AUTO_TEST_CASE(can_assign_a_string_value_of_other_type)
+	{
+		CMyString str;
+		BOOST_CHECK_EQUAL((str = "SomeString").GetStringData(), "SomeString");
+		BOOST_CHECK_EQUAL((str = std::string("english")).GetStringData(), "english");
+		char *chars = "repositories";
+		BOOST_CHECK_EQUAL((str = chars).GetStringData(), "repositories");
+	}
+	BOOST_AUTO_TEST_CASE(can_assign_it_as_the_value_string)
+	{
+		CMyString str("SomeString");
+		str = str;
+		BOOST_CHECK_EQUAL(str.GetStringData(), "SomeString");
+	}
+	BOOST_AUTO_TEST_CASE(can_assign_a_string_value_of_displacement)
+	{
+		CMyString str("string");
+		str = move(CMyString("bottom - down"));
+		BOOST_CHECK_EQUAL(str.GetStringData(), "bottom - down");
+	}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(concatenation_operator)
+	BOOST_AUTO_TEST_CASE(can_add_two_strings_of_the_same_type)
+	{
+		CMyString myAddStr = CMyString("My") + CMyString(" string");
+		VerifyString(myAddStr, 9u, "My string");
+	}
+	BOOST_AUTO_TEST_CASE(can_add_STL_string_with_the_string)
+	{
+		CMyString stlAddStr = std::string("STL") + CMyString(" string");
+		VerifyString(stlAddStr, 10u, "STL string");
+	}
+	BOOST_AUTO_TEST_CASE(can_add_char_string_with_the_string)
+	{
+		CMyString charArrAddStr = "CHAR*" + CMyString(" string");
+		VerifyString(charArrAddStr, 12u, "CHAR* string");
+	}
+	BOOST_AUTO_TEST_CASE(can_be_assign_addition_of_itself)
+	{
+		CMyString myAddStr("MY string");
+
+		BOOST_CHECK_NO_THROW(myAddStr = myAddStr + myAddStr);
+
+		BOOST_CHECK_EQUAL(myAddStr.GetStringData(), "MY stringMY string");
+	}
+
+BOOST_AUTO_TEST_SUITE_END()
 
