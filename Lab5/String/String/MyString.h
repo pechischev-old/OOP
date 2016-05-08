@@ -51,13 +51,28 @@ public:
 	CMyString& operator+= (CMyString const & str);
 	friend CMyString operator+(std::string const & str1, CMyString const & str2);
 	friend CMyString operator+(const char* str1, CMyString const & str2);
+	friend CMyString operator+(CMyString & str1, CMyString const & str2);
+
+	int StrCmp(CMyString const & str) const; // TODO: rename
+
+	bool operator== ( CMyString const & str2);
+	bool operator!= (CMyString const & str2);
+	bool operator< (CMyString const & str2);
+	bool operator> (CMyString const & str2);
+	bool operator<= (CMyString const & str2);
+	bool operator>= (CMyString const & str2);
+
+	const char &operator[](size_t index) const;
+	char &operator[](size_t index);
 private:
-	void StrCpy(const char * str);
-	size_t m_length = 0;
-	char* m_string = nullptr;
+	void MemoryAllocation(size_t length);
+	void ToCopyString(const char * str, size_t length);
+	size_t m_length;
+	char* m_string;
+
 };
 
-CMyString operator+ (CMyString & str1, CMyString const & str2);
-CMyString operator+(std::string const & str1, CMyString const & str2);
-CMyString operator+(const char* str1, CMyString const & str2);
+std::ostream & operator<<(std::ostream & strm, CMyString const & str);
+std::istream & operator>>(std::istream & strm, CMyString & str);
+
 
