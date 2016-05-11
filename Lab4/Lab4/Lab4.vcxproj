@@ -150,7 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Body.h" />
-    <ClInclude Include="Compaund.h" />
+    <ClInclude Include="Compound.h" />
     <ClInclude Include="Cone.h" />
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="Interpreter.h" />
@@ -163,7 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Body.cpp" />
-    <ClCompile Include="Compaund.cpp" />
+    <ClCompile Include="Compound.cpp" />
     <ClCompile Include="Cone.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="Interpreter.cpp" />

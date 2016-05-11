@@ -45,10 +45,10 @@
     <ClInclude Include="Interpreter.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="Compaund.h">
+    <ClInclude Include="VolumeBody.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="VolumeBody.h">
+    <ClInclude Include="Compound.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,10 +80,10 @@
     <ClCompile Include="Interpreter.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="Compaund.cpp">
+    <ClCompile Include="VolumeBody.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="VolumeBody.cpp">
+    <ClCompile Include="Compound.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>

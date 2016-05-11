@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "../Lab4/Compaund.h"
+#include "../Lab4/Compound.h"
 #include "../Lab4/Cone.h"
 
 using namespace std;
@@ -72,6 +72,12 @@ Cone:
 			pCompound->AppendShape(pCompound);
 			BOOST_CHECK_EQUAL(pCompound->GetShapesCount(), 1);
 		}
+		BOOST_AUTO_TEST_CASE(can_take_yet_one_body)
+		{
+			pCompound->AppendShape(make_shared<CCone>(CCone(expectedDensity, expectedRadius, expectedHeight)));
+			BOOST_CHECK_EQUAL(pCompound->GetShapesCount(), 2);
+		}
+
 	BOOST_AUTO_TEST_SUITE_END()
 
 

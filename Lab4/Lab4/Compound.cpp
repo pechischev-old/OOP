@@ -1,4 +1,4 @@
-#include "Compaund.h"
+#include "Compound.h"
 
 
 using namespace std;

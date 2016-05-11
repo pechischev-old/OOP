@@ -5,7 +5,7 @@
 #include "Cylinder.h"
 #include "Parallelepiped.h"
 #include "Sphere.h"
-#include "Compaund.h"
+#include "Compound.h"
 
 class CBodyFactory
 {
@@ -24,7 +24,7 @@ public:
 	void SetBody(std::string const & name); 
 	void DisplaySummaryInfo();
 private:
-	std::vector<std::shared_ptr<CBody>> bodies;
+	std::vector<std::shared_ptr<CBody>> m_bodies;
 	CBodyFactory m_bodyFactory;
 };
 

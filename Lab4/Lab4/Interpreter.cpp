@@ -64,7 +64,7 @@ double CBodyFactory::GetData(std::string const & type)
 
 void CInterpreter::SetBody(std::string const & name)
 {
-	bodies.push_back(m_bodyFactory.CreateBody(name));
+	m_bodies.push_back(m_bodyFactory.CreateBody(name));
 }
 
 void CInterpreter::DisplaySummaryInfo()
@@ -73,7 +73,7 @@ void CInterpreter::DisplaySummaryInfo()
 	CBody *lightFigure = nullptr;
 	double maxMass = 0;
 	double minWeight = std::numeric_limits<double>::infinity();
-	for (auto it : bodies)
+	for (auto it : m_bodies)
 	{
 		auto shape = it.get();
 		if (maxMass < shape->GetMass())
