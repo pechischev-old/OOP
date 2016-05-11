@@ -26,16 +26,6 @@ BOOST_FIXTURE_TEST_SUITE(before_declared_string, my_string_can_be_declared_by_de
 		BOOST_CHECK(myString.GetStringData()[myString.GetLength()] == '\0');
 	}
 
-	BOOST_AUTO_TEST_CASE(attempt_to_take_substring_if_empty_str_returns_exception)
-	{
-		BOOST_REQUIRE_THROW(auto substr = myString.SubString(0u, 30u), std::out_of_range);
-	}
-
-	BOOST_AUTO_TEST_CASE(can_clear_empty_string)
-	{
-		BOOST_CHECK_NO_THROW(myString.Clear());
-	}
-
 BOOST_AUTO_TEST_SUITE_END()
 
 void VerifyString(CMyString const & str, size_t length, std::string const & reference)
@@ -127,7 +117,7 @@ BOOST_AUTO_TEST_SUITE(assignment_operator)
 		char *chars = "repositories";
 		BOOST_CHECK_EQUAL((str = chars).GetStringData(), "repositories");
 	}
-	BOOST_AUTO_TEST_CASE(can_assign_it_as_the_value_string)
+	BOOST_AUTO_TEST_CASE(can_assign_itself_as_the_value_string)
 	{
 		CMyString str("SomeString");
 		str = str;
@@ -166,12 +156,29 @@ BOOST_AUTO_TEST_SUITE(concatenation_operator)
 
 		BOOST_CHECK_EQUAL(myAddStr.GetStringData(), "MY stringMY string");
 	}
+	BOOST_AUTO_TEST_CASE(can_add_two_values_where_one_is_its_value)
+	{
+		CMyString addStr("first value");
+		addStr += "second value";
+		VerifyString(addStr, 23u, "first valuesecond value");
+
+		auto sumWithMyString = CMyString();
+		sumWithMyString += CMyString("1");
+		auto sumWithMyString2 = CMyString("1");
+		sumWithMyString2 += CMyString();
+		auto sumWithMyString3 = CMyString("1");
+		sumWithMyString3 += CMyString("2");
+		auto sumWithMyString4 = CMyString();
+		sumWithMyString4 += CMyString();
+
+		BOOST_CHECK_EQUAL(sumWithMyString.GetStringData(), "1");
+		BOOST_CHECK_EQUAL(sumWithMyString2.GetStringData(), "1");
+		BOOST_CHECK_EQUAL(sumWithMyString3.GetStringData(), "12");
+		BOOST_CHECK_EQUAL(sumWithMyString4.GetStringData(), "");
+	}
 
 BOOST_AUTO_TEST_SUITE_END()
 
-// TODO: tests for +=
-
-//------------------
 
 BOOST_AUTO_TEST_SUITE(comparison_operator)
 
@@ -233,7 +240,7 @@ BOOST_AUTO_TEST_SUITE(less_operator)
 BOOST_AUTO_TEST_SUITE_END()
 
 //operator >
-BOOST_AUTO_TEST_SUITE(more_operator)
+BOOST_AUTO_TEST_SUITE(greater_operator)
 
 	BOOST_AUTO_TEST_CASE(can_find_out_which_of_rows_preceded_by_another_in_alphabetical_order)
 	{
@@ -273,7 +280,7 @@ BOOST_AUTO_TEST_SUITE(less_or_equal_operator)
 BOOST_AUTO_TEST_SUITE_END()
 
 //operator >=
-BOOST_AUTO_TEST_SUITE(more_or_equal_operator)
+BOOST_AUTO_TEST_SUITE(greater_or_equal_operator)
 
 	BOOST_AUTO_TEST_CASE(if_left_str_is_less_to_right_str_then_return_false)
 	{
@@ -347,3 +354,12 @@ BOOST_AUTO_TEST_SUITE(istream_operator_tests)
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_CASE(has_indexed_acces_operators)
+{
+	CMyString str("123");
+	BOOST_CHECK(str[1] == '2');
+	BOOST_CHECK(str[3] == '\0');
+	str = "";
+	BOOST_CHECK(str[0] == '\0');
+}

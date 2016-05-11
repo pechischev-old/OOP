@@ -53,7 +53,7 @@ public:
 	friend CMyString operator+(const char* str1, CMyString const & str2);
 	friend CMyString operator+(CMyString & str1, CMyString const & str2);
 
-	int StrCmp(CMyString const & str) const; // TODO: rename
+	int Compare(CMyString const & str) const; 
 
 	bool operator== ( CMyString const & str2);
 	bool operator!= (CMyString const & str2);
@@ -65,7 +65,8 @@ public:
 	const char &operator[](size_t index) const;
 	char &operator[](size_t index);
 private:
-	void MemoryAllocation(size_t length);
+	CMyString(size_t length);
+	void Reallocate(size_t length);
 	void ToCopyString(const char * str, size_t length);
 	size_t m_length;
 	char* m_string;
