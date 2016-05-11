@@ -1,13 +1,15 @@
 ﻿#pragma once
 #include "stdafx.h"
 
-using URLContainer = std::tuple<Protocol, std::string, std::string, unsigned short>;
+
 
 enum Protocol
 {
 	HTTP,
 	HTTPS
 };
+
+using URLContainer = std::tuple<Protocol, std::string, std::string, unsigned short>;
 
 class CHttpUrl
 {
@@ -48,8 +50,14 @@ public:
 	// возвращает номер порта
 	unsigned short GetPort() const;
 private:
-	URLContainer ParseURL(std::string const & url);
+	URLContainer ParseURL(boost::string_ref & str);
+	std::string ParseDomain(boost::string_ref & str);
+	std::string ParseDocument(boost::string_ref & str);
+	Protocol ParseProtocol(boost::string_ref & str);
 
+	std::string VerifyDomain(std::string const & domain);
+	std::string VerifyDocument(std::string const & document);
+	Protocol VerifyProtocol(Protocol const & protocol);
 private:
 	std::string m_domain;
 	std::string m_document;

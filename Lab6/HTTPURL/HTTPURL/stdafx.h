@@ -13,6 +13,7 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
+#include <boost\utility\string_ref.hpp>
 
 
 
