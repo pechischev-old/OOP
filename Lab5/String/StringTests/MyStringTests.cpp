@@ -161,20 +161,6 @@ BOOST_AUTO_TEST_SUITE(concatenation_operator)
 		CMyString addStr("first value");
 		addStr += "second value";
 		VerifyString(addStr, 23u, "first valuesecond value");
-
-		auto sumWithMyString = CMyString();
-		sumWithMyString += CMyString("1");
-		auto sumWithMyString2 = CMyString("1");
-		sumWithMyString2 += CMyString();
-		auto sumWithMyString3 = CMyString("1");
-		sumWithMyString3 += CMyString("2");
-		auto sumWithMyString4 = CMyString();
-		sumWithMyString4 += CMyString();
-
-		BOOST_CHECK_EQUAL(sumWithMyString.GetStringData(), "1");
-		BOOST_CHECK_EQUAL(sumWithMyString2.GetStringData(), "1");
-		BOOST_CHECK_EQUAL(sumWithMyString3.GetStringData(), "12");
-		BOOST_CHECK_EQUAL(sumWithMyString4.GetStringData(), "");
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -355,11 +341,23 @@ BOOST_AUTO_TEST_SUITE(istream_operator_tests)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_CASE(has_indexed_acces_operators)
-{
-	CMyString str("123");
-	BOOST_CHECK(str[1] == '2');
-	BOOST_CHECK(str[3] == '\0');
-	str = "";
-	BOOST_CHECK(str[0] == '\0');
-}
+BOOST_AUTO_TEST_SUITE(indexed_access_operator)
+
+	BOOST_AUTO_TEST_CASE(can_be_considered_string_characters)
+	{
+		CMyString str("get the string data");
+		BOOST_CHECK(str[5] == 'h');
+		BOOST_CHECK(str[18] == 'a');
+		BOOST_CHECK(str[0] == 'g');
+	}
+	BOOST_AUTO_TEST_CASE(can_be_replaced_by_another_character_string_symbol)
+	{
+		CMyString str("get the string data");
+		str[5] = 'f';
+		str[18] = 'd';
+		BOOST_CHECK(str[18] == 'd');
+		BOOST_CHECK(str[5] == 'f');
+		BOOST_CHECK_EQUAL(str.GetStringData(), "get tfe string datd");
+	}
+
+BOOST_AUTO_TEST_SUITE_END()

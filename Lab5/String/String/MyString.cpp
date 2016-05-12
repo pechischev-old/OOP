@@ -234,6 +234,6 @@ const char & CMyString::operator[](size_t index) const
 
 char & CMyString::operator[](size_t index) 
 {
-	assert(index <= m_length);
+	assert(index < m_length);
 	return m_string[index];
 }
