@@ -1,11 +1,12 @@
 #include "HttpUrl.h"
+#include <boost/lexical_cast.hpp>
 #include <algorithm>
 
 using namespace std;
 
 CHttpUrl::CHttpUrl(std::string const & url)
 {
-
+	tie(m_protocol, m_domain, m_document, m_port) = ParseURL(boost::string_ref(url));
 }
 
 CHttpUrl::CHttpUrl(std::string const & domain, std::string const & document, Protocol protocol, unsigned short port)
@@ -18,7 +19,7 @@ CHttpUrl::CHttpUrl(std::string const & domain, std::string const & document, Pro
 
 std::string CHttpUrl::GetURL() const
 {
-	return GetProtocol() + "://" + m_domain + m_document;
+	return ToStringProtocol() + "://" + m_domain + m_document;
 }
 
 std::string CHttpUrl::GetDomain() const
@@ -41,41 +42,95 @@ unsigned short CHttpUrl::GetPort() const
 	return m_port;
 }
 
-URLContainer CHttpUrl::ParseURL(boost::string_ref  & url)
+Protocol CHttpUrl::ToProtocol(std::string const & protocolStr) const
+{
+	if (protocolStr == "http")
+	{
+		return Protocol::HTTP;
+	}
+	else if (protocolStr == "https")
+	{
+		return Protocol::HTTPS;
+	}
+	throw CUrlParsingError("Invalid protocol");
+}
+
+std::string CHttpUrl::ToStringProtocol() const
+{
+	return ( m_protocol == Protocol::HTTP ? "http" : "https");
+}
+
+URLContainer CHttpUrl::ParseURL(boost::string_ref & url)
 {
 	Protocol protocol = ParseProtocol(url);
-	std::string domain = ParseDomain(url);
-	unsigned short port;
-	std::string document = ParseDocument(url);
-	
+	std::string domain = VerifyDomain(ParseDomain(url));
+	unsigned short port = ParsePort(url);
+	std::string document = VerifyDocument(ParseDocument(url));
 	return URLContainer(protocol, domain, document, port);
-}
-
-std::string CHttpUrl::ParseDomain(boost::string_ref & url)
-{
-	return std::string();
-}
-
-std::string CHttpUrl::ParseDocument(boost::string_ref & url)
-{
-	return std::string();
 }
 
 Protocol CHttpUrl::ParseProtocol(boost::string_ref & str)
 {
-	return Protocol();
+	const string schemeDelimiter = "://";
+	auto schemePos = str.find(schemeDelimiter);
+	if (schemePos == boost::string_ref::npos)
+	{
+		throw CUrlParsingError("Protocol parsing error");
+	}
+	string protocol = str.substr(0, schemePos).to_string();
+
+	str = str.substr(schemePos + schemeDelimiter.size() , str.size() - 1);
+
+	return ToProtocol(protocol);
+}
+
+std::string CHttpUrl::ParseDomain(boost::string_ref & url)
+{
+	auto domainPos = url.find(':');
+	if (domainPos == boost::string_ref::npos)
+	{
+		domainPos = url.find("/");
+		domainPos = (domainPos == boost::string_ref::npos ? url.size() : domainPos);
+	}
+	auto domain = url.substr(0, domainPos).to_string();
+	url = url.substr(domainPos, url.size());
+	return domain;
+}
+
+unsigned short CHttpUrl::ParsePort(boost::string_ref & str)
+{
+	if (str.front() == ':')
+	{
+		auto portPos = str.find('/');
+		string port;
+		if (portPos == boost::string_ref::npos)
+		{
+			port = str.substr(1, str.size()).to_string();
+		}
+		else
+		{
+			port = str.substr(1, portPos - 1).to_string();
+		}
+		return port.empty() ? throw CUrlParsingError("Port parsing error") : boost::lexical_cast<unsigned short>(port);
+	}
+	return 0;
+}
+
+std::string CHttpUrl::ParseDocument(boost::string_ref & url)
+{
+	return url.to_string();
 }
 
 std::string CHttpUrl::VerifyDomain(std::string const & domain)
 {
 	if (domain.empty())
 	{
-		throw invalid_argument("domain name is empty");
+		throw CUrlParsingError("domain name is empty");
 	}
-	else if (find_if(domain.begin(), domain.end(), [](char ch) { // TODO: проверять маской
+	else if (find_if(domain.begin(), domain.end(), [](char ch) { 
 		return (isspace(ch) || (ch == '/') || (ch == '\'')); }) != domain.end())
 	{
-		throw invalid_argument("domain name is contain invalid symbols");
+		throw CUrlParsingError("domain name is contain invalid symbols");
 	}
 
 	return domain;
@@ -87,7 +142,7 @@ std::string CHttpUrl::VerifyDocument(std::string const & document)
 		return (isspace(ch));
 	}) != document.end())
 	{
-		throw invalid_argument("Document must not contain any spaces or tabulation.");
+		throw CUrlParsingError("Document must not contain any spaces or tabulation.");
 	}
 
 	if (document[0] != '/')
@@ -99,5 +154,9 @@ std::string CHttpUrl::VerifyDocument(std::string const & document)
 
 Protocol CHttpUrl::VerifyProtocol(Protocol const & protocol)
 {
-	return protocol;
+	if (protocol == Protocol::HTTP || protocol == Protocol::HTTPS) 
+	{
+		return protocol;
+	}
+	throw CUrlParsingError("Invalid protocol");
 }

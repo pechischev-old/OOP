@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "stdafx.h"
-
+#include "UrlParsingError.h"
 
 
 enum Protocol
@@ -49,10 +49,14 @@ public:
 
 	// возвращает номер порта
 	unsigned short GetPort() const;
+
+	Protocol ToProtocol(std::string const & protocolStr) const;
+	std::string ToStringProtocol() const;
 private:
 	URLContainer ParseURL(boost::string_ref & str);
 	std::string ParseDomain(boost::string_ref & str);
 	std::string ParseDocument(boost::string_ref & str);
+	unsigned short ParsePort(boost::string_ref & str);
 	Protocol ParseProtocol(boost::string_ref & str);
 
 	std::string VerifyDomain(std::string const & domain);
