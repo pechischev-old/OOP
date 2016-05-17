@@ -74,6 +74,16 @@ BOOST_AUTO_TEST_SUITE(HttpUrl_initialized_with_url_string)
 	{
 		BOOST_CHECK_EQUAL(CHttpUrl("http://github.com:14").GetPort(), 14u);
 	}
+	
+	BOOST_AUTO_TEST_CASE(can_get_the_full_URL_after_the_transfer_of_the_class)
+	{
+		CHttpUrl url("http://github.com/document.txt");
+		BOOST_CHECK_EQUAL(url.GetURL(), "http://github.com/document.txt");
+		CHttpUrl url1("http://github.com:458/document.txt");
+		BOOST_CHECK_EQUAL(url1.GetURL(), "http://github.com:458/document.txt");
+		CHttpUrl url2("http://github.com:80/document.txt");
+		BOOST_CHECK_EQUAL(url2.GetURL(), "http://github.com/document.txt");
+	}
 
 BOOST_AUTO_TEST_SUITE_END()
 

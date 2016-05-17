@@ -11,10 +11,12 @@
 #include <tchar.h>
 #include <string>
 #include <iostream>
+#include <sstream>
+#include <memory>
 #include <vector>
 #include <tuple>
 #include <boost\utility\string_ref.hpp>
-
+#include <boost/lexical_cast.hpp>
 
 
 // TODO: Установите здесь ссылки на дополнительные заголовки, требующиеся для программы

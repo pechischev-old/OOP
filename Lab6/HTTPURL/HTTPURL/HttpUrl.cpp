@@ -1,5 +1,5 @@
 #include "HttpUrl.h"
-#include <boost/lexical_cast.hpp>
+
 #include <algorithm>
 
 using namespace std;
@@ -19,7 +19,8 @@ CHttpUrl::CHttpUrl(std::string const & domain, std::string const & document, Pro
 
 std::string CHttpUrl::GetURL() const
 {
-	return ToStringProtocol() + "://" + m_domain + m_document;
+	bool isOtherPort = (m_port == 80 || m_port == 443);
+	return ToStringProtocol() + "://" + m_domain + (isOtherPort ? "" : ":"+ to_string(m_port)) + m_document;
 }
 
 std::string CHttpUrl::GetDomain() const
@@ -66,6 +67,11 @@ URLContainer CHttpUrl::ParseURL(boost::string_ref & url)
 	std::string domain = VerifyDomain(ParseDomain(url));
 	unsigned short port = ParsePort(url);
 	std::string document = VerifyDocument(ParseDocument(url));
+
+	if (port == 0)
+	{
+		port = (protocol == Protocol::HTTP ? 80 : 443);
+	}
 	return URLContainer(protocol, domain, document, port);
 }
 
@@ -111,9 +117,10 @@ unsigned short CHttpUrl::ParsePort(boost::string_ref & str)
 		{
 			port = str.substr(1, portPos - 1).to_string();
 		}
-		return port.empty() ? throw CUrlParsingError("Port parsing error") : boost::lexical_cast<unsigned short>(port);
+		str = str.substr(port.size() + 1, str.size());
+		return (port.empty() ? throw CUrlParsingError("Port parsing error") : boost::lexical_cast<unsigned short>(port));
 	}
-	return 0;
+	return  0;
 }
 
 std::string CHttpUrl::ParseDocument(boost::string_ref & url)
