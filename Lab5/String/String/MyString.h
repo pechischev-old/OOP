@@ -68,9 +68,9 @@ private:
 	CMyString(size_t length);
 	void Reallocate(size_t length);
 	void ToCopyString(const char * str, size_t length);
+
 	size_t m_length;
 	char* m_string;
-
 };
 
 std::ostream & operator<<(std::ostream & strm, CMyString const & str);

@@ -5,8 +5,7 @@
 using namespace std;
 
 CMyString::CMyString()
-	: m_length(0)
-	, m_string(nullptr)
+	: CMyString("", 0)
 {
 }
 
@@ -31,11 +30,10 @@ CMyString::CMyString(std::string const & stlString)
 }
 
 CMyString::CMyString(CMyString && other)
-	: m_length(other.m_length)
 {
+	ToCopyString("", 0);
 	swap(m_string, other.m_string);
-	other.m_length = 0;
-	other.m_string = nullptr;
+	swap(m_length, other.m_length);
 }
 
 CMyString::~CMyString()
@@ -50,10 +48,6 @@ size_t CMyString::GetLength() const
 
 const char * CMyString::GetStringData() const
 {
-	if (!m_string)
-	{
-		return "\0";
-	}
 	return m_string;
 }
 
@@ -109,11 +103,7 @@ CMyString& CMyString::operator= (CMyString && str)
 	if (m_string != str.m_string)
 	{
 		swap(m_string, str.m_string);
-		m_length = str.m_length;
-
-		delete[] str.m_string;
-		str.m_string = nullptr;
-		str.m_length = 0;
+		swap(m_length, str.m_length);
 	}
 	return *this;
 }

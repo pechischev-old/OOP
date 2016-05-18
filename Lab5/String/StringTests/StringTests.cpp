@@ -11,7 +11,7 @@ using boost::unit_test::test_unit_type;
 
 /*
 Данный класс управляет формаитрованием журнала запуска тестов
-Для того, чтобы увидеть результат, приложение должно быть запущено с ключём --log-level=test_suite (см. Post-build event в настройках проекта)
+Для того, чтобы увидеть результат, приложение должно быть запущено с ключём --log_level=test_suite (см. Post-build event в настройках проекта)
 */
 class SpecLogFormatter :
 	public boost::unit_test::output::compiler_log_formatter

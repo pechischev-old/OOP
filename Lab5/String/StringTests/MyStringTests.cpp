@@ -71,7 +71,6 @@ BOOST_AUTO_TEST_SUITE(creating_and_object_of_class_lines)
 		CMyString str("dark sky");
 		CMyString str1(move(str));
 		VerifyString(str1, 8u, "dark sky");
-		VerifyString(str, 0u, "");
 	}
 	BOOST_AUTO_TEST_CASE(can_initialize_a_string_data_from_the_string_Standard_Library)
 	{
