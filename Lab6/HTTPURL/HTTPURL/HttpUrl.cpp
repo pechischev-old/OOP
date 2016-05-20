@@ -6,7 +6,20 @@ using namespace std;
 
 CHttpUrl::CHttpUrl(std::string const & url)
 {
-	tie(m_protocol, m_domain, m_document, m_port) = ParseURL(boost::string_ref(url));
+	auto m_url = boost::string_ref(url);
+	Protocol protocol = ParseProtocol(m_url);
+	std::string domain = VerifyDomain(ParseDomain(m_url));
+	unsigned short port = ParsePort(m_url);
+	std::string document = VerifyDocument(ParseDocument(m_url));
+
+	if (port == 0)
+	{
+		port = (protocol == Protocol::HTTP ? 80 : 443);
+	}
+	m_protocol = protocol;
+	m_domain = domain;
+	m_document = document;
+	m_port = port;
 }
 
 CHttpUrl::CHttpUrl(std::string const & domain, std::string const & document, Protocol protocol, unsigned short port)
@@ -19,8 +32,8 @@ CHttpUrl::CHttpUrl(std::string const & domain, std::string const & document, Pro
 
 std::string CHttpUrl::GetURL() const
 {
-	bool isOtherPort = (m_port == 80 || m_port == 443);
-	return ToStringProtocol() + "://" + m_domain + (isOtherPort ? "" : ":"+ to_string(m_port)) + m_document;
+	bool isStandartPort = (m_port == 80 || m_port == 443);
+	return ToStringProtocol() + "://" + m_domain + (isStandartPort ? "" : ":"+ to_string(m_port)) + m_document;
 }
 
 std::string CHttpUrl::GetDomain() const
@@ -59,20 +72,6 @@ Protocol CHttpUrl::ToProtocol(std::string const & protocolStr) const
 std::string CHttpUrl::ToStringProtocol() const
 {
 	return ( m_protocol == Protocol::HTTP ? "http" : "https");
-}
-
-URLContainer CHttpUrl::ParseURL(boost::string_ref & url)
-{
-	Protocol protocol = ParseProtocol(url);
-	std::string domain = VerifyDomain(ParseDomain(url));
-	unsigned short port = ParsePort(url);
-	std::string document = VerifyDocument(ParseDocument(url));
-
-	if (port == 0)
-	{
-		port = (protocol == Protocol::HTTP ? 80 : 443);
-	}
-	return URLContainer(protocol, domain, document, port);
 }
 
 Protocol CHttpUrl::ParseProtocol(boost::string_ref & str)
@@ -134,10 +133,10 @@ std::string CHttpUrl::VerifyDomain(std::string const & domain)
 	{
 		throw CUrlParsingError("domain name is empty");
 	}
-	else if (find_if(domain.begin(), domain.end(), [](char ch) { 
-		return (isspace(ch) || (ch == '/') || (ch == '\'')); }) != domain.end())
+	else if (std::any_of(domain.begin(), domain.end(), [&](char ch) {
+		return (isspace(ch) || (ch == '/') || (ch == '\'')); }))
 	{
-		throw CUrlParsingError("domain name is contain invalid symbols");
+		throw CUrlParsingError("domain mustn't contain spaces, tabulation or slash");
 	}
 
 	return domain;
@@ -145,11 +144,10 @@ std::string CHttpUrl::VerifyDomain(std::string const & domain)
 
 std::string CHttpUrl::VerifyDocument(std::string const & document)
 {
-	if (find_if(document.begin(), document.end(), [&](char ch) {
-		return (isspace(ch));
-	}) != document.end())
+	if (std::any_of(document.begin(), document.end(), [&](char ch) {
+		return (isspace(ch)); }))
 	{
-		throw CUrlParsingError("Document must not contain any spaces or tabulation.");
+		throw CUrlParsingError("document mustn't contain spaces or tabulation");
 	}
 
 	if (document[0] != '/')

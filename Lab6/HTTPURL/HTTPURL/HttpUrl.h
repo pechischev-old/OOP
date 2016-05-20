@@ -9,8 +9,6 @@ enum Protocol
 	HTTPS
 };
 
-using URLContainer = std::tuple<Protocol, std::string, std::string, unsigned short>;
-
 class CHttpUrl
 {
 public:
@@ -53,7 +51,6 @@ public:
 	Protocol ToProtocol(std::string const & protocolStr) const;
 	std::string ToStringProtocol() const;
 private:
-	URLContainer ParseURL(boost::string_ref & str);
 	std::string ParseDomain(boost::string_ref & str);
 	std::string ParseDocument(boost::string_ref & str);
 	unsigned short ParsePort(boost::string_ref & str);

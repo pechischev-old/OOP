@@ -14,7 +14,6 @@
 #include <sstream>
 #include <memory>
 #include <vector>
-#include <tuple>
 #include <boost\utility\string_ref.hpp>
 #include <boost/lexical_cast.hpp>
 
