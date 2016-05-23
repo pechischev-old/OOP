@@ -24,7 +24,52 @@ void CStringList::Append(const std::string & data)
 	++m_size;
 }
 
+bool CStringList::IsEmpty() const
+{
+	return m_size == 0 && !m_firstNode.get();
+}
+
+CStringList::CIterator CStringList::Insert(const std::string & data, CIterator index)
+{
+	return CIterator();
+}
+
 CStringList::CIterator CStringList::begin()
+{
+	return CIterator(m_firstNode.get());
+}
+
+CStringList::CIterator CStringList::end()
+{
+	return CIterator(m_lastNode);
+}
+
+CStringList::CIterator const CStringList::begin() const
+{
+	return CIterator(m_firstNode.get());
+}
+
+CStringList::CIterator const CStringList::end() const
+{
+	return CIterator(m_lastNode);
+}
+
+CStringList::CIterator CStringList::rbegin()
+{
+	return CIterator(m_lastNode); 
+}
+
+CStringList::CIterator CStringList::rend()
+{
+	return CIterator(m_firstNode.get());
+}
+
+CStringList::CIterator const CStringList::rbegin() const
+{
+	return CIterator(m_lastNode);
+}
+
+CStringList::CIterator const CStringList::rend() const
 {
 	return CIterator(m_firstNode.get());
 }

@@ -17,7 +17,10 @@ class CStringList
 
 public:
 	size_t GetSize()const;
+	bool IsEmpty() const;
+
 	void Append(const std::string& data);
+	
 
 	class CIterator
 	{
@@ -26,12 +29,22 @@ public:
 	public:
 		CIterator() = default;
 		std::string & operator*()const;
+		
 	private:
 		Node *m_node = nullptr;
 	};
 
-	CIterator begin();
+	CIterator Insert(const std::string& data, CIterator index);
 
+	CIterator begin();
+	CIterator end();
+	CIterator const begin() const;
+	CIterator const end() const;
+
+	CIterator rbegin();
+	CIterator rend();
+	CIterator const rbegin() const;
+	CIterator const rend() const;
 	std::string & GetBackElement();
 	std::string const& GetBackElement()const;
 private:
