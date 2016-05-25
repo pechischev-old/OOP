@@ -48,6 +48,7 @@ int main()
 	}
 
 	Athlete athleteWithMaxWeight;
+
 	if (FindMax(athletes, athleteWithMaxWeight, [](Athlete const & lhs, Athlete const & rhs) {
 		return lhs.weight < rhs.weight;
 	}))

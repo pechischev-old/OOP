@@ -30,8 +30,7 @@ BOOST_AUTO_TEST_SUITE(FindMaxEx)
 	{
 		float maxFloat = 555.f;
 		vector<float> arr = { 54.3f, 548.f, -78.f, 98.f };
-		BOOST_CHECK(FindMax(arr, maxFloat, [](float lhs, float rhs) {
-			return lhs < rhs; }));
+		BOOST_CHECK(FindMax(arr, maxFloat));
 		BOOST_CHECK_EQUAL(maxFloat, 548.f);
 	}
 	BOOST_AUTO_TEST_CASE(can_replace_the_max_value)
