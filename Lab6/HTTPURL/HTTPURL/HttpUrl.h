@@ -59,6 +59,7 @@ private:
 	std::string VerifyDomain(std::string const & domain);
 	std::string VerifyDocument(std::string const & document);
 	Protocol VerifyProtocol(Protocol const & protocol);
+	unsigned short VerifyPort(unsigned short port);
 private:
 	std::string m_domain;
 	std::string m_document;

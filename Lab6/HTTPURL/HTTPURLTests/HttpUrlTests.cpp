@@ -61,6 +61,10 @@ BOOST_AUTO_TEST_SUITE(HttpUrl_initialized_with_url_string)
 	{
 		BOOST_REQUIRE_NO_THROW(CHttpUrl("http://github.com:443/document.txt"));
 	}
+	BOOST_AUTO_TEST_CASE(if_the_URL_port_is_out_of_range)
+	{
+		BOOST_REQUIRE_THROW(CHttpUrl("http://github.com:9999999999999/document.txt"), CUrlParsingError);
+	}
 	BOOST_AUTO_TEST_CASE(if_the_URL_contains_the_uncorrect_port_then_class_throw_exception)
 	{
 		BOOST_REQUIRE_THROW(CHttpUrl("http://github.com:/document.txt"), CUrlParsingError);

@@ -12,21 +12,17 @@ CHttpUrl::CHttpUrl(std::string const & url)
 	unsigned short port = ParsePort(m_url);
 	std::string document = VerifyDocument(ParseDocument(m_url));
 
-	if (port == 0)
-	{
-		port = (protocol == Protocol::HTTP ? 80 : 443);
-	}
 	m_protocol = protocol;
 	m_domain = domain;
 	m_document = document;
-	m_port = port;
+	m_port = VerifyPort(port);
 }
 
 CHttpUrl::CHttpUrl(std::string const & domain, std::string const & document, Protocol protocol, unsigned short port)
 	: m_domain(VerifyDomain(domain))
 	, m_document(VerifyDocument(document))
 	, m_protocol(VerifyProtocol(protocol))
-	, m_port(port)
+	, m_port(VerifyPort(port))
 {
 }
 
@@ -117,7 +113,22 @@ unsigned short CHttpUrl::ParsePort(boost::string_ref & str)
 			port = str.substr(1, portPos - 1).to_string();
 		}
 		str = str.substr(port.size() + 1, str.size());
-		return (port.empty() ? throw CUrlParsingError("Port parsing error") : boost::lexical_cast<unsigned short>(port));
+		bool portOk = !port.empty();
+		if (portOk)
+		{
+			try
+			{
+				return boost::lexical_cast<unsigned short>(port);
+			}
+			catch (...)
+			{
+				portOk = false;
+			}
+		}
+		if (!portOk)
+		{
+			throw CUrlParsingError("Port parsing error");
+		}
 	}
 	return  0;
 }
@@ -164,4 +175,13 @@ Protocol CHttpUrl::VerifyProtocol(Protocol const & protocol)
 		return protocol;
 	}
 	throw CUrlParsingError("Invalid protocol");
+}
+
+unsigned short CHttpUrl::VerifyPort(unsigned short port)
+{
+	if (port == 0)
+	{
+		port = (m_protocol == Protocol::HTTP ? 80 : 443);
+	}
+	return port;
 }
