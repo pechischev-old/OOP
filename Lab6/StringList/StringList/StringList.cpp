@@ -24,7 +24,6 @@ void CStringList::PushBack(const std::string & data)
 	}
 	m_lastNode = newLastNode;
 	++m_size;
-	list<int> ad;
 }
 
 void CStringList::PushFront(const std::string & data)
@@ -48,7 +47,7 @@ bool CStringList::IsEmpty() const
 	return m_firstNode == nullptr;
 }
 
-CStringList::CIterator CStringList::Insert(const std::string & data, CIterator iter)
+CStringList::CIterator CStringList::Insert(const std::string & data, CIterator & iter)
 {
 	if (iter == begin())
 	{
@@ -60,9 +59,14 @@ CStringList::CIterator CStringList::Insert(const std::string & data, CIterator i
 	}
 	else
 	{
+		if (!iter.m_node)
+		{
+			throw std::invalid_argument("Iterator is not valid");
+		}
 		auto node = make_unique<Node>(data, iter->prev, move(iter->prev->next));
 		iter->prev = move(node.get());
 		node->prev->next = move(node);
+		++m_size;
 	}
 	return iter;
 }
@@ -77,12 +81,12 @@ CStringList::CIterator CStringList::end()
 	return CIterator(m_lastNode->next.get());
 }
 
-CStringList::CIterator const CStringList::begin() const
+CStringList::CIterator const CStringList::cbegin() const
 {
 	return CIterator(m_firstNode.get());
 }
 
-CStringList::CIterator const CStringList::end() const
+CStringList::CIterator const CStringList::cend() const
 {
 	return CIterator(m_lastNode->next.get());
 }
@@ -97,27 +101,40 @@ CStringList::CIterator CStringList::rend()
 	return CIterator(m_firstNode->prev, true);
 }
 
-CStringList::CIterator const CStringList::rbegin() const
+CStringList::CIterator const CStringList::crbegin() const
 {
 	return CIterator(m_lastNode, true);
 }
 
-CStringList::CIterator const CStringList::rend() const
+CStringList::CIterator const CStringList::crend() const
 {
 	return CIterator(m_firstNode->prev, true);
 }
 
-CStringList::CIterator CStringList::Erase(CIterator iter)
+CStringList::CIterator CStringList::Erase(CIterator & iter)
 {
 	if (m_size == 1)
 	{
 		Clear();
 		return this->end();
 	}
-	else if (iter == begin())
+	if (iter == begin())
 	{
-
+		iter->next->prev = nullptr;
+		m_firstNode = move(iter->next);
 	}
+	else if (iter->data == GetBackElement())
+	{
+		iter->prev->next = nullptr;
+		m_lastNode = move(iter->prev);
+	}
+	else
+	{
+		iter->next->prev = move(iter->prev);
+		iter->prev->next = move(iter->next);
+	}
+
+	m_size == 0 ? m_size : m_size--;
 	return iter;
 }
 
@@ -159,10 +176,10 @@ void CStringList::Clear()
 	}
 }
 
-CStringList::CIterator::CIterator(Node * node)
-	:m_node(node)
-{
-}
+//CStringList::CIterator::CIterator(CIterator const & it)
+//	:m_node(node)
+//{
+//}
 
 CStringList::CIterator::CIterator(Node * node, bool isReverse)
 	: m_node(node)
@@ -182,7 +199,7 @@ bool CStringList::CIterator::operator==(CIterator const & other) const
 
 bool CStringList::CIterator::operator!=(CIterator const & other) const
 {
-	return m_node != other.m_node;;
+	return m_node != other.m_node;
 }
 
 CStringList::CIterator CStringList::CIterator::operator+(unsigned shift)

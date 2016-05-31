@@ -17,6 +17,7 @@ BOOST_FIXTURE_TEST_SUITE(String_list, EmptyStringList)
 			BOOST_CHECK_EQUAL(list.GetSize(), 0u);
 			BOOST_CHECK(list.IsEmpty());
 		}
+		
 	BOOST_AUTO_TEST_SUITE_END()
 
 	BOOST_AUTO_TEST_SUITE(after_appeding_a_string)
@@ -130,39 +131,75 @@ BOOST_FIXTURE_TEST_SUITE(String_list, EmptyStringList)
 				i++;
 			}
 		}
-		// TODO: добавить тесты проверки очищенного списка
-		BOOST_AUTO_TEST_CASE(can_be_cleared)
+		
+		struct was_clear_ : public was_filled_
 		{
-			BOOST_CHECK(!list.IsEmpty());
-			list.Clear();
-			BOOST_CHECK(list.IsEmpty());
-			
-		}
-		BOOST_AUTO_TEST_CASE(can_be_cleared_where_the_list_is_empty)
-		{
-			CStringList emptyList;
+			was_clear_()
+			{
+				list.Clear();
+			}
+		};
+		BOOST_FIXTURE_TEST_SUITE(after_clear_a_string_list, was_clear_)
 
-			BOOST_CHECK(emptyList.IsEmpty());
-			emptyList.Clear();
-			BOOST_CHECK(emptyList.IsEmpty());
-		}
-		// TODO: отчистка из пустого вектора
-		BOOST_AUTO_TEST_CASE(can_erase_element_at_iterator_pos)
+			BOOST_AUTO_TEST_CASE(list_is_empty)
+			{
+				BOOST_CHECK(list.IsEmpty());
+			}
+			BOOST_AUTO_TEST_CASE(list_size_is_equal_zero)
+			{
+				BOOST_CHECK_EQUAL(list.GetSize(), 0);
+			}
+			BOOST_AUTO_TEST_CASE(can_clear_already_empty_list_with_no_throw)
+			{
+				BOOST_REQUIRE_NO_THROW(list.Clear());
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+		
+		/*BOOST_AUTO_TEST_CASE(can_erase_element_at_iterator_pos)
 		{
-			/*auto it = list.begin();
+			auto it = list.begin();
 			BOOST_CHECK_EQUAL(*it, "first");
 			auto elem = list.Erase(it);
 			BOOST_CHECK_EQUAL(*elem, "first");
-*/
-			/*BOOST_CHECK_EQUAL(*++list.begin(), "second");
+
+			BOOST_CHECK_EQUAL(*++list.begin(), "second");
 
 			list.Erase(list.begin());
 			BOOST_CHECK_EQUAL(*list.begin(), "second");
 
 			list.Erase(list.begin());
-			BOOST_CHECK(list.IsEmpty());*/
+			BOOST_CHECK(list.IsEmpty());
+		}*/
+	BOOST_AUTO_TEST_SUITE_END()
+
+	BOOST_FIXTURE_TEST_SUITE(can_insert_data_in_iterator_pos, was_filled_)
+		BOOST_AUTO_TEST_CASE(element_is_inserted_before_iterator_position)
+		{
+			BOOST_CHECK_EQUAL(list.GetFrontElement(), "first");
+			BOOST_REQUIRE_NO_THROW(list.Insert("Hm...", list.begin()));
+			BOOST_CHECK_EQUAL(list.GetFrontElement(), "Hm...");
+		}
+		BOOST_AUTO_TEST_CASE(inserting_incremented_list_size)
+		{
+			auto oldSize = list.GetSize();
+			BOOST_REQUIRE_NO_THROW(list.Insert("String", list.begin()));
+			BOOST_CHECK_EQUAL(list.GetSize(), oldSize + 1);
+			BOOST_REQUIRE_NO_THROW(list.Insert("Ptn", list.begin()));
+			BOOST_CHECK_EQUAL(list.GetSize(), oldSize + 2);
+		}
+		BOOST_AUTO_TEST_CASE(can_insert_element_in_any_pos)
+		{
+			BOOST_CHECK_EQUAL(*(++list.begin()), "second");
+			BOOST_REQUIRE_NO_THROW(list.Insert("Or Welkome in?", ++list.begin()));
+			BOOST_CHECK_EQUAL(*(++list.begin()), "Or Welkome in?");
+		}
+		BOOST_AUTO_TEST_CASE(can_insert_to_empty_list)
+		{
+			CStringList emptyList;
+			BOOST_CHECK_NO_THROW(emptyList.Insert("123", emptyList.begin()));
+			BOOST_CHECK_EQUAL(emptyList.GetFrontElement(), "123");
+			BOOST_CHECK_EQUAL(emptyList.GetBackElement(), "123");
 		}
 	BOOST_AUTO_TEST_SUITE_END()
-	
 
 BOOST_AUTO_TEST_SUITE_END()

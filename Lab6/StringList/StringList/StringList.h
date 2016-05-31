@@ -22,11 +22,11 @@ public:
 	void PushBack(const std::string& data);
 	void PushFront(const std::string& data);
 
-	class CIterator : public std::iterator<std::random_access_iterator_tag, Node>
+	class CIterator : public std::iterator<std::bidirectional_iterator_tag, Node, ptrdiff_t>
 	{
 		friend CStringList;
-		CIterator(Node *node);
-		CIterator(Node *node, bool isReverse);
+		//CIterator(CIterator const & it);
+		CIterator(Node *node, bool isReverse = false);
 	public:
 		CIterator() = default;
 		std::string & operator*()const;
@@ -41,18 +41,18 @@ public:
 		bool m_isReverse = false;
 	};
 
-	CIterator Insert(const std::string& data, CIterator iter);
+	CIterator Insert(const std::string& data, CIterator  & iter);
 
 	CIterator begin();
 	CIterator end();
-	CIterator const begin() const;
-	CIterator const end() const;
+	CIterator const cbegin() const;
+	CIterator const cend() const;
 
 	CIterator rbegin();
 	CIterator rend();
-	CIterator const rbegin() const;
-	CIterator const rend() const;
-	CIterator Erase(CIterator iter);
+	CIterator const crbegin() const;
+	CIterator const crend() const;
+	CIterator Erase(CIterator & iter);
 
 	std::string & GetBackElement();
 	std::string & GetFrontElement();
@@ -65,3 +65,4 @@ private:
 	std::unique_ptr<Node> m_firstNode = nullptr;
 	Node * m_lastNode = nullptr;
 };
+
