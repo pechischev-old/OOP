@@ -49,7 +49,7 @@ bool CStringList::IsEmpty() const
 
 CStringList::CIterator CStringList::Insert(const std::string & data, CIterator & iter)
 {
-	if (iter == begin())
+	if (iter.m_node == m_firstNode.get())
 	{
 		PushFront(data);
 	}
@@ -78,7 +78,7 @@ CStringList::CIterator CStringList::begin()
 
 CStringList::CIterator CStringList::end()
 {
-	return CIterator(m_lastNode->next.get());
+	return CIterator(nullptr);
 }
 
 CStringList::CIterator const CStringList::cbegin() const
@@ -88,7 +88,7 @@ CStringList::CIterator const CStringList::cbegin() const
 
 CStringList::CIterator const CStringList::cend() const
 {
-	return CIterator(m_lastNode->next.get());
+	return CIterator(nullptr);
 }
 
 CStringList::CIterator CStringList::rbegin()
@@ -123,18 +123,23 @@ CStringList::CIterator CStringList::Erase(CIterator & iter)
 		iter->next->prev = nullptr;
 		m_firstNode = move(iter->next);
 	}
-	else if (iter->data == GetBackElement())
+	else if (iter.m_node == m_lastNode)
 	{
 		iter->prev->next = nullptr;
 		m_lastNode = move(iter->prev);
+		iter = m_lastNode->next.get();
 	}
 	else
 	{
-		iter->next->prev = move(iter->prev);
-		iter->prev->next = move(iter->next);
+		auto next = move(iter.m_node->next);
+		auto prev = iter.m_node->prev;
+		next->prev = prev;
+		prev->next = move(next);
+		iter = prev->next.get();
 	}
 
-	m_size == 0 ? m_size : m_size--;
+	--m_size;
+
 	return iter;
 }
 

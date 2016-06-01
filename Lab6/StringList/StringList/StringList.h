@@ -14,7 +14,7 @@ class CStringList
 		Node *prev;
 		std::unique_ptr<Node> next;
 	};
-
+	
 public:
 	size_t GetSize()const;
 	bool IsEmpty() const;
@@ -22,7 +22,7 @@ public:
 	void PushBack(const std::string& data);
 	void PushFront(const std::string& data);
 
-	class CIterator : public std::iterator<std::bidirectional_iterator_tag, Node, ptrdiff_t>
+	class CIterator : public std::iterator<std::random_access_iterator_tag, Node>
 	{
 		friend CStringList;
 		//CIterator(CIterator const & it);

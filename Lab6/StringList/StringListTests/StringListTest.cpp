@@ -132,6 +132,20 @@ BOOST_FIXTURE_TEST_SUITE(String_list, EmptyStringList)
 			}
 		}
 		
+		BOOST_AUTO_TEST_CASE(can_erase_element_at_iterator_pos)
+		{
+			auto it = ++list.begin();
+			BOOST_CHECK_EQUAL(*it, "second");
+			list.Erase(it);
+			BOOST_CHECK_EQUAL(*++list.begin(), "third");
+
+			list.Erase(list.begin());
+			BOOST_CHECK_EQUAL(*list.begin(), "third");
+
+			list.Erase(list.begin());
+			BOOST_CHECK(list.IsEmpty());
+		}
+
 		struct was_clear_ : public was_filled_
 		{
 			was_clear_()
@@ -155,21 +169,7 @@ BOOST_FIXTURE_TEST_SUITE(String_list, EmptyStringList)
 			}
 		BOOST_AUTO_TEST_SUITE_END()
 		
-		/*BOOST_AUTO_TEST_CASE(can_erase_element_at_iterator_pos)
-		{
-			auto it = list.begin();
-			BOOST_CHECK_EQUAL(*it, "first");
-			auto elem = list.Erase(it);
-			BOOST_CHECK_EQUAL(*elem, "first");
-
-			BOOST_CHECK_EQUAL(*++list.begin(), "second");
-
-			list.Erase(list.begin());
-			BOOST_CHECK_EQUAL(*list.begin(), "second");
-
-			list.Erase(list.begin());
-			BOOST_CHECK(list.IsEmpty());
-		}*/
+		
 	BOOST_AUTO_TEST_SUITE_END()
 
 	BOOST_FIXTURE_TEST_SUITE(can_insert_data_in_iterator_pos, was_filled_)
@@ -202,4 +202,4 @@ BOOST_FIXTURE_TEST_SUITE(String_list, EmptyStringList)
 		}
 	BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END();
