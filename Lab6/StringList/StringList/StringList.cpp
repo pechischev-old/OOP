@@ -63,84 +63,88 @@ CStringList::CIterator CStringList::Insert(const std::string & data, CIterator &
 		{
 			throw std::invalid_argument("Iterator is not valid");
 		}
-		auto node = make_unique<Node>(data, iter->prev, move(iter->prev->next));
-		iter->prev = move(node.get());
-		node->prev->next = move(node);
-		++m_size;
+		unique_ptr<Node> node = nullptr;
+		try
+		{
+			auto node = make_unique<Node>(data, iter.m_node->prev, move(iter.m_node->prev->next));
+			++m_size;
+		}
+		catch (...)
+		{
+			iter.m_node->prev = move(node.get());
+			node->prev->next = move(node);
+		}
 	}
-	return iter;
+	
+	return CIterator(iter.m_node->prev, this);
 }
 
 CStringList::CIterator CStringList::begin()
 {
-	return CIterator(m_firstNode.get());
+	return CIterator(m_firstNode.get(), this);
 }
 
 CStringList::CIterator CStringList::end()
 {
-	return CIterator(nullptr);
+	return CIterator(nullptr, this);
 }
 
-CStringList::CIterator const CStringList::cbegin() const
+const CStringList::CIterator  CStringList::cbegin() const
 {
-	return CIterator(m_firstNode.get());
+	return CIterator(m_firstNode.get(), this);
 }
 
-CStringList::CIterator const CStringList::cend() const
+const CStringList::CIterator  CStringList::cend() const
 {
-	return CIterator(nullptr);
+	return CIterator(nullptr, this);
 }
 
 CStringList::CIterator CStringList::rbegin()
 {
-	return CIterator(m_lastNode, true);
+	return CIterator(m_lastNode, this, true);
 }
 
 CStringList::CIterator CStringList::rend()
 {
-	return CIterator(m_firstNode->prev, true);
+	return CIterator(nullptr, this, true);
 }
 
-CStringList::CIterator const CStringList::crbegin() const
+const CStringList::CIterator  CStringList::crbegin() const
 {
-	return CIterator(m_lastNode, true);
+	return CIterator(m_lastNode, this, true);
 }
 
-CStringList::CIterator const CStringList::crend() const
+const CStringList::CIterator  CStringList::crend() const
 {
-	return CIterator(m_firstNode->prev, true);
+	return CIterator(nullptr, this, true);
 }
 
-CStringList::CIterator CStringList::Erase(CIterator & iter)
+CStringList::CIterator CStringList::Erase(CIterator & it)
 {
 	if (m_size == 1)
 	{
 		Clear();
-		return this->end();
+		return CIterator(nullptr, this);
 	}
-	if (iter == begin())
+
+	if (it == begin())
 	{
-		iter->next->prev = nullptr;
-		m_firstNode = move(iter->next);
+		it->next->prev = nullptr;
+		m_firstNode = move(it->next);
 	}
-	else if (iter.m_node == m_lastNode)
+	else if (it->data == GetBackElement())
 	{
-		iter->prev->next = nullptr;
-		m_lastNode = move(iter->prev);
-		iter = m_lastNode->next.get();
+		it->prev->next = nullptr;
+		m_lastNode = move(it->prev);
 	}
 	else
 	{
-		auto next = move(iter.m_node->next);
-		auto prev = iter.m_node->prev;
-		next->prev = prev;
-		prev->next = move(next);
-		iter = prev->next.get();
+		it->next->prev = move(it->prev);
+		it->prev->next = move(it->next);
 	}
 
-	--m_size;
-
-	return iter;
+	m_size--;	
+	return it;
 }
 
 std::string & CStringList::GetBackElement()
@@ -173,23 +177,25 @@ void CStringList::Clear()
 	{
 		m_lastNode->next = nullptr;
 		m_lastNode = m_lastNode->prev;
-		--m_size;
 	}
-	if (m_size == 0)
-	{
-		m_firstNode = nullptr;
-	}
+	m_firstNode = nullptr;
+	m_size = 0;
 }
 
-//CStringList::CIterator::CIterator(CIterator const & it)
-//	:m_node(node)
-//{
-//}
+CStringList::~CStringList()
+{
+	Clear();
+}
 
-CStringList::CIterator::CIterator(Node * node, bool isReverse)
+CStringList::CIterator::CIterator(Node * node, const CStringList * list, bool isReverse)
 	: m_node(node)
+	, m_list(list)
 	, m_isReverse(isReverse)
 {
+	if (!m_list)
+	{
+		throw std::invalid_argument("Pointer to list is nullptr");
+	}
 }
 
 std::string & CStringList::CIterator::operator*() const
@@ -207,11 +213,6 @@ bool CStringList::CIterator::operator!=(CIterator const & other) const
 	return m_node != other.m_node;
 }
 
-CStringList::CIterator CStringList::CIterator::operator+(unsigned shift)
-{
-	return CIterator();
-}
-
 CStringList::CIterator & CStringList::CIterator::operator++()
 {
 	m_node = (m_isReverse ? m_node->prev : m_node->next.get());
@@ -220,7 +221,14 @@ CStringList::CIterator & CStringList::CIterator::operator++()
 
 CStringList::CIterator & CStringList::CIterator::operator--()
 {
-	m_node = (m_isReverse ? m_node->next.get() : m_node->prev);
+	if (!m_node)
+	{
+		m_node = (m_isReverse ? m_list->m_firstNode.get() : m_list->m_lastNode);
+	}
+	else
+	{
+		m_node = (m_isReverse ? m_node->next.get() : m_node->prev);
+	}
 	return *this;
 }
 
